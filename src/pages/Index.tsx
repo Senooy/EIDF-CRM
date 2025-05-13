@@ -181,25 +181,23 @@ const Index = () => {
     enabled: !!queryOptions, // Only run query if queryOptions is valid
   });
 
-  // Calculate Lifetime KPIs using useMemo, now filtered by period
+  // Calculate KPIs for the selected period using the fetched periodOrders
   const kpiStats = useMemo(() => {
-    // Filter orders based on the selected period first
+    // Use periodOrders directly as they are already filtered by the API call
     console.log(`[Debug] Calculating KPIs for period: ${selectedPeriodKey}. Orders received from API: ${periodOrders.length}`);
 
     if (!periodOrders || periodOrders.length === 0) return {
       totalOrders: 0,
       pendingOrders: 0,
       completedOrders: 0,
-      totalRevenueLifetime: 0,
+      // totalRevenueLifetime: 0, // OLD - Mismatched property name
+      revenueForPeriod: 0,    // CORRECTED - Ensure this matches the structure used by KPICard
     };
 
-    // Calculate stats based on FILTERED orders
+    // Calculate stats based on FILTERED orders by API now
     const completed = periodOrders.filter(order => order.status === 'completed');
     const pending = periodOrders.filter(order => order.status === 'pending');
-    // Note: totalOrders should reflect the filtered count for the period, 
-    // unless we want 'Total commandes (période)' vs 'Total commandes (lifetime)'?
-    // Let's show stats for the period.
-
+    
     const revenueForPeriod = completed.reduce((sum, order) => {
         // Ensure 'total' is treated as a number, handling potential null/undefined/empty strings
         const orderTotal = parseFloat(order.total || '0');
@@ -212,9 +210,9 @@ const Index = () => {
       completedOrders: completed.length, // Completed in the selected period
       revenueForPeriod: revenueForPeriod, 
     };
-  }, [periodOrders, selectedPeriodKey]);
+  }, [periodOrders, selectedPeriodKey]); // Use periodOrders
 
-  // Format data for Revenue Chart using useMemo, now filtered by period
+  // Format data for Revenue Chart using periodOrders
   const chartData = useMemo(() => {
     const completedOrdersForChart = periodOrders.filter(order => order.status === 'completed');
 
