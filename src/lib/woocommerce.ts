@@ -2,18 +2,18 @@ import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 // WARNING: Hardcoding keys is insecure. Use environment variables in production.
-// const WOOCOMMERCE_CLIENT_KEY = "ck_79c0b154b61a8259c1390deb3c2eebe22b013589"; // REMOVE
-// const WOOCOMMERCE_SECRET_KEY = "cs_7f589b934aa97db46be3b9a5736651095ca10550"; // REMOVE
+const WOOCOMMERCE_CLIENT_KEY = "ck_79c0b154b61a8259c1390deb3c2eebe22b013589";
+const WOOCOMMERCE_SECRET_KEY = "cs_7f589b934aa97db46be3b9a5736651095ca10550";
 
 // const API_URL = 'https://eco-industrie-france.com/wp-json/wc/v3'; // Original URL
 const API_URL = '/api'; // Use the proxied path
 
 const woocommerceApi = axios.create({
   baseURL: API_URL,
-  // auth: {  // REMOVE - Auth handled by the Vercel function
-  //   username: WOOCOMMERCE_CLIENT_KEY,
-  //   password: WOOCOMMERCE_SECRET_KEY,
-  // },     // REMOVE
+  auth: {
+    username: WOOCOMMERCE_CLIENT_KEY,
+    password: WOOCOMMERCE_SECRET_KEY,
+  },
 });
 
 // Define interfaces for nested objects
@@ -103,7 +103,6 @@ export const getRecentOrders = async (count: number = 10): Promise<Order[]> => {
 
 // Fetch all orders, optionally filtering by customer ID.
 // Handles being called directly or via react-query's queryFn.
-// DEPRECATED - Use getOrdersPage instead for better performance.
 export const getAllOrders = async (
   // Accept either a customer ID number or the react-query context object
   contextOrCustomerId?: number | QueryFunctionContext<[string, number?]>
@@ -172,73 +171,6 @@ export const getAllOrders = async (
 
   console.log(`Finished fetching orders${customerId !== undefined ? ' for customer ' + customerId : ''}. Total found: ${allOrders.length}`);
   return allOrders;
-};
-
-// Interface for the data returned by getOrdersPage, including pagination info
-export interface PaginatedOrdersResponse {
-  orders: Order[];
-  totalOrders: number;
-  totalPages: number;
-}
-
-// Interface for order filters used in getOrdersPage
-export interface OrderFilters {
-  status?: string;
-  search?: string; // Searches in id, name, email
-  customer?: number; // Filter by customer ID
-  date_min?: string; // YYYY-MM-DD
-  date_max?: string; // YYYY-MM-DD
-  orderby?: 'id' | 'date' | 'total'; // Allow sorting by specific fields
-  order?: 'asc' | 'desc';
-  // Add other filterable fields as needed
-}
-
-// Fetch a specific page of orders with filtering and sorting
-export const getOrdersPage = async (
-  page: number = 1,
-  perPage: number = 10,
-  filters: OrderFilters = {}
-): Promise<PaginatedOrdersResponse> => {
-  console.log(`Fetching orders page ${page} (perPage: ${perPage})...`, filters);
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const params: any = {
-      page: page,
-      per_page: perPage,
-      // Default sorting if not provided
-      orderby: filters.orderby || 'date',
-      order: filters.order || 'desc',
-      // Add filters if provided
-      ...(filters.status && filters.status !== 'all' && { status: filters.status }), // Handle 'all' case
-      ...(filters.search && { search: filters.search }),
-      ...(filters.customer && { customer: filters.customer }),
-      ...(filters.date_min && { after: filters.date_min + 'T00:00:00' }), // Use 'after' for date_min
-      ...(filters.date_max && { before: filters.date_max + 'T23:59:59' }), // Use 'before' for date_max
-      // Note: Filtering by total amount directly via params might not be standard in WC API v3.
-      // This often requires fetching and then filtering client-side if needed,
-      // but we are trying to avoid fetching all data.
-      // If total filtering is critical, further investigation or custom API endpoint might be needed.
-    };
-
-    const response = await woocommerceApi.get<Order[]>('/orders', { params });
-
-    const orders = response.data;
-    // Extract pagination headers
-    const totalOrders = parseInt(response.headers['x-wp-total'] || '0', 10);
-    const totalPages = parseInt(response.headers['x-wp-totalpages'] || '0', 10);
-
-    console.log(`Fetched orders page ${page}. Found: ${orders.length}, Total: ${totalOrders}, TotalPages: ${totalPages}`);
-
-    return {
-      orders,
-      totalOrders,
-      totalPages,
-    };
-  } catch (error) {
-    console.error(`Error fetching WooCommerce orders page ${page}:`, error);
-    // Re-throw the error to be handled by react-query
-    throw error;
-  }
 };
 
 // Function to update an order's status

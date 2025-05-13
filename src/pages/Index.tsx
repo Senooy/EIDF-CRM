@@ -2,10 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Order as WooCommerceOrder,
-  getSalesReport,
-  SalesReport,
-  getOrderTotalsReport,
-  OrderTotalsReport
+  getAllOrders
 } from "@/lib/woocommerce";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import KPICard from "@/components/Dashboard/KPICard";
@@ -101,100 +98,85 @@ const Index = () => {
   // Add state for forecast mode
   const [forecastMode, setForecastMode] = useState<boolean>(false);
 
-  // Fetch Sales Report data for KPIs and Revenue Chart
-  const { data: salesReportData, isLoading: salesReportLoading } = useQuery<SalesReport>({
-    queryKey: ["woocommerce_sales_report", selectedPeriodKey],
-    queryFn: () => {
-        // Map our PeriodKey to what getSalesReport expects
-        let reportPeriod = selectedPeriodKey;
-        if (selectedPeriodKey === 'all') reportPeriod = 'year'; // API might not have 'all', default to 'year' or handle appropriately
-        // For 'all', getSalesReport might need special handling or a very long range if API doesn't support 'all' directly
-        // For now, let's assume 'year' for 'all' as a placeholder.
-        // Or, we could disable 'all' for reports if API doesn't support it well.
-        // For simplicity, if selectedPeriodKey is 'all', we might fetch for 'year' and label it 'Total'
-        // The getSalesReport in woocommerce.ts handles 'quarter' logic correctly by calculating date_min/max.
-        // For 'day', 'week', 'month', 'year', it passes them directly.
-        return getSalesReport(reportPeriod as 'day' | 'week' | 'month' | 'quarter' | 'year');
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-
-  // Fetch Order Totals Report for Pie Chart and order count KPIs
-  const { data: orderTotalsData, isLoading: orderTotalsLoading } = useQuery<OrderTotalsReport[]>({ 
-    queryKey: ["woocommerce_order_totals_report", selectedPeriodKey], // Period key might not be used by this specific API endpoint, but included for consistency
-    queryFn: () => getOrderTotalsReport(), // This API endpoint often doesn't take period filters
+  // Fetch ALL orders data from WooCommerce
+  const { data: allOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({ 
+    queryKey: ["woocommerce_all_orders"], // Keep the query key simple
+    // Explicitly call with undefined to fetch ALL orders
+    queryFn: () => getAllOrders(undefined), 
     staleTime: 1000 * 60 * 5, 
   });
 
-  // Calculate KPIs based on report data
+  // Calculate Lifetime KPIs using useMemo, now filtered by period
   const kpiStats = useMemo(() => {
-    let totalRevenueForPeriod = 0;
-    let totalOrdersForPeriod = 0;
-    let pendingOrdersCount = 0;
-    let completedOrdersCount = 0;
+    // Filter orders based on the selected period first
+    console.log(`[Debug] Calculating KPIs for period: ${selectedPeriodKey}. Total orders before filter: ${allOrders.length}`);
+    const filteredOrders = allOrders.filter(order => isOrderInPeriod(order.date_created, selectedPeriodKey));
+    console.log(`[Debug] Total orders AFTER filter for period ${selectedPeriodKey}: ${filteredOrders.length}`);
 
-    if (salesReportData?.totals) {
-      // Sum up totals from all intervals in the sales report for the period
-      // This depends on the structure of salesReportData.totals
-      // If totals is an object keyed by date/interval:
-      Object.values(salesReportData.totals).forEach(totalEntry => {
-        totalRevenueForPeriod += parseFloat(totalEntry.sales || '0');
-        totalOrdersForPeriod += totalEntry.orders || 0;
-      });
-    }
-    // If selectedPeriodKey is 'all', the sales report might give lifetime, or for a default like 'year'.
-    // The label for revenue will be `CA (${timePeriods[selectedPeriodKey].label})`
+    if (!filteredOrders || filteredOrders.length === 0) return {
+      totalOrders: 0,
+      pendingOrders: 0,
+      completedOrders: 0,
+      totalRevenueLifetime: 0,
+    };
 
-    if (orderTotalsData) {
-      // Sum up order counts from orderTotalsData for specific statuses
-      // This report gives current counts by status, not necessarily for a specific period.
-      // So this shows LIFETIME pending/completed unless the report can be filtered.
-      // The current getOrderTotalsReport in woocommerce.ts does not filter by period.
-      // For now, we'll use these as lifetime counts if period is 'all', or acknowledge they are not period-specific.
+    // Calculate stats based on FILTERED orders
+    const completed = filteredOrders.filter(order => order.status === 'completed');
+    const pending = filteredOrders.filter(order => order.status === 'pending');
+    // Note: totalOrders should reflect the filtered count for the period, 
+    // unless we want 'Total commandes (période)' vs 'Total commandes (lifetime)'?
+    // Let's show stats for the period.
 
-      // If we want period-specific counts here, we'd need to process salesReportData.intervals
-      // or adjust getOrderTotalsReport if the API supports period filtering.
-
-      // For simplicity, let's use salesReportData for totalOrdersForPeriod as it's period-specific.
-      // And orderTotalsData for status-specific counts (which are currently lifetime).
-      orderTotalsData.forEach(statusTotal => {
-        if (statusTotal.slug === 'pending') pendingOrdersCount = statusTotal.total;
-        if (statusTotal.slug === 'completed') completedOrdersCount = statusTotal.total;
-        // if (selectedPeriodKey === 'all') totalOrdersForPeriod += statusTotal.total; // This would be all-time total
-      });
-
-      // If selectedPeriodKey is 'all', we use totalOrdersForPeriod from sales report (e.g., for the year)
-      // and lifetime pending/completed counts. This is a bit of a mix.
-      // A true "Total" period that sums up everything would need all orders.
-      // Given the move away from fetching all orders, KPIs for "Total" will reflect the chosen report period (e.g. 'year') or be lifetime counts.
-    }
+    const revenueForPeriod = completed.reduce((sum, order) => {
+        // Ensure 'total' is treated as a number, handling potential null/undefined/empty strings
+        const orderTotal = parseFloat(order.total || '0');
+        return sum + (isNaN(orderTotal) ? 0 : orderTotal);
+    }, 0);
 
     return {
-      totalOrders: totalOrdersForPeriod, // From sales report, period-specific
-      pendingOrders: pendingOrdersCount,   // From order totals, currently lifetime
-      completedOrders: completedOrdersCount, // From order totals, currently lifetime
-      revenueForPeriod: totalRevenueForPeriod, // From sales report, period-specific
+      totalOrders: filteredOrders.length, // Orders in the selected period
+      pendingOrders: pending.length, // Pending in the selected period
+      completedOrders: completed.length, // Completed in the selected period
+      revenueForPeriod: revenueForPeriod, 
     };
-  }, [salesReportData, orderTotalsData, selectedPeriodKey]);
+  }, [allOrders, selectedPeriodKey]);
 
-  // Format data for Revenue Chart using sales report data
+  // Format data for Revenue Chart using useMemo, now filtered by period
   const chartData = useMemo(() => {
-    if (!salesReportData || !salesReportData.intervals || salesReportData.intervals.length === 0) return [];
+    const filteredRawOrders = allOrders.filter(order => 
+        isOrderInPeriod(order.date_created, selectedPeriodKey) && order.status === 'completed'
+    );
 
-    let historicalData = salesReportData.intervals
-      .map(interval => ({
-        date: interval.interval, // API provides date string like "2024-05-13"
-        amount: parseFloat(interval.subtotals.sales || '0'),
-        forecastAmount: undefined,
-      }))
+    if (!filteredRawOrders || filteredRawOrders.length === 0) return [];
+
+    const aggregationFormat = (selectedPeriodKey === 'year' || selectedPeriodKey === 'all' || selectedPeriodKey === 'quarter') 
+                              ? 'YYYY-MM' 
+                              : 'YYYY-MM-DD';
+
+    const aggregatedRevenue: { [key: string]: { amount: number, orderCount: number } } = {};
+
+    filteredRawOrders.forEach(order => {
+        const date = new Date(order.date_created);
+        let key = '';
+        if (aggregationFormat === 'YYYY-MM') {
+          key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        } else {
+          key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+        }
+        
+        const orderTotal = parseFloat(order.total || '0');
+        if (!isNaN(orderTotal)) {
+          if (!aggregatedRevenue[key]) aggregatedRevenue[key] = { amount: 0, orderCount: 0 };
+          aggregatedRevenue[key].amount += orderTotal;
+          aggregatedRevenue[key].orderCount += 1;
+        }
+      });
+
+    let historicalData = Object.entries(aggregatedRevenue)
+      .map(([date, data]) => ({ date, amount: parseFloat(data.amount.toFixed(2)), forecastAmount: undefined })) // ensure amount is number, add forecastAmount
       .sort((a, b) => a.date.localeCompare(b.date));
 
-    // Forecast logic needs to be adapted as the date format might be daily from sales report
-    // For monthly forecast, we would need to aggregate daily data to monthly first.
-    // Let's simplify and only enable forecast if data looks monthly (e.g. period is year/quarter/all)
-    const isMonthlyData = selectedPeriodKey === 'year' || selectedPeriodKey === 'all' || selectedPeriodKey === 'quarter';
-
-    if (forecastMode && historicalData.length >= 2 && isMonthlyData) { 
+    if (forecastMode && historicalData.length >= 2 && (aggregationFormat === 'YYYY-MM')) { // Forecast only for YYYY-MM for now
       // Prepare data for linear regression: [index, amount]
       const regressionData = historicalData.map((point, index) => [index, point.amount]);
       
@@ -202,24 +184,13 @@ const Index = () => {
       const { m, b } = ss.linearRegression(regressionData);
       const line = ss.linearRegressionLine({ m, b });
 
-      // Ensure lastHistoricalDate is correctly parsed; salesReportData.intervals.interval could be YYYY-MM-DD or YYYY-MM
-      // Assuming it's YYYY-MM if isMonthlyData is true, or we need to adjust
-      const lastDateStr = historicalData[historicalData.length - 1].date;
-      const lastHistoricalDate = new Date(lastDateStr.includes('-') ? lastDateStr : `${lastDateStr.substring(0,4)}-${lastDateStr.substring(4,6)}-01`);
-
+      const lastHistoricalDate = new Date(historicalData[historicalData.length - 1].date + '-01'); // Ensure it's a valid date
       const forecastPoints = 3; // Predict next 3 months
 
       for (let i = 1; i <= forecastPoints; i++) {
         const nextDate = new Date(lastHistoricalDate);
         nextDate.setMonth(lastHistoricalDate.getMonth() + i);
-        // Format forecastDateKey to match historical data's date format (YYYY-MM or YYYY-MM-DD)
-        // If historical is YYYY-MM-DD from daily report, forecasting monthly doesn't align directly.
-        // This forecast logic might need significant rework if sales report gives daily data for monthly views.
-        // For now, assume historicalData.date is YYYY-MM if isMonthlyData is true.
-        const forecastDateKey = isMonthlyData 
-          ? `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}`
-          : `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}-${String(nextDate.getDate()).padStart(2, '0')}`; // Fallback, may not be right
-
+        const forecastDateKey = `${nextDate.getFullYear()}-${String(nextDate.getMonth() + 1).padStart(2, '0')}`;
         const predictedAmount = line(historicalData.length -1 + i);
         
         historicalData.push({
@@ -230,9 +201,9 @@ const Index = () => {
       }
     }
     return historicalData;
-  }, [salesReportData, selectedPeriodKey, forecastMode]);
+  }, [allOrders, selectedPeriodKey, forecastMode]); // Add forecastMode to dependencies
 
-  const isLoading = salesReportLoading || orderTotalsLoading;
+  const isLoading = ordersLoading;
 
   if (isLoading) {
     return (
@@ -331,7 +302,7 @@ const Index = () => {
             {/* Order Status Pie Chart */}
             {/* Spans 1 col on md+, 1 on xl+ */}
             <div className="md:col-span-1 xl:col-span-1">
-               <OrderStatusPieChart orderTotals={orderTotalsData || []} />
+               <OrderStatusPieChart orders={allOrders} />
             </div>
             {/* Activity Feed */}
             {/* Spans 2 cols on md/lg (full width below), 1 col on xl+ */}
@@ -341,7 +312,7 @@ const Index = () => {
           </div>
           
           {/* Orders Table */}
-          <OrdersTable /> {/* Remove orders prop, it fetches its own data */}
+          <OrdersTable orders={allOrders} />
         </main>
       </div>
     </div>

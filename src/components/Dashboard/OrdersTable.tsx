@@ -1,12 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { formatDate, formatOrderNumber, formatPrice } from "@/utils/formatters";
 import OrderStatusBadge from "./OrderStatusBadge";
-import {
-  Order as WooCommerceOrder,
-  getOrdersPage,
-  PaginatedOrdersResponse,
-  OrderFilters
-} from "@/lib/woocommerce";
+import { Order as WooCommerceOrder } from "@/lib/woocommerce";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +31,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useQuery } from "@tanstack/react-query";
 
 // Objet de mapping pour les traductions des statuts
 const statusTranslations: { [key: string]: string } = {
@@ -55,11 +49,12 @@ const getStatusTranslation = (status: string): string => {
 };
 
 interface OrdersTableProps {
+  orders: WooCommerceOrder[];
   isLoading?: boolean;
   itemsPerPage?: number;
 }
 
-const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: OrdersTableProps) => {
+const OrdersTable = ({ orders, isLoading = false, itemsPerPage = 10 }: OrdersTableProps) => {
   const navigate = useNavigate();
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -68,51 +63,32 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
   const [minTotal, setMinTotal] = useState<string>("");
   const [maxTotal, setMaxTotal] = useState<string>("");
   const [sortConfig, setSortConfig] = useState<{
-    key: 'id' | 'date' | 'total' | "customer";
+    key: keyof WooCommerceOrder | "customer";
     direction: "asc" | "desc";
-  }>({ key: "date", direction: "desc" });
+  }>({ key: "date_created", direction: "desc" });
   const [currentPage, setCurrentPage] = useState<number>(1);
 
-  // Fetch data using react-query
-  const queryKey = useMemo(() => [
-    'woocommerce_orders_page',
-    currentPage,
-    itemsPerPage,
-    statusFilter,
-    searchQuery,
-    dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : undefined,
-    dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : undefined,
-    sortConfig.key,
-    sortConfig.direction,
-  ], [currentPage, itemsPerPage, statusFilter, searchQuery, dateRange, sortConfig]);
-
-  const { data, isLoading, error } = useQuery<PaginatedOrdersResponse>({
-    queryKey: queryKey,
-    queryFn: () => {
-      const filters: OrderFilters = {
-        status: statusFilter === 'all' ? undefined : statusFilter,
-        search: searchQuery || undefined,
-        date_min: dateRange?.from ? format(dateRange.from, 'yyyy-MM-dd') : undefined,
-        date_max: dateRange?.to ? format(dateRange.to, 'yyyy-MM-dd') : undefined,
-        orderby: (sortConfig.key !== 'customer' ? sortConfig.key : 'date') as 'id' | 'date' | 'total',
-        order: sortConfig.direction,
-      };
-      return getOrdersPage(currentPage, itemsPerPage, filters);
-    },
-    placeholderData: (previousData) => previousData,
-    staleTime: 1000 * 60 * 1,
-  });
-
-  // Extract data and pagination info
-  const ordersOnPage = data?.orders ?? [];
-  const totalOrders = data?.totalOrders ?? 0;
-  const totalPages = data?.totalPages ?? 0;
-
-  // Client-side filtering (apply AFTER fetching the page) for filters not supported by API
-  const clientFilteredOrders = useMemo(() => {
-    let result = [...ordersOnPage];
-
-    // Apply client filter (example - refine as needed)
+  const filteredAndSortedOrders = useMemo(() => {
+    let result = [...orders];
+    
+    // Apply status filter
+    if (statusFilter !== "all") {
+      result = result.filter(order => order.status === statusFilter);
+    }
+    
+    // Apply search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      result = result.filter(
+        order => 
+          order.id.toString().includes(query) ||
+          order.billing.first_name.toLowerCase().includes(query) ||
+          order.billing.last_name.toLowerCase().includes(query) ||
+          order.billing.email.toLowerCase().includes(query)
+      );
+    }
+    
+    // Apply client filter
     if (clientFilter) {
       const clientQuery = clientFilter.toLowerCase();
       result = result.filter(order =>
@@ -120,7 +96,23 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
         order.billing.email.toLowerCase().includes(clientQuery)
       );
     }
-
+    
+    // Apply date range filter
+    if (dateRange?.from) {
+      const startDate = dateRange.from.setHours(0, 0, 0, 0);
+      result = result.filter(order => {
+        const orderDate = parseISO(order.date_created).getTime();
+        return orderDate >= startDate;
+      });
+    }
+    if (dateRange?.to) {
+      const endDate = dateRange.to.setHours(23, 59, 59, 999);
+      result = result.filter(order => {
+        const orderDate = parseISO(order.date_created).getTime();
+        return orderDate <= endDate;
+      });
+    }
+    
     // Apply total filter
     const min = parseFloat(minTotal);
     const max = parseFloat(maxTotal);
@@ -130,27 +122,60 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
     if (!isNaN(max)) {
       result = result.filter(order => parseFloat(order.total) <= max);
     }
-
-    // Apply client-side sorting ONLY if key is 'customer'
-    if (sortConfig.key === 'customer') {
-      result.sort((a, b) => {
-        const aValue = `${a.billing.first_name} ${a.billing.last_name}`.toLowerCase();
-        const bValue = `${b.billing.first_name} ${b.billing.last_name}`.toLowerCase();
-        if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-        if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-        return 0;
-      });
-    }
-
+    
+    // Sort orders
+    result.sort((a, b) => {
+      let aValue: any, bValue: any;
+      
+      if (sortConfig.key === "customer") {
+        aValue = `${a.billing.first_name} ${a.billing.last_name}`.toLowerCase();
+        bValue = `${b.billing.first_name} ${b.billing.last_name}`.toLowerCase();
+      } else if (sortConfig.key === "date_created") {
+        aValue = new Date(a.date_created).getTime();
+        bValue = new Date(b.date_created).getTime();
+      } else if (sortConfig.key === "total") {
+        aValue = parseFloat(a.total);
+        bValue = parseFloat(b.total);
+      } else {
+         if (sortConfig.key in a && sortConfig.key in b) {
+            aValue = a[sortConfig.key as keyof WooCommerceOrder];
+            bValue = b[sortConfig.key as keyof WooCommerceOrder];
+         } else {
+             aValue = 0;
+             bValue = 0;
+         }
+      }
+      
+      if (aValue < bValue) {
+        return sortConfig.direction === "asc" ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === "asc" ? 1 : -1;
+      }
+      return 0;
+    });
+    
     return result;
-  }, [ordersOnPage, clientFilter, minTotal, maxTotal, sortConfig]);
+  }, [orders, statusFilter, searchQuery, clientFilter, dateRange, minTotal, maxTotal, sortConfig]);
+
+  // Calculer les commandes pour la page actuelle
+  const paginatedOrders = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return filteredAndSortedOrders.slice(startIndex, endIndex);
+  }, [filteredAndSortedOrders, currentPage, itemsPerPage]);
+
+  // Calculer le nombre total de pages
+  const totalPages = useMemo(() => {
+    return Math.ceil(filteredAndSortedOrders.length / itemsPerPage);
+  }, [filteredAndSortedOrders, itemsPerPage]);
 
   // Réinitialiser la page actuelle lorsque les filtres changent
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, searchQuery, clientFilter, dateRange, minTotal, maxTotal, itemsPerPage, sortConfig]);
+  }, [statusFilter, searchQuery, clientFilter, dateRange, minTotal, maxTotal, itemsPerPage]);
 
-  const handleSort = (key: 'id' | 'date' | 'total' | "customer") => {
+  const handleSort = (key: keyof WooCommerceOrder | "customer") => {
     setSortConfig(prev => ({
       key,
       direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
@@ -161,22 +186,13 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
     navigate(`/orders/${id}`);
   };
 
-  // Calculate display range based on current page and actual items received
+  // Calculer le nombre d'éléments à afficher
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + clientFilteredOrders.length;
+  const endIndex = Math.min(startIndex + itemsPerPage, filteredAndSortedOrders.length);
 
-  // TODO: Get statuses dynamically or use a predefined list if API for distinct statuses isn't available
-  const uniqueStatuses = [
-    "pending",
-    "processing",
-    "on-hold",
-    "completed",
-    "cancelled",
-    "refunded",
-    "failed",
-  ];
+  const uniqueStatuses = Array.from(new Set(orders.map(order => order.status)));
 
-  if (initialLoading) {
+  if (isLoading) {
     return (
       <div className="w-full bg-white rounded-xl shadow-sm border border-gray-100 p-6">
         <div className="animate-pulse space-y-4">
@@ -323,7 +339,7 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
                 onClick={() => handleSort("id")}
               >
                 <div className="flex items-center">
-                  <span>ID</span>
+                  <span>Commande</span>
                   {sortConfig.key === "id" && (
                     <ArrowUpDown className="ml-1 h-4 w-4" />
                   )}
@@ -331,11 +347,11 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
               </TableHead>
               <TableHead 
                 className="cursor-pointer"
-                onClick={() => handleSort("date")}
+                onClick={() => handleSort("date_created")}
               >
                 <div className="flex items-center">
                   <span>Date</span>
-                  {sortConfig.key === "date" && (
+                  {sortConfig.key === "date_created" && (
                     <ArrowUpDown className="ml-1 h-4 w-4" />
                   )}
                 </div>
@@ -367,26 +383,14 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && !initialLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-gray-500">
-                  Chargement...
-                </TableCell>
-              </TableRow>
-            ) : error ? (
-              <TableRow>
-                <TableCell colSpan={6} className="text-center py-10 text-red-500">
-                  Erreur lors du chargement des commandes.
-                </TableCell>
-              </TableRow>
-            ) : clientFilteredOrders.length === 0 ? (
+            {paginatedOrders.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-10 text-gray-500">
                   Aucune commande trouvée
                 </TableCell>
               </TableRow>
             ) : (
-              clientFilteredOrders.map(order => (
+              paginatedOrders.map(order => (
                 <TableRow key={order.id} className="hover:bg-gray-50">
                   <TableCell>{formatOrderNumber(order.id)}</TableCell>
                   <TableCell>{formatDate(order.date_created)}</TableCell>
@@ -420,14 +424,10 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
 
       {/* Card View (below md) */}
       <div className="md:hidden p-4 space-y-4">
-        {isLoading && !initialLoading ? (
-          <p className="text-center py-10 text-gray-500">Chargement...</p>
-        ) : error ? (
-          <p className="text-center py-10 text-red-500">Erreur lors du chargement.</p>
-        ) : clientFilteredOrders.length === 0 ? (
+        {paginatedOrders.length === 0 ? (
           <p className="text-center py-10 text-gray-500">Aucune commande trouvée</p>
         ) : (
-          clientFilteredOrders.map(order => (
+          paginatedOrders.map(order => (
             <Card key={order.id} className="overflow-hidden">
               <CardHeader className="p-4 bg-gray-50 border-b">
                  <div className="flex justify-between items-center">
@@ -467,7 +467,7 @@ const OrdersTable = ({ isLoading: initialLoading = false, itemsPerPage = 10 }: O
       {totalPages > 1 && (
         <div className="p-4 border-t border-gray-100 flex items-center justify-between text-sm">
           <div className="text-gray-600">
-            Affichage de {clientFilteredOrders.length > 0 ? startIndex + 1 : 0} à {endIndex} sur {totalOrders} commandes
+            Affichage de {startIndex + 1} à {endIndex} sur {filteredAndSortedOrders.length} commandes
           </div>
           <div className="flex items-center gap-2">
             <Button
