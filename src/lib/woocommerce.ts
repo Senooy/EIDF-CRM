@@ -61,15 +61,6 @@ export interface Order {
   // Add other relevant order properties here
 }
 
-// Define options for fetching orders
-export interface GetOrdersOptions {
-  customerId?: number;
-  date_after?: string;  // ISO8601 format e.g., YYYY-MM-DDTHH:mm:ss or YYYY-MM-DD
-  date_before?: string; // ISO8601 format e.g., YYYY-MM-DDTHH:mm:ss or YYYY-MM-DD
-  status?: string | string[]; // Allow filtering by status(es)
-  // Future: Add per_page, page for direct pagination control if needed outside this func
-}
-
 export const getOrders = async (): Promise<Order[]> => {
   try {
     const response = await woocommerceApi.get('/orders');
@@ -112,91 +103,52 @@ export const getRecentOrders = async (count: number = 10): Promise<Order[]> => {
 
 // Fetch all orders, optionally filtering by customer ID.
 // Handles being called directly or via react-query's queryFn.
+// DEPRECATED - Use getOrdersPage instead for better performance.
 export const getAllOrders = async (
   // Accept either a customer ID number or the react-query context object
-  // contextOrCustomerId?: number | QueryFunctionContext<[string, number?]> // OLD SIGNATURE
-  // contextOrOptions can be:
-  // 1. QueryFunctionContext (from React Query, queryKey[1] is GetOrdersOptions)
-  // 2. Direct GetOrdersOptions object
-  // 3. Undefined (original behavior, though we aim to provide options)
-  contextOrOptions?: QueryFunctionContext<[string, GetOrdersOptions?]> | GetOrdersOptions
+  contextOrCustomerId?: number | QueryFunctionContext<[string, number?]>
 ): Promise<Order[]> => {
-  // let customerId: number | undefined = undefined; // OLD
-  let options: GetOrdersOptions | undefined = undefined;
+  let customerId: number | undefined = undefined;
 
   // Check if the argument is the react-query context object
-  // if (typeof contextOrCustomerId === 'object' && contextOrCustomerId !== null && 'queryKey' in contextOrCustomerId) { // OLD
-  //   // Extract customerId from the queryKey if it exists (it's the second element)
-  //   customerId = contextOrCustomerId.queryKey[1]; 
-  // } else if (typeof contextOrCustomerId === 'number') { // OLD
-  //   // Argument is directly the customerId
-  //   customerId = contextOrCustomerId;
-  // } // OLD
-  // If contextOrCustomerId is undefined or null, customerId remains undefined // OLD
-
-  // Type guard and extraction for options
-  if (contextOrOptions) {
-    if ('queryKey' in contextOrOptions && Array.isArray(contextOrOptions.queryKey)) {
-      // React Query context
-      options = contextOrOptions.queryKey[1] as GetOrdersOptions | undefined;
-    } else if (typeof contextOrOptions === 'object' && !('queryKey' in contextOrOptions)) {
-      // Direct options object
-      options = contextOrOptions as GetOrdersOptions;
-    }
+  if (typeof contextOrCustomerId === 'object' && contextOrCustomerId !== null && 'queryKey' in contextOrCustomerId) {
+    // Extract customerId from the queryKey if it exists (it's the second element)
+    customerId = contextOrCustomerId.queryKey[1]; 
+  } else if (typeof contextOrCustomerId === 'number') {
+    // Argument is directly the customerId
+    customerId = contextOrCustomerId;
   }
-  
-  const customerId = options?.customerId;
-  const dateAfter = options?.date_after;
-  const dateBefore = options?.date_before;
-  const statusFilter = options?.status;
+  // If contextOrCustomerId is undefined or null, customerId remains undefined
 
   let allOrders: Order[] = [];
   let page = 1;
   const perPage = 100; // Max items per page for WooCommerce API
   let morePages = true;
 
-  // console.log(`Starting to fetch all orders${customerId !== undefined ? ' for customer ' + customerId : ''}...`); // OLD
-  console.log(`Starting to fetch orders with options:`, options);
-
+  console.log(`Starting to fetch all orders${customerId !== undefined ? ' for customer ' + customerId : ''}...`);
 
   while (morePages) {
     try {
-      // console.log(`Fetching orders page ${page}${customerId !== undefined ? ' for customer ' + customerId : ''}...`); // OLD
+      console.log(`Fetching orders page ${page}${customerId !== undefined ? ' for customer ' + customerId : ''}...`);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = {
         per_page: perPage,
         page: page,
         orderby: 'date', // Order by date to process chronologically if needed
-        order: 'asc'     // Fetch oldest first within the period if a range is given
+        order: 'asc'
       };
 
       // Only add the customer parameter if a valid customerId was extracted
       if (customerId !== undefined) {
         params.customer = customerId;
       }
-      // Add date filters if provided
-      if (dateAfter) {
-        params.after = dateAfter;
-      }
-      if (dateBefore) {
-        params.before = dateBefore;
-      }
-      if (statusFilter) {
-        params.status = statusFilter;
-      }
-      
-      console.log(`Fetching orders page ${page} with params:`, params);
+
       const response = await woocommerceApi.get<Order[]>('/orders', { params });
 
       const orders = response.data;
       if (orders.length > 0) {
         allOrders = allOrders.concat(orders);
-        // if (orders.length < perPage && page === 1 && orders.length === response.headers['x-wp-total']) { // Original logic was a bit off
-        if (orders.length < perPage) { // If less than per_page items returned, it's the last page
-          morePages = false;
-        } else {
-          page++;
-        }
+        page++;
         // Optional: Add a small delay to avoid hitting rate limits if necessary
         // await new Promise(resolve => setTimeout(resolve, 200)); 
       } else {
@@ -210,8 +162,7 @@ export const getAllOrders = async (
       }
 
     } catch (error) {
-      // console.error(`Error fetching WooCommerce orders page ${page}:`, error); // OLD
-      console.error(`Error fetching WooCommerce orders page ${page} with options ${JSON.stringify(options)}:`, error);
+      console.error(`Error fetching WooCommerce orders page ${page}:`, error);
       // Stop fetching if one page fails
       morePages = false;
       // Optionally re-throw the error or return partial data
@@ -219,9 +170,75 @@ export const getAllOrders = async (
     }
   }
 
-  // console.log(`Finished fetching orders${customerId !== undefined ? ' for customer ' + customerId : ''}. Total found: ${allOrders.length}`); // OLD
-  console.log(`Finished fetching orders with options. Total found: ${allOrders.length}`);
+  console.log(`Finished fetching orders${customerId !== undefined ? ' for customer ' + customerId : ''}. Total found: ${allOrders.length}`);
   return allOrders;
+};
+
+// Interface for the data returned by getOrdersPage, including pagination info
+export interface PaginatedOrdersResponse {
+  orders: Order[];
+  totalOrders: number;
+  totalPages: number;
+}
+
+// Interface for order filters used in getOrdersPage
+export interface OrderFilters {
+  status?: string;
+  search?: string; // Searches in id, name, email
+  customer?: number; // Filter by customer ID
+  date_min?: string; // YYYY-MM-DD
+  date_max?: string; // YYYY-MM-DD
+  orderby?: 'id' | 'date' | 'total'; // Allow sorting by specific fields
+  order?: 'asc' | 'desc';
+  // Add other filterable fields as needed
+}
+
+// Fetch a specific page of orders with filtering and sorting
+export const getOrdersPage = async (
+  page: number = 1,
+  perPage: number = 10,
+  filters: OrderFilters = {}
+): Promise<PaginatedOrdersResponse> => {
+  console.log(`Fetching orders page ${page} (perPage: ${perPage})...`, filters);
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: any = {
+      page: page,
+      per_page: perPage,
+      // Default sorting if not provided
+      orderby: filters.orderby || 'date',
+      order: filters.order || 'desc',
+      // Add filters if provided
+      ...(filters.status && filters.status !== 'all' && { status: filters.status }), // Handle 'all' case
+      ...(filters.search && { search: filters.search }),
+      ...(filters.customer && { customer: filters.customer }),
+      ...(filters.date_min && { after: filters.date_min + 'T00:00:00' }), // Use 'after' for date_min
+      ...(filters.date_max && { before: filters.date_max + 'T23:59:59' }), // Use 'before' for date_max
+      // Note: Filtering by total amount directly via params might not be standard in WC API v3.
+      // This often requires fetching and then filtering client-side if needed,
+      // but we are trying to avoid fetching all data.
+      // If total filtering is critical, further investigation or custom API endpoint might be needed.
+    };
+
+    const response = await woocommerceApi.get<Order[]>('/orders', { params });
+
+    const orders = response.data;
+    // Extract pagination headers
+    const totalOrders = parseInt(response.headers['x-wp-total'] || '0', 10);
+    const totalPages = parseInt(response.headers['x-wp-totalpages'] || '0', 10);
+
+    console.log(`Fetched orders page ${page}. Found: ${orders.length}, Total: ${totalOrders}, TotalPages: ${totalPages}`);
+
+    return {
+      orders,
+      totalOrders,
+      totalPages,
+    };
+  } catch (error) {
+    console.error(`Error fetching WooCommerce orders page ${page}:`, error);
+    // Re-throw the error to be handled by react-query
+    throw error;
+  }
 };
 
 // Function to update an order's status
