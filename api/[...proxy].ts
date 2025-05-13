@@ -9,7 +9,7 @@ const WOOCOMMERCE_API_URL = process.env.WOOCOMMERCE_API_URL;
 const WOOCOMMERCE_CLIENT_KEY = process.env.WOOCOMMERCE_CLIENT_KEY;
 const WOOCOMMERCE_SECRET_KEY = process.env.WOOCOMMERCE_SECRET_KEY;
 
-async function handler(
+export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
@@ -111,4 +111,4 @@ async function handler(
   }
 }
 
-module.exports = handler; // Use CommonJS export 
+// module.exports = handler; // Remove CommonJS export 
