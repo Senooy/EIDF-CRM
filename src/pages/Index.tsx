@@ -65,7 +65,7 @@ const getStartOfYear = (d: Date): Date => {
 
 // Checks if an order date string falls within the selected period relative to today
 const isOrderInPeriod = (orderDateStr: string, period: PeriodKey): boolean => {
-  if (period === 'all') return true;
+  // if (period === 'all') return true; // REMOVE: 'all' is no longer a valid PeriodKey
 
   const orderDate = new Date(orderDateStr);
   const today = new Date();
@@ -171,10 +171,12 @@ const Index = () => {
     return range ? ({ date_after: range.after, date_before: range.before } as GetOrdersOptions) : undefined;
   }, [selectedPeriodKey]);
 
-  // Fetch ALL orders data from WooCommerce
+  // Fetch orders based on selected period using queryOptions
   const { data: periodOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({ 
     queryKey: ["woocommerce_orders_period", queryOptions], // Key includes options
-    queryFn: (context) => getAllOrders(context), // Pass context, getAllOrders extracts options
+    // queryFn: (context) => getAllOrders(context), // Pass context, getAllOrders extracts options // OLD -> Type Error
+    // Pass only the options part of the query key, which getAllOrders uses
+    queryFn: ({ queryKey }) => getAllOrders(queryKey[1] as GetOrdersOptions | undefined),
     staleTime: 1000 * 60 * 5, 
     enabled: !!queryOptions, // Only run query if queryOptions is valid
   });
