@@ -656,3 +656,50 @@ export const updateProduct = async (
     throw error; // Re-throw the error to be caught by useMutation
   }
 };
+
+// --- Orders Pagination Function ---
+export interface PaginatedOrdersResponse {
+  orders: Order[];
+  totalOrders: number;
+  totalPages: number;
+}
+
+export const getOrdersPage = async (
+  page: number = 1,
+  perPage: number = 25, // Default to a reasonable number for display
+  filters: { customerId?: number; status?: string; orderby?: string; order?: string } = {}
+): Promise<PaginatedOrdersResponse> => {
+  console.log(`Fetching orders page ${page} (perPage: ${perPage})...`, filters);
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const params: any = {
+      page: page,
+      per_page: perPage,
+      orderby: filters.orderby || 'date', // Default to sort by date
+      order: filters.order || 'desc',     // Default to most recent first
+      ...(filters.customerId && { customer: filters.customerId }),
+      ...(filters.status && { status: filters.status }),
+      // Consider adding '_fields' to limit data if performance is still an issue
+      // e.g., _fields: 'id,date_created,status,total,billing,line_items' 
+    };
+
+    const response = await woocommerceApi.get<Order[]>('/orders', { params });
+
+    const orders = response.data;
+    // WooCommerce API returns total count and total pages in headers
+    const totalOrders = parseInt(response.headers['x-wp-total'] || '0', 10);
+    const totalPages = parseInt(response.headers['x-wp-totalpages'] || '0', 10);
+
+    console.log(`Fetched orders page ${page}. Found: ${orders.length}, Total: ${totalOrders}, TotalPages: ${totalPages}`);
+
+    return {
+      orders,
+      totalOrders,
+      totalPages,
+    };
+  } catch (error) {
+    console.error(`Error fetching WooCommerce orders page ${page}:`, error);
+    // Rethrow the error to be handled by react-query
+    throw error;
+  }
+};
