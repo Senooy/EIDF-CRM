@@ -2,18 +2,18 @@ import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 // WARNING: Hardcoding keys is insecure. Use environment variables in production.
-const WOOCOMMERCE_CLIENT_KEY = "ck_79c0b154b61a8259c1390deb3c2eebe22b013589";
-const WOOCOMMERCE_SECRET_KEY = "cs_7f589b934aa97db46be3b9a5736651095ca10550";
+// const WOOCOMMERCE_CLIENT_KEY = "ck_79c0b154b61a8259c1390deb3c2eebe22b013589"; // REMOVE
+// const WOOCOMMERCE_SECRET_KEY = "cs_7f589b934aa97db46be3b9a5736651095ca10550"; // REMOVE
 
 // const API_URL = 'https://eco-industrie-france.com/wp-json/wc/v3'; // Original URL
 const API_URL = '/api'; // Use the proxied path
 
 const woocommerceApi = axios.create({
   baseURL: API_URL,
-  auth: {
-    username: WOOCOMMERCE_CLIENT_KEY,
-    password: WOOCOMMERCE_SECRET_KEY,
-  },
+  // auth: {  // REMOVE - Auth handled by the Vercel function
+  //   username: WOOCOMMERCE_CLIENT_KEY,
+  //   password: WOOCOMMERCE_SECRET_KEY,
+  // },     // REMOVE
 });
 
 // Define interfaces for nested objects
