@@ -454,6 +454,7 @@ export interface ProductCategory {
   id: number;
   name: string;
   slug: string;
+  count?: number; // Add count if available and useful
 }
 
 // Interface for a WooCommerce Product
@@ -552,24 +553,54 @@ export interface PaginatedProductsResponse {
 export const getProductsPage = async (
   page: number = 1,
   perPage: number = 10,
-  filters: { search?: string; status?: string; category?: string; tag?: string; sku?: string; stock_status?: string } = {}
+  filters: { 
+    search?: string; 
+    status?: string; 
+    category?: string; // Category ID
+    tag?: string; 
+    sku?: string; 
+    stock_status?: 'instock' | 'outofstock' | 'onbackorder';
+    min_price?: string;
+    max_price?: string;
+    orderby?: 'date' | 'id' | 'include' | 'title' | 'slug' | 'modified' | 'rand' | 'menu_order' | 'price' | 'popularity' | 'rating' | 'total_sales'; // Extended orderby options
+    order?: 'asc' | 'desc';
+  } = {}
 ): Promise<PaginatedProductsResponse> => {
-  console.log(`Fetching products page ${page} (perPage: ${perPage})...`, filters);
+  console.log(`Fetching products page ${page} (perPage: ${perPage})...`, filters.search ? filters.search : '');
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const params: any = {
       page: page,
       per_page: perPage,
-      orderby: 'date',
-      order: 'desc',
-      // Add filters if provided
-      ...(filters.search && { search: filters.search }),
-      ...(filters.status && { status: filters.status }),
-      ...(filters.category && { category: filters.category }),
-      ...(filters.tag && { tag: filters.tag }),
-      ...(filters.sku && { sku: filters.sku }),
-      ...(filters.stock_status && { stock_status: filters.stock_status }),
+      status: filters.status || 'publish', // Default to published products
+      // Include other filters if they are provided
     };
+
+    if (filters.search) {
+      params.search = filters.search;
+    }
+    if (filters.category) {
+      params.category = filters.category; // Pass category ID
+    }
+    if (filters.tag) {
+      params.tag = filters.tag;
+    }
+    if (filters.sku) {
+      params.sku = filters.sku;
+    }
+    if (filters.stock_status) {
+      params.stock_status = filters.stock_status;
+    }
+    if (filters.min_price) {
+      params.min_price = filters.min_price;
+    }
+    if (filters.max_price) {
+      params.max_price = filters.max_price;
+    }
+    if (filters.orderby) {
+      params.orderby = filters.orderby;
+      params.order = filters.order || 'asc'; // Default to ascending if orderby is present but order is not
+    }
 
     const response = await woocommerceApi.get<Product[]>('/products', { params });
 
@@ -654,5 +685,26 @@ export const updateProduct = async (
   } catch (error) {
     console.error(`Error updating WooCommerce product ${productId}:`, error);
     throw error; // Re-throw the error to be caught by useMutation
+  }
+};
+
+// Fetch all product categories
+export const getProductCategories = async (): Promise<ProductCategory[]> => {
+  try {
+    // Fetch all categories - WooCommerce might paginate, so handle if necessary
+    // For simplicity, assuming a reasonable number of categories that fit in one request.
+    // Adjust per_page or implement pagination if you have many categories.
+    const response = await woocommerceApi.get<ProductCategory[]>('/products/categories', {
+      params: {
+        per_page: 100, // Fetch up to 100 categories
+        orderby: 'name',
+        order: 'asc'
+      }
+    });
+    console.log('Fetched product categories:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching WooCommerce product categories:', error);
+    throw error;
   }
 };
