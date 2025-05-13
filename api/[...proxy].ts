@@ -9,7 +9,7 @@ const WOOCOMMERCE_API_URL = process.env.WOOCOMMERCE_API_URL;
 const WOOCOMMERCE_CLIENT_KEY = process.env.WOOCOMMERCE_CLIENT_KEY;
 const WOOCOMMERCE_SECRET_KEY = process.env.WOOCOMMERCE_SECRET_KEY;
 
-export default async function handler(
+async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
@@ -109,4 +109,6 @@ export default async function handler(
         res.status(500).json({ message: 'Unknown Internal Server Error' });
     }
   }
-} 
+}
+
+module.exports = handler; // Use CommonJS export 

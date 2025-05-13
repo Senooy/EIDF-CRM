@@ -21,6 +21,7 @@
   },
   "include": [
     "vite.config.ts",
-    "api/**/*.ts"
+    "api/**/*.ts",
+    "api/**/*.cts"
   ]
 }
