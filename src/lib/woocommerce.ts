@@ -101,45 +101,72 @@ export const getRecentOrders = async (count: number = 10): Promise<Order[]> => {
   }
 };
 
-// Fetch all orders, optionally filtering by customer ID.
+// Fetch all orders, optionally filtering by customer ID or date range.
 // Handles being called directly or via react-query's queryFn.
 export const getAllOrders = async (
   // Accept either a customer ID number or the react-query context object
-  contextOrCustomerId?: number | QueryFunctionContext<[string, number?]>
+  // Or an object containing filters like date ranges
+  contextOrFilters?: number | QueryFunctionContext<[string, number?, { date_min?: string; date_max?: string }?]> | { customerId?: number; date_min?: string; date_max?: string }
 ): Promise<Order[]> => {
   let customerId: number | undefined = undefined;
+  let date_min: string | undefined = undefined;
+  let date_max: string | undefined = undefined;
 
   // Check if the argument is the react-query context object
-  if (typeof contextOrCustomerId === 'object' && contextOrCustomerId !== null && 'queryKey' in contextOrCustomerId) {
-    // Extract customerId from the queryKey if it exists (it's the second element)
-    customerId = contextOrCustomerId.queryKey[1]; 
-  } else if (typeof contextOrCustomerId === 'number') {
+  if (typeof contextOrFilters === 'object' && contextOrFilters !== null && 'queryKey' in contextOrFilters) {
+    // queryKey: [queryName: string, customerId?: number, filters?: { date_min?, date_max? }]
+    const queryKeyParams = contextOrFilters.queryKey; 
+    if (typeof queryKeyParams[1] === 'number') {
+      customerId = queryKeyParams[1];
+    }
+    // Filters are expected in the third element
+    const filtersFromQueryKey = queryKeyParams[2];
+    if (typeof filtersFromQueryKey === 'object' && filtersFromQueryKey !== null) {
+        date_min = filtersFromQueryKey.date_min;
+        date_max = filtersFromQueryKey.date_max;
+    }
+  } else if (typeof contextOrFilters === 'number') {
     // Argument is directly the customerId
-    customerId = contextOrCustomerId;
+    customerId = contextOrFilters;
+  } else if (typeof contextOrFilters === 'object' && contextOrFilters !== null) {
+    // Argument is a direct filter object (check it's not the QueryFunctionContext again)
+    if (!('queryKey' in contextOrFilters)) {
+      customerId = contextOrFilters.customerId;
+      date_min = contextOrFilters.date_min;
+      date_max = contextOrFilters.date_max;
+    }
   }
-  // If contextOrCustomerId is undefined or null, customerId remains undefined
+  // If contextOrFilters is undefined or null, all remain undefined
 
   let allOrders: Order[] = [];
   let page = 1;
   const perPage = 100; // Max items per page for WooCommerce API
   let morePages = true;
 
-  console.log(`Starting to fetch all orders${customerId !== undefined ? ' for customer ' + customerId : ''}...`);
+  console.log(`Starting to fetch orders...`, { customerId, date_min, date_max });
 
   while (morePages) {
     try {
-      console.log(`Fetching orders page ${page}${customerId !== undefined ? ' for customer ' + customerId : ''}...`);
+      console.log(`Fetching orders page ${page}...`, { customerId, date_min, date_max });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const params: any = {
         per_page: perPage,
         page: page,
         orderby: 'date', // Order by date to process chronologically if needed
-        order: 'asc'
+        order: 'asc' // Fetch oldest first if paginating
       };
 
-      // Only add the customer parameter if a valid customerId was extracted
+      // Add optional filters
       if (customerId !== undefined) {
         params.customer = customerId;
+      }
+      if (date_min) {
+         // WooCommerce expects ISO8601 format, e.g., 2023-11-20T00:00:00
+         params.after = date_min;
+      }
+      if (date_max) {
+         // WooCommerce expects ISO8601 format, e.g., 2023-11-20T23:59:59
+         params.before = date_max;
       }
 
       const response = await woocommerceApi.get<Order[]>('/orders', { params });
@@ -169,7 +196,7 @@ export const getAllOrders = async (
     }
   }
 
-  console.log(`Finished fetching orders${customerId !== undefined ? ' for customer ' + customerId : ''}. Total found: ${allOrders.length}`);
+  console.log(`Finished fetching orders. Total found: ${allOrders.length}`, { customerId, date_min, date_max });
   return allOrders;
 };
 
