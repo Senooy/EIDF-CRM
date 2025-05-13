@@ -1,8 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
-import { useQuery, QueryFunctionContext } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   Order as WooCommerceOrder,
-  getAllOrders
+  getAllOrders,
+  GetOrdersOptions
 } from "@/lib/woocommerce";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import KPICard from "@/components/Dashboard/KPICard";
@@ -21,7 +22,6 @@ import * as ss from 'simple-statistics';
 
 // Re-introduce time periods, adding 'all'
 const timePeriods = {
-  all: { label: "Total" },
   day: { label: "Aujourd'hui" },
   week: { label: "Cette Semaine" },
   month: { label: "Ce Mois" },
@@ -63,51 +63,6 @@ const getStartOfYear = (d: Date): Date => {
   return new Date(d.getFullYear(), 0, 1);
 };
 
-// Helper function to get date range for a period
-const getPeriodDateRange = (period: PeriodKey): { date_min?: string; date_max?: string } => {
-  const now = new Date();
-  let startDate: Date | null = null;
-  let endDate: Date | null = new Date(now); // Default end date is now
-
-  // Set time to end of day for endDate consistency
-  endDate.setHours(23, 59, 59, 999);
-
-  switch (period) {
-    case 'day':
-      startDate = new Date(now);
-      startDate.setHours(0, 0, 0, 0);
-      break;
-    case 'week':
-      startDate = getStartOfWeek(now);
-      startDate.setHours(0, 0, 0, 0);
-      break;
-    case 'month':
-      startDate = getStartOfMonth(now);
-      startDate.setHours(0, 0, 0, 0);
-      break;
-    case 'quarter':
-      startDate = getStartOfQuarter(now);
-      startDate.setHours(0, 0, 0, 0);
-      break;
-    case 'year':
-      startDate = getStartOfYear(now);
-      startDate.setHours(0, 0, 0, 0);
-      break;
-    case 'all':
-    default:
-      // No date range needed for 'all' - fetch everything
-      return {}; 
-  }
-
-  // Format dates as ISO 8601 strings (YYYY-MM-DDTHH:mm:ss) required by WooCommerce API
-  const formatISO = (date: Date) => date.toISOString().slice(0, 19); // Keep only up to seconds
-
-  return {
-    date_min: startDate ? formatISO(startDate) : undefined,
-    date_max: endDate ? formatISO(endDate) : undefined, // Use current time as end for ongoing periods
-  };
-};
-
 // Checks if an order date string falls within the selected period relative to today
 const isOrderInPeriod = (orderDateStr: string, period: PeriodKey): boolean => {
   if (period === 'all') return true;
@@ -137,69 +92,135 @@ const isOrderInPeriod = (orderDateStr: string, period: PeriodKey): boolean => {
   }
 };
 
+// Helper to get ISO start of day string (YYYY-MM-DDTHH:mm:ss)
+const getISODateStartString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}T00:00:00`;
+};
+
+// Helper to get ISO end of day string (YYYY-MM-DDTHH:mm:ss)
+const getISODateEndString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}T23:59:59`;
+};
+
+// Calculate date range {after, before} for the API query based on period key
+const getDateRangeForPeriod = (period: PeriodKey): { after?: string; before?: string } | null => {
+  const today = new Date();
+  let startDate: Date;
+  const endDate = new Date(); // Use current date as end date for ongoing periods
+
+  switch (period) {
+    case 'day':
+      // For 'today', we need orders *after* the beginning of today and *before* the end of today.
+      return {
+        after: getISODateStartString(today),
+        before: getISODateEndString(today)
+      };
+    case 'week':
+      startDate = getStartOfWeek(today);
+      // After start of the week, before end of today
+      return {
+        after: getISODateStartString(startDate),
+        before: getISODateEndString(endDate)
+      };
+    case 'month':
+      startDate = getStartOfMonth(today);
+      // After start of the month, before end of today
+      return {
+        after: getISODateStartString(startDate),
+        before: getISODateEndString(endDate)
+      };
+    case 'quarter':
+      startDate = getStartOfQuarter(today);
+      // After start of the quarter, before end of today
+      return {
+        after: getISODateStartString(startDate),
+        before: getISODateEndString(endDate)
+      };
+    case 'year':
+      startDate = getStartOfYear(today);
+      // After start of the year, before end of today
+      return {
+        after: getISODateStartString(startDate),
+        before: getISODateEndString(endDate)
+      };
+    // No 'all' case
+    default:
+      // Should be unreachable due to TypeScript PeriodKey
+      console.warn("Invalid period key:", period);
+      return null; // Return null for invalid period
+  }
+};
+
 const Index = () => {
   // Re-introduce state for selected period, default to 'all' now
-  const [selectedPeriodKey, setSelectedPeriodKey] = useState<PeriodKey>('all'); 
+  const [selectedPeriodKey, setSelectedPeriodKey] = useState<PeriodKey>('month'); 
   // Add state for forecast mode
   const [forecastMode, setForecastMode] = useState<boolean>(false);
 
-  // Calculate date range based on selected period
-  const dateRange = useMemo(() => getPeriodDateRange(selectedPeriodKey), [selectedPeriodKey]);
+  // Calculate query options based on selected period
+  const queryOptions = useMemo(() => {
+    const range = getDateRangeForPeriod(selectedPeriodKey);
+    // Create the options object for the query key and API call
+    // Return undefined if range is null to disable query
+    return range ? ({ date_after: range.after, date_before: range.before } as GetOrdersOptions) : undefined;
+  }, [selectedPeriodKey]);
 
-  // Fetch Orders data based on the selected period
-  // The queryKey now includes the period and date range to ensure unique caching per period
-  const { data: periodOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({
-    queryKey: ["woocommerce_orders", undefined /* No customerId filter here */, { ...dateRange, periodKey: selectedPeriodKey } ],
-    queryFn: (context) => 
-      getAllOrders(context as QueryFunctionContext<[string, undefined, { date_min?: string; date_max?: string; periodKey: PeriodKey }]>) ,
+  // Fetch ALL orders data from WooCommerce
+  const { data: periodOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({ 
+    queryKey: ["woocommerce_orders_period", queryOptions], // Key includes options
+    queryFn: (context) => getAllOrders(context), // Pass context, getAllOrders extracts options
     staleTime: 1000 * 60 * 5, 
+    enabled: !!queryOptions, // Only run query if queryOptions is valid
   });
 
-  // Calculate Lifetime KPIs using useMemo, now using periodOrders
+  // Calculate Lifetime KPIs using useMemo, now filtered by period
   const kpiStats = useMemo(() => {
-    // No need to filter again if a specific period was selected,
-    // as the API call already filtered the data in periodOrders.
-    // Only filter if 'all' is selected AND we decide to filter 'all' client-side
-    // For now, assume periodOrders contains the correct data for the selected period.
-    const ordersToProcess = periodOrders; // Use the data fetched for the period
+    // Filter orders based on the selected period first
+    console.log(`[Debug] Calculating KPIs for period: ${selectedPeriodKey}. Orders received from API: ${periodOrders.length}`);
 
-    console.log(`[Debug] Calculating KPIs for period: ${selectedPeriodKey}. Orders received: ${ordersToProcess.length}`);
-
-    if (!ordersToProcess || ordersToProcess.length === 0) return {
+    if (!periodOrders || periodOrders.length === 0) return {
       totalOrders: 0,
       pendingOrders: 0,
       completedOrders: 0,
-      revenueForPeriod: 0, // Renamed from totalRevenueLifetime
+      totalRevenueLifetime: 0,
     };
 
-    // Calculate stats based on ordersToProcess (which are already filtered for the period)
-    const completed = ordersToProcess.filter(order => order.status === 'completed');
-    const pending = ordersToProcess.filter(order => order.status === 'pending');
-    
+    // Calculate stats based on FILTERED orders
+    const completed = periodOrders.filter(order => order.status === 'completed');
+    const pending = periodOrders.filter(order => order.status === 'pending');
+    // Note: totalOrders should reflect the filtered count for the period, 
+    // unless we want 'Total commandes (période)' vs 'Total commandes (lifetime)'?
+    // Let's show stats for the period.
+
     const revenueForPeriod = completed.reduce((sum, order) => {
+        // Ensure 'total' is treated as a number, handling potential null/undefined/empty strings
         const orderTotal = parseFloat(order.total || '0');
         return sum + (isNaN(orderTotal) ? 0 : orderTotal);
     }, 0);
 
     return {
-      totalOrders: ordersToProcess.length, // Orders in the selected period
+      totalOrders: periodOrders.length, // Orders in the selected period
       pendingOrders: pending.length, // Pending in the selected period
       completedOrders: completed.length, // Completed in the selected period
       revenueForPeriod: revenueForPeriod, 
     };
-  }, [periodOrders, selectedPeriodKey]); // Depend on periodOrders and selectedPeriodKey
+  }, [periodOrders, selectedPeriodKey]);
 
-  // Format data for Revenue Chart using useMemo, using periodOrders
+  // Format data for Revenue Chart using useMemo, now filtered by period
   const chartData = useMemo(() => {
-    // Data in periodOrders is already filtered by the selected date range (unless 'all')
-    // We still need to filter by status 'completed' for the revenue chart.
     const completedOrdersForChart = periodOrders.filter(order => order.status === 'completed');
 
     if (!completedOrdersForChart || completedOrdersForChart.length === 0) return [];
 
-    // Determine aggregation format based on the period duration or forecast mode
-    const isLongPeriod = ['all', 'year', 'quarter'].includes(selectedPeriodKey);
-    const aggregationFormat = (isLongPeriod || forecastMode) ? 'YYYY-MM' : 'YYYY-MM-DD';
+    const aggregationFormat = (selectedPeriodKey === 'year' || selectedPeriodKey === 'quarter') 
+                              ? 'YYYY-MM' 
+                              : 'YYYY-MM-DD';
 
     const aggregatedRevenue: { [key: string]: { amount: number, orderCount: number } } = {};
 
@@ -208,7 +229,7 @@ const Index = () => {
         let key = '';
         if (aggregationFormat === 'YYYY-MM') {
           key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-        } else { // 'YYYY-MM-DD'
+        } else {
           key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
         }
         
@@ -221,16 +242,19 @@ const Index = () => {
       });
 
     let historicalData = Object.entries(aggregatedRevenue)
-      .map(([date, data]) => ({ date, amount: parseFloat(data.amount.toFixed(2)), forecastAmount: undefined })) 
+      .map(([date, data]) => ({ date, amount: parseFloat(data.amount.toFixed(2)), forecastAmount: undefined })) // ensure amount is number, add forecastAmount
       .sort((a, b) => a.date.localeCompare(b.date));
 
-    // Forecasting logic remains the same, but applied to potentially smaller dataset
-    if (forecastMode && historicalData.length >= 2 && (aggregationFormat === 'YYYY-MM')) { 
+    if (forecastMode && historicalData.length >= 2 && (aggregationFormat === 'YYYY-MM')) { // Forecast only for YYYY-MM for now
+      // Prepare data for linear regression: [index, amount]
       const regressionData = historicalData.map((point, index) => [index, point.amount]);
+      
+      // Calculate linear regression
       const { m, b } = ss.linearRegression(regressionData);
       const line = ss.linearRegressionLine({ m, b });
-      const lastHistoricalDate = new Date(historicalData[historicalData.length - 1].date + '-01'); 
-      const forecastPoints = 3; 
+
+      const lastHistoricalDate = new Date(historicalData[historicalData.length - 1].date + '-01'); // Ensure it's a valid date
+      const forecastPoints = 3; // Predict next 3 months
 
       for (let i = 1; i <= forecastPoints; i++) {
         const nextDate = new Date(lastHistoricalDate);
@@ -240,14 +264,13 @@ const Index = () => {
         
         historicalData.push({
           date: forecastDateKey,
-          amount: undefined, 
-          forecastAmount: parseFloat(Math.max(0, predictedAmount).toFixed(2)) 
+          amount: undefined, // No actual amount for forecast
+          forecastAmount: parseFloat(Math.max(0, predictedAmount).toFixed(2)) // Ensure forecast is not negative
         });
       }
     }
     return historicalData;
-  // Depend on periodOrders, selectedPeriodKey, and forecastMode
-  }, [periodOrders, selectedPeriodKey, forecastMode]); 
+  }, [periodOrders, selectedPeriodKey, forecastMode]); // Add forecastMode to dependencies
 
   const isLoading = ordersLoading;
 
@@ -347,24 +370,18 @@ const Index = () => {
             </div>
             {/* Order Status Pie Chart */}
             {/* Spans 1 col on md+, 1 on xl+ */}
-            {/* This component might need adjustment if it relies on ALL orders */}
-            {/* For now, passing periodOrders. If it needs all orders, we might need a separate query */}
             <div className="md:col-span-1 xl:col-span-1">
-               <OrderStatusPieChart orders={periodOrders} /> 
+               <OrderStatusPieChart orders={periodOrders} />
             </div>
             {/* Activity Feed */}
             {/* Spans 2 cols on md/lg (full width below), 1 col on xl+ */}
-            {/* ActivityFeed likely needs recent orders, not period-specific ones. */}
-            {/* Consider fetching recent orders separately if needed, or adjusting ActivityFeed */}
             <div className="md:col-span-2 xl:col-span-1">
               <ActivityFeed numberOfOrders={5} /> 
             </div>
           </div>
           
           {/* Orders Table */}
-          {/* This table also shows periodOrders now. Is this desired? */}
-          {/* Or should it always show recent/all orders with pagination? */}
-          <OrdersTable orders={periodOrders} /> 
+          <OrdersTable orders={periodOrders} />
         </main>
       </div>
     </div>
