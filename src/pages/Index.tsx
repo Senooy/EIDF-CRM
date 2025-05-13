@@ -1,10 +1,8 @@
 import { useEffect, useState, useMemo } from "react";
-import { useQuery, useInfiniteQuery, QueryFunctionContext } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import {
   Order as WooCommerceOrder,
-  getAllOrders,
-  getOrdersPage,
-  PaginatedOrdersResponse
+  getAllOrders
 } from "@/lib/woocommerce";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import KPICard from "@/components/Dashboard/KPICard";
@@ -100,52 +98,13 @@ const Index = () => {
   // Add state for forecast mode
   const [forecastMode, setForecastMode] = useState<boolean>(false);
 
-  // NEW: Fetch orders using useInfiniteQuery
-  const {
-    data: infiniteOrdersData,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-    isLoading: ordersLoading, // Main loading state for initial fetch
-    // error: ordersError, // Optional: handle error state
-  } = useInfiniteQuery<PaginatedOrdersResponse, Error, PaginatedOrdersResponse, string[]>( // Explicitly add TData and TQueryKey types
-    ['woocommerce_orders_paginated'], // Simple key for now
-    // Explicitly type the context object
-    async (context: QueryFunctionContext<string[], number | undefined>) => { 
-       const pageParam = context.pageParam || 1; // Default to 1 if pageParam is undefined (for the first page)
-       console.log("[InfiniteQuery] Fetching page:", pageParam);
-       // Fetch 25 orders per page, descending by date
-       // Call remains the same, should accept 3 arguments based on definition
-       const result = await getOrdersPage(pageParam, 25, { orderby: 'date', order: 'desc' });
-       console.log("[InfiniteQuery] Fetched page:", pageParam, "Result:", result);
-       return result;
-    },
-    {
-      // Explicitly type the parameters for getNextPageParam
-      getNextPageParam: (lastPage: PaginatedOrdersResponse, allPages: PaginatedOrdersResponse[]) => {
-        // Calculate the next page number
-        const nextPage = allPages.length + 1;
-        console.log(`[InfiniteQuery] getNextPageParam called. Last page had ${lastPage.orders.length} orders. Total pages fetched: ${allPages.length}. Total pages available: ${lastPage.totalPages}. Calculated next page: ${nextPage}`);
-        // Check if there are more pages to fetch
-        if (nextPage <= lastPage.totalPages) {
-          console.log(`[InfiniteQuery] Requesting next page: ${nextPage}`)
-          return nextPage;
-        }
-        console.log("[InfiniteQuery] No more pages to fetch.");
-        return undefined; // No more pages
-      },
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      // Keep data from previous key when period changes? Optional.
-      // keepPreviousData: true, 
-    }
-  );
-
-  // Derive the flat list of all orders from the paginated data
-  const allOrders = useMemo(() => {
-    const orders = infiniteOrdersData?.pages.flatMap(page => page.orders) || [];
-    console.log(`[Memo] Derived allOrders. Total count: ${orders.length}`);
-    return orders;
-  }, [infiniteOrdersData]);
+  // Fetch ALL orders data from WooCommerce
+  const { data: allOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({ 
+    queryKey: ["woocommerce_all_orders"], // Keep the query key simple
+    // Explicitly call with undefined to fetch ALL orders
+    queryFn: () => getAllOrders(undefined), 
+    staleTime: 1000 * 60 * 5, 
+  });
 
   // Calculate Lifetime KPIs using useMemo, now filtered by period
   const kpiStats = useMemo(() => {
@@ -187,8 +146,6 @@ const Index = () => {
     const filteredRawOrders = allOrders.filter(order => 
         isOrderInPeriod(order.date_created, selectedPeriodKey) && order.status === 'completed'
     );
-    
-    console.log(`[Chart] Calculating chart data for period ${selectedPeriodKey}. Filtered orders: ${filteredRawOrders.length}`);
 
     if (!filteredRawOrders || filteredRawOrders.length === 0) return [];
 
@@ -356,18 +313,6 @@ const Index = () => {
           
           {/* Orders Table */}
           <OrdersTable orders={allOrders} />
-          {/* Load More Button */}
-          <div className="flex justify-center mt-4 mb-4"> 
-            {hasNextPage && (
-              <Button 
-                onClick={() => fetchNextPage()} 
-                disabled={isFetchingNextPage}
-                variant="outline"
-              >
-                {isFetchingNextPage ? 'Chargement...' : 'Charger plus d\'anciennes commandes'}
-              </Button>
-            )}
-          </div>
         </main>
       </div>
     </div>
