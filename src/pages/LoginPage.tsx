@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase'; // Adjust path if needed
 import { Button } from "@/components/ui/button"
@@ -77,10 +77,16 @@ const LoginPage: React.FC = () => {
             </div>
             {error && <p className="text-red-600 text-sm">{error}</p>}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col items-start gap-2">
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Connexion...' : 'Se connecter'}
             </Button>
+            <Link
+              to="/reset-password"
+              className="text-sm text-blue-500 hover:underline"
+            >
+              Mot de passe oublié ?
+            </Link>
           </CardFooter>
         </form>
       </Card>

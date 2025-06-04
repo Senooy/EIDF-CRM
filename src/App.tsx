@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import OrderDetails from "./pages/OrderDetails";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/LoginPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 import ProtectedRoute from "./components/Auth/ProtectedRoute";
 import OrdersListPage from "./pages/OrdersListPage";
 import CustomersListPage from "./pages/CustomersListPage";
@@ -35,7 +36,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
-          <Route 
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route
             element={
               <ProtectedRoute>
                 <ProtectedLayout />
