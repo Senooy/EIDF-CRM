@@ -1,18 +1,31 @@
 import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-// WARNING: Hardcoding keys is insecure. Use environment variables in production.
-const WOOCOMMERCE_CLIENT_KEY = "ck_79c0b154b61a8259c1390deb3c2eebe22b013589";
-const WOOCOMMERCE_SECRET_KEY = "cs_7f589b934aa97db46be3b9a5736651095ca10550";
+// Read WooCommerce credentials from environment variables.
+const API_URL = import.meta.env.VITE_WOOCOMMERCE_API_URL;
+const CLIENT_KEY = import.meta.env.VITE_WOOCOMMERCE_CLIENT_KEY;
+const SECRET_KEY = import.meta.env.VITE_WOOCOMMERCE_SECRET_KEY;
 
-// const API_URL = 'https://eco-industrie-france.com/wp-json/wc/v3'; // Original URL
-const API_URL = '/api'; // Use the proxied path
+const requiredVars = {
+  VITE_WOOCOMMERCE_API_URL: API_URL,
+  VITE_WOOCOMMERCE_CLIENT_KEY: CLIENT_KEY,
+  VITE_WOOCOMMERCE_SECRET_KEY: SECRET_KEY,
+};
 
+const missing = Object.entries(requiredVars)
+  .filter(([, value]) => !value)
+  .map(([name]) => name);
+
+if (missing.length) {
+  throw new Error(`Missing environment variables: ${missing.join(', ')}`);
+}
+
+// Create Axios instance using provided credentials
 const woocommerceApi = axios.create({
   baseURL: API_URL,
   auth: {
-    username: WOOCOMMERCE_CLIENT_KEY,
-    password: WOOCOMMERCE_SECRET_KEY,
+    username: CLIENT_KEY,
+    password: SECRET_KEY,
   },
 });
 
