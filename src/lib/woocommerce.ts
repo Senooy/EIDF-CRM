@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-// WARNING: Hardcoding keys is insecure. Use environment variables in production.
-const WOOCOMMERCE_CLIENT_KEY = "ck_79c0b154b61a8259c1390deb3c2eebe22b013589";
-const WOOCOMMERCE_SECRET_KEY = "cs_7f589b934aa97db46be3b9a5736651095ca10550";
+// Use Vite environment variables for WooCommerce credentials
+const WOOCOMMERCE_CLIENT_KEY = import.meta.env.VITE_WOOCOMMERCE_CLIENT_KEY;
+const WOOCOMMERCE_SECRET_KEY = import.meta.env.VITE_WOOCOMMERCE_SECRET_KEY;
 
-// const API_URL = 'https://eco-industrie-france.com/wp-json/wc/v3'; // Original URL
-const API_URL = '/api'; // Use the proxied path
+// Default to the proxied path but allow override via env
+const API_URL = import.meta.env.VITE_WOOCOMMERCE_API_URL || '/api';
 
 const woocommerceApi = axios.create({
   baseURL: API_URL,

@@ -36,6 +36,9 @@ npm i
 npm run dev
 ```
 
+If you update any values in `.env`, make sure to restart the Vite dev server so
+the new environment variables are picked up.
+
 **Edit a file directly in GitHub**
 
 - Navigate to the desired file(s).
