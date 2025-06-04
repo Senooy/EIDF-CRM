@@ -60,6 +60,19 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
+## Environment variables
+
+Create a `.env` file at the project root with the following variables:
+
+```bash
+VITE_WOOCOMMERCE_API_URL=<https://your-store.example.com/wp-json/wc/v3>
+VITE_WOOCOMMERCE_CLIENT_KEY=<your-consumer-key>
+VITE_WOOCOMMERCE_SECRET_KEY=<your-consumer-secret>
+```
+
+These variables are required for the WooCommerce API client. The application
+will throw an error at startup if any of them are missing.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/3d5a1967-f4fc-4aac-b1db-bfb39761c6c7) and click on Share -> Publish.
