@@ -3,14 +3,13 @@ import { getAuth } from "firebase/auth";
 // import { getFirestore } from "firebase/firestore"; // Uncomment if you need Firestore
 // import { getAnalytics } from "firebase/analytics"; // Uncomment if you need Analytics
 
-// TODO: Replace with your actual Firebase project configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyD6cMUsQYN2Yy9yC5UucMisegy9Jt3uF5k",
-  authDomain: "eidf-ebdf4.firebaseapp.com",
-  projectId: "eidf-ebdf4",
-  storageBucket: "eidf-ebdf4.firebasestorage.app",
-  messagingSenderId: "278830945504",
-  appId: "1:278830945504:web:6a06b1cbe313212c7b2c85"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase

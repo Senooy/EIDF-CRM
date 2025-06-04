@@ -62,16 +62,23 @@ This project is built with:
 
 ## Environment variables
 
-Create a `.env` file at the project root with the following variables:
+Copy `.env.example` to `.env` and fill in the required values:
 
 ```bash
 VITE_WOOCOMMERCE_API_URL=<https://your-store.example.com/wp-json/wc/v3>
 VITE_WOOCOMMERCE_CLIENT_KEY=<your-consumer-key>
 VITE_WOOCOMMERCE_SECRET_KEY=<your-consumer-secret>
+VITE_FIREBASE_API_KEY=<your-api-key>
+VITE_FIREBASE_AUTH_DOMAIN=<your-auth-domain>
+VITE_FIREBASE_PROJECT_ID=<your-project-id>
+VITE_FIREBASE_STORAGE_BUCKET=<your-storage-bucket>
+VITE_FIREBASE_MESSAGING_SENDER_ID=<your-messaging-sender-id>
+VITE_FIREBASE_APP_ID=<your-app-id>
 ```
 
-These variables are required for the WooCommerce API client. The application
-will throw an error at startup if any of them are missing.
+These variables are required for the WooCommerce API client and Firebase
+initialization. The application will throw an error at startup if any of them
+are missing.
 
 ## How can I deploy this project?
 
