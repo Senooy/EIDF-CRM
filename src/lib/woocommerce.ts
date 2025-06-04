@@ -1,32 +1,26 @@
 import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
+import { auth } from './firebase';
 
-// Read WooCommerce credentials from environment variables.
-const API_URL = import.meta.env.VITE_WOOCOMMERCE_API_URL;
-const CLIENT_KEY = import.meta.env.VITE_WOOCOMMERCE_CLIENT_KEY;
-const SECRET_KEY = import.meta.env.VITE_WOOCOMMERCE_SECRET_KEY;
+// URL of the backend server exposing the WooCommerce endpoints
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001/api';
 
-const requiredVars = {
-  VITE_WOOCOMMERCE_API_URL: API_URL,
-  VITE_WOOCOMMERCE_CLIENT_KEY: CLIENT_KEY,
-  VITE_WOOCOMMERCE_SECRET_KEY: SECRET_KEY,
-};
-
-const missing = Object.entries(requiredVars)
-  .filter(([, value]) => !value)
-  .map(([name]) => name);
-
-if (missing.length) {
-  throw new Error(`Missing environment variables: ${missing.join(', ')}`);
-}
-
-// Create Axios instance using provided credentials
+// Axios instance pointing to the backend server
 const woocommerceApi = axios.create({
-  baseURL: API_URL,
-  auth: {
-    username: CLIENT_KEY,
-    password: SECRET_KEY,
-  },
+  baseURL: SERVER_URL,
+});
+
+// Attach Firebase ID token to requests if the user is authenticated
+woocommerceApi.interceptors.request.use(async (config) => {
+  const user = auth.currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+  return config;
 });
 
 // Define interfaces for nested objects

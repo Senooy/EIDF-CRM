@@ -1,12 +1,14 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { getRecentOrders, getAllOrders, getCustomerById, getProductById, getSalesReport, getOrderById } from './src/lib/woocommerce.js'; // Notez l'extension .js ici
+import { firebaseAuthMiddleware } from './src/middleware/firebaseAuth.js';
 
 const app = express();
 const port = process.env.PORT || 3001; // Le port 3000 est souvent utilisé par Vite
 
 app.use(cors()); // Activer CORS pour toutes les routes
 app.use(express.json()); // Pour parser les corps de requête JSON
+app.use('/api', firebaseAuthMiddleware);
 
 // Helper type pour les gestionnaires de requêtes async
 type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<unknown>;
