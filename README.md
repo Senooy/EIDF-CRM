@@ -80,6 +80,19 @@ These variables are required for the WooCommerce API client and Firebase
 initialization. The application will throw an error at startup if any of them
 are missing.
 
+## Running the Express API locally
+
+The project includes a small Express server used by the frontend. When
+developing locally you need to start this API in **another terminal** in
+addition to running the Vite dev server:
+
+```sh
+npm run start:server
+```
+
+Keep this process running while you use `npm run dev` so the frontend can make
+requests to the API.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/3d5a1967-f4fc-4aac-b1db-bfb39761c6c7) and click on Share -> Publish.
