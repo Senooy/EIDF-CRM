@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
-import { getOrders, getAllOrders, getCustomerById, getProductById, getSalesReport, getOrderById } from './src/lib/woocommerce.js'; // Notez l'extension .js ici
+import { getRecentOrders, getAllOrders, getCustomerById, getProductById, getSalesReport, getOrderById } from './src/lib/woocommerce.js'; // Notez l'extension .js ici
 
 const app = express();
 const port = process.env.PORT || 3001; // Le port 3000 est souvent utilisé par Vite
@@ -19,11 +19,8 @@ const asyncHandler = (fn: AsyncRequestHandler) =>
 
 // Route pour récupérer les commandes récentes
 app.get('/api/orders', asyncHandler(async (req: Request, res: Response) => {
-  // const count = req.query.count ? parseInt(req.query.count as string) : 10;
-  // Pour l'instant, utilisons getOrders qui récupère tout par défaut.
-  // Si vous voulez les commandes récentes, il faudrait appeler getRecentOrders(count)
-  // ou modifier getOrders pour accepter des paramètres.
-  const orders = await getOrders();
+  const count = req.query.count ? parseInt(req.query.count as string, 10) : undefined;
+  const orders = await getRecentOrders(count);
   res.json(orders);
 }));
 
