@@ -1,7 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import { getRecentOrders, getAllOrders, getCustomerById, getProductById, getSalesReport, getOrderById } from './src/lib/woocommerce.js'; // Notez l'extension .js ici
 import { firebaseAuthMiddleware } from './src/middleware/firebaseAuth.js';
+
+// Load environment variables from .env if present
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3001; // Le port 3000 est souvent utilisé par Vite

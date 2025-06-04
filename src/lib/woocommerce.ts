@@ -2,8 +2,28 @@ import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 import { auth } from './firebase';
 
+// Helper to read env vars in both browser (import.meta.env) and Node (process.env)
+const readEnv = (key: string): string | undefined => {
+  // import.meta may be undefined when this code runs in Node
+  return (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env[key])
+    || (process.env as Record<string, string | undefined>)[key];
+};
+
 // URL of the backend server exposing the WooCommerce endpoints
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001/api';
+const SERVER_URL = readEnv('VITE_SERVER_URL') || 'http://localhost:3001/api';
+
+// Check required env vars using resolved values
+const requiredVars = {
+  VITE_SERVER_URL: readEnv('VITE_SERVER_URL'),
+};
+
+const missing = Object.entries(requiredVars)
+  .filter(([, value]) => !value)
+  .map(([name]) => name);
+
+if (missing.length) {
+  console.warn(`Missing environment variables: ${missing.join(', ')}`);
+}
 
 // Axios instance pointing to the backend server
 const woocommerceApi = axios.create({
