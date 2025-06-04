@@ -1,10 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
 import { verifyIdToken } from '../lib/firebaseAdmin.js';
 
 export const firebaseAuthMiddleware = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
+  req: any,
+  res: any,
+  next: any
 ) => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
