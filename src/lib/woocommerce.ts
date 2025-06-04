@@ -2,9 +2,13 @@ import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 
 // Read WooCommerce credentials from environment variables.
-const API_URL = import.meta.env.VITE_WOOCOMMERCE_API_URL;
-const CLIENT_KEY = import.meta.env.VITE_WOOCOMMERCE_CLIENT_KEY;
-const SECRET_KEY = import.meta.env.VITE_WOOCOMMERCE_SECRET_KEY;
+// When running in the browser via Vite, `import.meta.env` is available.
+// In a Node context (e.g. the Express server), fall back to `process.env`.
+const metaEnv = typeof import.meta !== 'undefined' ? (import.meta as { env?: Record<string, string> }).env : undefined;
+
+const API_URL = metaEnv?.VITE_WOOCOMMERCE_API_URL || process.env.VITE_WOOCOMMERCE_API_URL;
+const CLIENT_KEY = metaEnv?.VITE_WOOCOMMERCE_CLIENT_KEY || process.env.VITE_WOOCOMMERCE_CLIENT_KEY;
+const SECRET_KEY = metaEnv?.VITE_WOOCOMMERCE_SECRET_KEY || process.env.VITE_WOOCOMMERCE_SECRET_KEY;
 
 const requiredVars = {
   VITE_WOOCOMMERCE_API_URL: API_URL,
