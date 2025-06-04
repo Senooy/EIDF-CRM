@@ -74,24 +74,14 @@ VITE_FIREBASE_PROJECT_ID=<your-project-id>
 VITE_FIREBASE_STORAGE_BUCKET=<your-storage-bucket>
 VITE_FIREBASE_MESSAGING_SENDER_ID=<your-messaging-sender-id>
 VITE_FIREBASE_APP_ID=<your-app-id>
+VITE_SERVER_URL=<http://localhost:3001/api>
 ```
 
 These variables are required for the WooCommerce API client and Firebase
 initialization. The application will throw an error at startup if any of them
 are missing.
+The frontend expects `VITE_SERVER_URL` to point to the API exposing the WooCommerce endpoints. During development set `VITE_SERVER_URL=http://localhost:3001/api` in your `.env` file.
 
-## Running the Express API locally
-
-The project includes a small Express server used by the frontend. When
-developing locally you need to start this API in **another terminal** in
-addition to running the Vite dev server:
-
-```sh
-npm run start:server
-```
-
-Keep this process running while you use `npm run dev` so the frontend can make
-requests to the API.
 
 ## How can I deploy this project?
 
