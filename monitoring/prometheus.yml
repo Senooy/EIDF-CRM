@@ -1,0 +1,79 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'eidf-crm'
+    environment: 'production'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - 'alertmanager:9093'
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - "alerts/*.yml"
+
+# Scrape configurations
+scrape_configs:
+  # Gateway metrics
+  - job_name: 'gateway'
+    static_configs:
+      - targets: ['gateway:3000']
+        labels:
+          service: 'gateway'
+    metrics_path: '/metrics'
+
+  # Organization Service metrics
+  - job_name: 'organization-service'
+    static_configs:
+      - targets: ['organization:3002']
+        labels:
+          service: 'organization'
+    metrics_path: '/metrics'
+
+  # Billing Service metrics
+  - job_name: 'billing-service'
+    static_configs:
+      - targets: ['billing:3004']
+        labels:
+          service: 'billing'
+    metrics_path: '/metrics'
+
+  # Analytics Service metrics
+  - job_name: 'analytics-service'
+    static_configs:
+      - targets: ['analytics:3005']
+        labels:
+          service: 'analytics'
+    metrics_path: '/metrics'
+
+  # PostgreSQL exporter
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'postgres'
+
+  # Redis exporter
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'redis'
+
+  # RabbitMQ metrics
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          service: 'rabbitmq'
+
+  # Node exporter for host metrics
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'node-exporter'

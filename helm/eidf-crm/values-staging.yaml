@@ -1,0 +1,96 @@
+# Staging environment values for EIDF CRM
+
+# Use staging images
+image:
+  registry: ghcr.io
+  repository: your-org/eidf-crm
+  tag: staging
+
+# Reduced replicas for staging
+services:
+  gateway:
+    replicaCount: 2
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 5
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+
+  organization:
+    replicaCount: 1
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+
+  billing:
+    replicaCount: 1
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "100m"
+      limits:
+        memory: "256Mi"
+        cpu: "200m"
+
+  analytics:
+    replicaCount: 1
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "150m"
+      limits:
+        memory: "512Mi"
+        cpu: "300m"
+
+# Staging ingress
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/rate-limit: "50"
+  hosts:
+    - host: api-staging.eidf-crm.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: eidf-crm-staging-tls
+      hosts:
+        - api-staging.eidf-crm.com
+
+# Staging configuration
+config:
+  nodeEnv: "staging"
+  logLevel: "debug"
+
+# External services for staging
+postgresql:
+  enabled: false
+  external:
+    host: "eidf-crm-staging.cluster-xxxxx.eu-west-1.rds.amazonaws.com"
+    port: 5432
+    database: "eidf_crm_staging"
+
+redis:
+  enabled: false
+  external:
+    host: "eidf-crm-staging.xxxxx.cache.amazonaws.com"
+    port: 6379
+
+rabbitmq:
+  enabled: false
+  external:
+    host: "b-xxxxx-xxxxx.mq.eu-west-1.amazonaws.com"
+    port: 5671
+    vhost: "staging"

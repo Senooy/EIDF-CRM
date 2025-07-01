@@ -1,0 +1,210 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for subscription plans
+enum SubscriptionPlan {
+  FREE
+  STARTER
+  PROFESSIONAL
+  ENTERPRISE
+}
+
+// Enum for subscription status
+enum SubscriptionStatus {
+  ACTIVE
+  INACTIVE
+  CANCELLED
+  PAST_DUE
+}
+
+// Enum for user roles within an organization
+enum UserRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+// Organization model - the main tenant
+model Organization {
+  id              String              @id @default(cuid())
+  name            String
+  slug            String              @unique
+  logo            String?
+  website         String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  // Relations
+  users           OrganizationUser[]
+  subscription    Subscription?
+  apiCredentials  ApiCredential[]
+  activityLogs    ActivityLog[]
+  invitations     Invitation[]
+  
+  @@index([slug])
+}
+
+// User model - Firebase Auth users
+model User {
+  id              String              @id // Firebase UID
+  email           String              @unique
+  displayName     String?
+  photoURL        String?
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  
+  // Relations
+  organizations   OrganizationUser[]
+  activityLogs    ActivityLog[]
+  invitationsSent Invitation[]        @relation("InvitedBy")
+  
+  @@index([email])
+}
+
+// Many-to-many relationship between User and Organization
+model OrganizationUser {
+  id             String       @id @default(cuid())
+  userId         String
+  organizationId String
+  role           UserRole     @default(MEMBER)
+  joinedAt       DateTime     @default(now())
+  
+  // Relations
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId, organizationId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+// Subscription model for billing
+model Subscription {
+  id                String              @id @default(cuid())
+  organizationId    String              @unique
+  plan              SubscriptionPlan    @default(FREE)
+  status            SubscriptionStatus  @default(ACTIVE)
+  
+  // Stripe/Paddle fields
+  customerId        String?             @unique
+  subscriptionId    String?             @unique
+  
+  // Plan limits
+  maxUsers          Int                 @default(1)
+  maxProducts       Int                 @default(100)
+  maxOrders         Int                 @default(1000)
+  aiGenerationsPerMonth Int             @default(50)
+  
+  // Billing cycle
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelledAt        DateTime?
+  
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  
+  // Relations
+  organization      Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  usageRecords      UsageRecord[]
+  
+  @@index([status])
+  @@index([plan])
+}
+
+// API Credentials for external services
+model ApiCredential {
+  id              String       @id @default(cuid())
+  organizationId  String
+  service         String       // 'woocommerce', 'gemini', etc.
+  name            String       // User-friendly name
+  
+  // Encrypted credentials
+  credentials     Json         // Encrypted JSON with service-specific fields
+  
+  // WooCommerce specific fields (stored encrypted in credentials)
+  // - apiUrl
+  // - consumerKey
+  // - consumerSecret
+  
+  isActive        Boolean      @default(true)
+  lastUsedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@unique([organizationId, service, name])
+  @@index([organizationId, service])
+}
+
+// Usage tracking for billing and limits
+model UsageRecord {
+  id               String       @id @default(cuid())
+  subscriptionId   String
+  metric           String       // 'ai_generation', 'api_call', etc.
+  count            Int          @default(1)
+  metadata         Json?
+  createdAt        DateTime     @default(now())
+  
+  // Relations
+  subscription     Subscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  
+  @@index([subscriptionId, metric, createdAt])
+}
+
+// Activity logs for audit trail
+model ActivityLog {
+  id              String       @id @default(cuid())
+  organizationId  String
+  userId          String
+  action          String       // 'product.created', 'order.updated', etc.
+  entityType      String?      // 'product', 'order', 'customer'
+  entityId        String?      // External ID from WooCommerce
+  metadata        Json?
+  ipAddress       String?
+  userAgent       String?
+  createdAt       DateTime     @default(now())
+  
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId, createdAt])
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+}
+
+// Invitations for users to join organizations
+model Invitation {
+  id              String       @id @default(cuid())
+  organizationId  String
+  email           String
+  role            UserRole     @default(MEMBER)
+  token           String       @unique @default(cuid())
+  invitedById     String
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+  createdAt       DateTime     @default(now())
+  
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  invitedBy       User         @relation("InvitedBy", fields: [invitedById], references: [id])
+  
+  @@unique([organizationId, email])
+  @@index([token])
+  @@index([email])
+}

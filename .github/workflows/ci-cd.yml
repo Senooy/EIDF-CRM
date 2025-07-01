@@ -1,0 +1,223 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository_owner }}/eidf-crm
+
+jobs:
+  # Run tests for all services
+  test:
+    name: Test Services
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [gateway, organization, billing, analytics]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: services/${{ matrix.service }}/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: services/${{ matrix.service }}
+        run: npm ci
+      
+      - name: Run linter
+        working-directory: services/${{ matrix.service }}
+        run: npm run lint --if-present
+      
+      - name: Run tests
+        working-directory: services/${{ matrix.service }}
+        run: npm test --if-present
+      
+      - name: Build service
+        working-directory: services/${{ matrix.service }}
+        run: npm run build
+
+  # Build and push Docker images
+  build:
+    name: Build Docker Images
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        service: [gateway, organization, billing, analytics, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.service == 'frontend' && '.' || format('services/{0}', matrix.service) }}
+          file: ${{ matrix.service == 'frontend' && 'Dockerfile.frontend' || format('services/{0}/Dockerfile', matrix.service) }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Deploy to staging
+  deploy-staging:
+    name: Deploy to Staging
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.STAGING_KUBECONFIG }}" | base64 -d > ~/.kube/config
+      
+      - name: Deploy to staging
+        run: |
+          # Update image tags in k8s manifests
+          find k8s/ -name "*.yaml" -exec sed -i "s|image: .*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/\1:develop-${{ github.sha }}|g" {} \;
+          
+          # Apply manifests
+          kubectl apply -f k8s/namespace.yaml
+          kubectl apply -f k8s/
+          
+          # Wait for rollout
+          kubectl rollout status deployment/gateway -n eidf-crm --timeout=5m
+      
+      - name: Run smoke tests
+        run: |
+          STAGING_URL=$(kubectl get svc gateway-service -n eidf-crm -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          ./scripts/smoke-tests.sh $STAGING_URL
+
+  # Deploy to production
+  deploy-production:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+      
+      - name: Configure kubectl
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.PRODUCTION_KUBECONFIG }}" | base64 -d > ~/.kube/config
+      
+      - name: Create deployment artifacts
+        run: |
+          # Generate deployment manifest with current image tags
+          ./scripts/generate-deployment.sh ${{ github.sha }} > deployment-${{ github.sha }}.yaml
+      
+      - name: Deploy to production (Blue/Green)
+        run: |
+          # Deploy to green environment
+          kubectl apply -f deployment-${{ github.sha }}.yaml -n eidf-crm-green
+          
+          # Wait for green deployment
+          kubectl rollout status deployment/gateway -n eidf-crm-green --timeout=10m
+          
+          # Run health checks
+          ./scripts/health-check.sh green
+          
+          # Switch traffic to green
+          kubectl patch service gateway-service -n eidf-crm -p '{"spec":{"selector":{"version":"green"}}}'
+          
+          # Tag previous blue as old
+          kubectl label deployment -n eidf-crm-blue version=old --overwrite
+          
+          # Tag green as new blue
+          kubectl label deployment -n eidf-crm-green version=blue --overwrite
+      
+      - name: Create release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          release_name: Release v${{ github.run_number }}
+          body: |
+            ## Changes
+            ${{ github.event.head_commit.message }}
+            
+            ## Docker Images
+            - Gateway: `${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/gateway:main-${{ github.sha }}`
+            - Organization: `${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/organization:main-${{ github.sha }}`
+            - Billing: `${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/billing:main-${{ github.sha }}`
+            - Analytics: `${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/analytics:main-${{ github.sha }}`
+            - Frontend: `${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/frontend:main-${{ github.sha }}`
+
+  # Security scanning
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+      
+      - name: Run npm audit
+        run: |
+          for service in services/*; do
+            if [ -f "$service/package.json" ]; then
+              echo "Auditing $service"
+              cd $service && npm audit --production || true
+              cd ../..
+            fi
+          done

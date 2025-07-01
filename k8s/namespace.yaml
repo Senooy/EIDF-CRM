@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: eidf-crm
+  labels:
+    name: eidf-crm
+    app.kubernetes.io/name: eidf-crm
+    app.kubernetes.io/instance: production

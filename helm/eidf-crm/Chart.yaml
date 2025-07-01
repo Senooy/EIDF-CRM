@@ -1,0 +1,34 @@
+apiVersion: v2
+name: eidf-crm
+description: A Helm chart for EIDF-CRM SaaS application
+type: application
+version: 1.0.0
+appVersion: "1.0.0"
+
+keywords:
+  - saas
+  - woocommerce
+  - crm
+  - microservices
+
+home: https://github.com/your-org/eidf-crm
+sources:
+  - https://github.com/your-org/eidf-crm
+
+maintainers:
+  - name: Your Team
+    email: team@eidf-crm.com
+
+dependencies:
+  - name: postgresql
+    version: "~12.1.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "~17.3.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled
+  - name: rabbitmq
+    version: "~11.1.0"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: rabbitmq.enabled

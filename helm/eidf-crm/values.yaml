@@ -1,0 +1,191 @@
+# Default values for eidf-crm
+replicaCount: 3
+
+image:
+  registry: ghcr.io
+  repository: your-org/eidf-crm
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+# Service configurations
+services:
+  gateway:
+    enabled: true
+    replicaCount: 3
+    image:
+      repository: gateway
+    service:
+      type: LoadBalancer
+      port: 80
+      targetPort: 3000
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "250m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    autoscaling:
+      enabled: true
+      minReplicas: 3
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 70
+      targetMemoryUtilizationPercentage: 80
+
+  organization:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: organization
+    service:
+      type: ClusterIP
+      port: 3002
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "200m"
+      limits:
+        memory: "512Mi"
+        cpu: "400m"
+
+  billing:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: billing
+    service:
+      type: ClusterIP
+      port: 3004
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "200m"
+      limits:
+        memory: "512Mi"
+        cpu: "400m"
+
+  analytics:
+    enabled: true
+    replicaCount: 2
+    image:
+      repository: analytics
+    service:
+      type: ClusterIP
+      port: 3005
+    resources:
+      requests:
+        memory: "512Mi"
+        cpu: "300m"
+      limits:
+        memory: "1Gi"
+        cpu: "600m"
+
+# Database configuration
+postgresql:
+  enabled: false  # Use external RDS in production
+  auth:
+    postgresPassword: "changeme"
+    database: "eidf_crm"
+  primary:
+    persistence:
+      enabled: true
+      size: 10Gi
+
+# Redis configuration
+redis:
+  enabled: false  # Use external ElastiCache in production
+  auth:
+    enabled: true
+    password: "changeme"
+  master:
+    persistence:
+      enabled: true
+      size: 8Gi
+
+# RabbitMQ configuration
+rabbitmq:
+  enabled: false  # Use external MQ in production
+  auth:
+    username: admin
+    password: "changeme"
+  persistence:
+    enabled: true
+    size: 8Gi
+
+# Ingress configuration
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+  hosts:
+    - host: api.eidf-crm.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: eidf-crm-tls
+      hosts:
+        - api.eidf-crm.com
+
+# ConfigMap for application configuration
+config:
+  nodeEnv: "production"
+  logLevel: "info"
+  
+# Secrets (use external secret manager in production)
+secrets:
+  jwtSecret: "changeme"
+  encryptionKey: "changeme-32-characters-minimum!!"
+  stripeSecretKey: "sk_test_changeme"
+  stripeWebhookSecret: "whsec_changeme"
+  geminiApiKey: "changeme"
+
+# Service Account
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+# Pod Security Context
+podSecurityContext:
+  fsGroup: 1000
+  runAsNonRoot: true
+  runAsUser: 1000
+
+# Security Context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: true
+
+# Probes
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+# Node selector
+nodeSelector: {}
+
+# Tolerations
+tolerations: []
+
+# Affinity
+affinity: {}
