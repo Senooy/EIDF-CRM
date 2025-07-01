@@ -1,32 +1,12 @@
 import axios from 'axios';
 import { QueryFunctionContext } from "@tanstack/react-query";
 
-// Read WooCommerce credentials from environment variables.
-const API_URL = import.meta.env.VITE_WOOCOMMERCE_API_URL;
-const CLIENT_KEY = import.meta.env.VITE_WOOCOMMERCE_CLIENT_KEY;
-const SECRET_KEY = import.meta.env.VITE_WOOCOMMERCE_SECRET_KEY;
+// Use server proxy URL for all WooCommerce API calls
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001/api';
 
-const requiredVars = {
-  VITE_WOOCOMMERCE_API_URL: API_URL,
-  VITE_WOOCOMMERCE_CLIENT_KEY: CLIENT_KEY,
-  VITE_WOOCOMMERCE_SECRET_KEY: SECRET_KEY,
-};
-
-const missing = Object.entries(requiredVars)
-  .filter(([, value]) => !value)
-  .map(([name]) => name);
-
-if (missing.length) {
-  throw new Error(`Missing environment variables: ${missing.join(', ')}`);
-}
-
-// Create Axios instance using provided credentials
+// Create Axios instance for server API
 const woocommerceApi = axios.create({
-  baseURL: API_URL,
-  auth: {
-    username: CLIENT_KEY,
-    password: SECRET_KEY,
-  },
+  baseURL: `${SERVER_URL}/wc`,
 });
 
 // Define interfaces for nested objects
@@ -496,6 +476,11 @@ export interface Product {
   rating_count: number;
   categories: ProductCategory[];
   images: ProductImage[];
+  meta_data?: Array<{
+    id?: number;
+    key: string;
+    value: string;
+  }>;
   // Add other relevant product properties if needed
 }
 
@@ -665,6 +650,10 @@ export interface UpdateProductPayload {
   sale_price?: string;
   stock_quantity?: number | null;
   stock_status?: 'instock' | 'outofstock' | 'onbackorder';
+  meta_data?: Array<{
+    key: string;
+    value: string;
+  }>;
   // Add other fields you want to make editable
 }
 

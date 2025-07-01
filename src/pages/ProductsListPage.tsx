@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProductsPage, PaginatedProductsResponse, Product, getProductCategories, ProductCategory } from '@/lib/woocommerce';
+import { getProductsPage, PaginatedProductsResponse, Product, getProductCategories, ProductCategory, getAllProducts } from '@/lib/woocommerce';
 import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -30,6 +30,8 @@ import { useMediaQuery } from '@/hooks/use-media-query';
 import { Input } from "@/components/ui/input";
 import { useDebounce } from '@/hooks/use-debounce';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { toast } from "sonner";
+import { SEOGenerationModal } from '@/components/SEOGenerationModal';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -49,6 +51,10 @@ const ProductsListPage: React.FC = () => {
   const [minPrice, setMinPrice] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [sortBy, setSortBy] = useState<SortByOption>('');
+  
+  // SEO generation states
+  const [showSEOModal, setShowSEOModal] = useState(false);
+  const [allProductsForSEO, setAllProductsForSEO] = useState<Product[]>([]);
 
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const queryClient = useQueryClient();
@@ -114,6 +120,12 @@ const ProductsListPage: React.FC = () => {
     // refetchOnWindowFocus: false, 
   });
 
+  // Callback when SEO generation is complete
+  const handleSEOBatchComplete = () => {
+    queryClient.invalidateQueries({ queryKey: ['products'] });
+    setShowSEOModal(false);
+  };
+
   // Effect to reset to page 1 when filters change
   useEffect(() => {
     if (!isPlaceholderData) { // Avoid resetting on initial load or placeholder data updates
@@ -133,6 +145,25 @@ const ProductsListPage: React.FC = () => {
   const handleNextPage = () => {
     if (!isPlaceholderData && currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
+    }
+  };
+
+  const handleOpenSEOModal = async () => {
+    try {
+      toast.info("Chargement de tous les produits...");
+      const allProducts = await getAllProducts();
+      
+      if (!allProducts || allProducts.length === 0) {
+        toast.error("Aucun produit trouvé dans la base");
+        return;
+      }
+      
+      setAllProductsForSEO(allProducts);
+      toast.success(`${allProducts.length} produits trouvés`);
+      setShowSEOModal(true);
+    } catch (error) {
+      console.error('Erreur lors du chargement des produits:', error);
+      toast.error("Erreur lors du chargement des produits: " + (error as any).message);
     }
   };
 
@@ -224,9 +255,22 @@ const ProductsListPage: React.FC = () => {
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <Card>
             <CardHeader>
-              <CardTitle>Produits</CardTitle>
-              <CardDescription>Gérez vos produits et consultez leurs performances de vente.</CardDescription>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle>Produits</CardTitle>
+                  <CardDescription>Gérez vos produits et consultez leurs performances de vente.</CardDescription>
+                </div>
+                <Button 
+                  onClick={handleOpenSEOModal}
+                  variant="outline" 
+                  size="sm"
+                >
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Générer SEO
+                </Button>
+              </div>
             </CardHeader>
+            
             <CardContent>
               <div className="mb-4 space-y-4 md:flex md:items-end md:space-x-4 md:space-y-0">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:flex lg:flex-wrap gap-4 items-end">
@@ -396,6 +440,14 @@ const ProductsListPage: React.FC = () => {
             </CardContent>
           </Card>
         </main>
+        
+        {/* Modale SEO */}
+        <SEOGenerationModal 
+          isOpen={showSEOModal}
+          onClose={() => setShowSEOModal(false)}
+          products={allProductsForSEO}
+          onComplete={handleSEOBatchComplete}
+        />
       </div>
     </div>
   );

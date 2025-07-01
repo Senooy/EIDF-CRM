@@ -9,12 +9,15 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { formatPrice } from '@/lib/utils';
-import { ChevronLeft, ExternalLink, Package, Tag, Palette, Weight, Ruler, Info, Edit, Save, X } from 'lucide-react';
+import { ChevronLeft, ExternalLink, Package, Tag, Palette, Weight, Ruler, Info, Edit, Save, X, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
+import { AIContentGenerator } from '@/components/Products/AIContentGenerator';
+import { GeneratedProductContent } from '@/lib/gemini-service';
+import { formatSEOForYoast } from '@/lib/yoast-seo-helper';
 
 // Helper to safely render HTML content
 const createMarkup = (htmlContent: string | undefined) => {
@@ -28,6 +31,7 @@ const ProductDetailsPage: React.FC = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState<Partial<UpdateProductPayload>>({});
+  const [showAIGenerator, setShowAIGenerator] = useState(false);
 
   const { data: product, isLoading, error, isError } = useQuery<Product, Error>({
     queryKey: ['product', productId],
@@ -161,6 +165,51 @@ const ProductDetailsPage: React.FC = () => {
     }
   };
 
+  const handleAIContentApply = (content: Partial<GeneratedProductContent>) => {
+    // Apply AI-generated content to edit data
+    const updatedData = { ...editData };
+    
+    if (content.title) {
+      updatedData.name = content.title;
+    }
+    if (content.description) {
+      updatedData.description = content.description;
+    }
+    if (content.shortDescription) {
+      updatedData.short_description = content.shortDescription;
+    }
+    
+    // Apply SEO metadata to Yoast SEO meta fields
+    if (content.seo) {
+      const yoastMetaData = formatSEOForYoast(content.seo);
+      
+      // Merge with existing meta_data or create new
+      const existingMetaData = product?.meta_data || [];
+      const metaDataMap = new Map<string, { key: string; value: string }>();
+      
+      // First, add existing non-Yoast meta data
+      existingMetaData.forEach(meta => {
+        if (!meta.key.startsWith('_yoast_wpseo_')) {
+          metaDataMap.set(meta.key, { key: meta.key, value: meta.value });
+        }
+      });
+      
+      // Then add/update Yoast SEO meta data
+      yoastMetaData.forEach(meta => {
+        metaDataMap.set(meta.key, meta);
+      });
+      
+      updatedData.meta_data = Array.from(metaDataMap.values());
+      
+      console.log('SEO metadata formatted for Yoast:', yoastMetaData);
+      toast.success("Métadonnées SEO générées et prêtes à être sauvegardées avec Yoast SEO.");
+    }
+    
+    setEditData(updatedData);
+    setIsEditing(true);
+    toast.success("Contenu AI appliqué. Vérifiez et sauvegardez les modifications.");
+  };
+
   const renderStockBadge = (status: Product['stock_status'] | undefined, quantity: number | null | undefined) => {
     let variant: 'default' | 'secondary' | 'destructive' = 'secondary';
     let text = 'Inconnu';
@@ -222,9 +271,14 @@ const ProductDetailsPage: React.FC = () => {
                 </>
               ) : (
                 product && !isError && (
-                  <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
-                    <Edit className="mr-2 h-4 w-4" /> Modifier
-                  </Button>
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => setShowAIGenerator(true)}>
+                      <Sparkles className="mr-2 h-4 w-4" /> Générer avec IA
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setIsEditing(true)}>
+                      <Edit className="mr-2 h-4 w-4" /> Modifier
+                    </Button>
+                  </>
                 )
               )}
             </div>
@@ -424,6 +478,16 @@ const ProductDetailsPage: React.FC = () => {
           )}
         </main>
       </div>
+      
+      {/* AI Content Generator Modal */}
+      {product && (
+        <AIContentGenerator
+          product={product}
+          isOpen={showAIGenerator}
+          onClose={() => setShowAIGenerator(false)}
+          onApply={handleAIContentApply}
+        />
+      )}
     </div>
   );
 };
