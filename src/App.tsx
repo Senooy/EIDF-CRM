@@ -14,6 +14,9 @@ import CustomersListPage from "./pages/CustomersListPage";
 import CustomerDetailsPage from "./pages/CustomerDetailsPage";
 import ProductsListPage from "./pages/ProductsListPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
+import SiteConfiguration from "./pages/Settings/SiteConfiguration";
+import WordPressDashboard from "./pages/WordPressDashboard";
+import WooCommerceDashboard from "./pages/WooCommerceDashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -51,6 +54,9 @@ const App = () => (
             <Route path="/customer/:id" element={<CustomerDetailsPage />} />
             <Route path="/products" element={<ProductsListPage />} />
             <Route path="/products/:id" element={<ProductDetailsPage />} />
+            <Route path="/wordpress" element={<WordPressDashboard />} />
+            <Route path="/woocommerce" element={<WooCommerceDashboard />} />
+            <Route path="/settings/sites" element={<SiteConfiguration />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Route>

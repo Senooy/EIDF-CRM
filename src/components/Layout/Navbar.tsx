@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useNavigate } from "react-router-dom";
+import { SiteSwitcher } from "./SiteSwitcher";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Navbar = () => {
       <div className="flex items-center justify-between px-4 h-16">
         <div className="flex items-center gap-4">
           <span className="font-semibold text-lg">EIDF</span>
+          <SiteSwitcher />
           <div className="hidden md:flex relative">
             <Input
               placeholder="Rechercher..."

@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Order as WooCommerceOrder,
   getAllOrders
-} from "@/lib/woocommerce";
+} from "@/lib/woocommerce-multi";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import KPICard from "@/components/Dashboard/KPICard";
 import OrdersTable from "@/components/Dashboard/OrdersTable";
@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import * as ss from 'simple-statistics';
+import { RequireSite } from "@/components/RequireSite";
 
 // Re-introduce time periods, adding 'all'
 const timePeriods = {
@@ -102,7 +103,7 @@ const Index = () => {
   const { data: allOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({ 
     queryKey: ["woocommerce_all_orders"], // Keep the query key simple
     // Explicitly call with undefined to fetch ALL orders
-    queryFn: () => getAllOrders(undefined), 
+    queryFn: () => getAllOrders(), 
     staleTime: 1000 * 60 * 5, 
   });
 
@@ -228,11 +229,12 @@ const Index = () => {
   }
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+    <RequireSite>
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex-1 flex flex-col">
+          <Navbar />
+          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
               <h1 className="text-2xl font-semibold text-gray-900">Tableau de bord</h1>
               <div className="flex flex-col sm:flex-row items-center gap-4">
@@ -316,6 +318,7 @@ const Index = () => {
         </main>
       </div>
     </div>
+    </RequireSite>
   );
 };
 

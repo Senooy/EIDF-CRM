@@ -3,9 +3,10 @@ import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import OrdersTable from "@/components/Dashboard/OrdersTable";
 import ActivityFeed from "@/components/Dashboard/ActivityFeed";
-import { getRecentOrders, Order } from "@/lib/woocommerce";
+import { getRecentOrders, Order } from "@/lib/woocommerce-multi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
+import { RequireSite } from "@/components/RequireSite";
 
 const Dashboard = () => {
   const { data: orders, isLoading, error } = useQuery<Order[]>({
@@ -14,11 +15,12 @@ const Dashboard = () => {
   });
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
+    <RequireSite>
+      <div className="flex h-screen bg-gray-100">
+        <Sidebar />
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <Navbar />
+          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
           <div className="space-y-6">
 
             {/* Top Section: KPIs + Activity Feed */}
@@ -66,6 +68,7 @@ const Dashboard = () => {
         </main>
       </div>
     </div>
+    </RequireSite>
   );
 };
 

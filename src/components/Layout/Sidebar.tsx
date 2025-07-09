@@ -8,15 +8,18 @@ import {
   Settings,
   BarChart2,
   Package,
+  Globe,
 } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
-  { name: "Commandes", href: "/orders", icon: ShoppingCart },
+  { name: "WordPress", href: "/wordpress", icon: Globe },
+  { name: "WooCommerce", href: "/woocommerce", icon: ShoppingCart },
+  { name: "Commandes", href: "/orders", icon: Package },
   { name: "Clients", href: "/customers", icon: Users },
   { name: "Produits", href: "/products", icon: Package },
-  { name: "Statistiques", href: "/statistics", icon: BarChart2 },
-  { name: "Paramètres", href: "/settings", icon: Settings },
+  { name: "Analytics", href: "/statistics", icon: BarChart2 },
+  { name: "Paramètres", href: "/settings/sites", icon: Settings },
 ];
 
 const Sidebar = () => {
