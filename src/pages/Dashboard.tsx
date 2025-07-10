@@ -7,12 +7,29 @@ import { getRecentOrders, Order } from "@/lib/woocommerce-multi";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { RequireSite } from "@/components/RequireSite";
+import { useCachedOrders } from "@/hooks/useCachedData";
 
 const Dashboard = () => {
-  const { data: orders, isLoading, error } = useQuery<Order[]>({
+  // Use cached orders with recent filter
+  const {
+    data: cachedOrders,
+    isLoading: cacheLoading,
+    isStale
+  } = useCachedOrders({
+    perPage: 25,
+    sort: (a, b) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime(),
+    autoSync: isStale // Auto-sync if cache is stale
+  });
+
+  // Fallback to API if cache is empty
+  const { data: apiOrders, isLoading: apiLoading, error } = useQuery<Order[]>({
     queryKey: ["woocommerce_recent_orders_dashboard", 25],
     queryFn: () => getRecentOrders(25),
+    enabled: cachedOrders.length === 0 && !cacheLoading
   });
+
+  const orders = cachedOrders.length > 0 ? cachedOrders : apiOrders;
+  const isLoading = cacheLoading || (cachedOrders.length === 0 && apiLoading);
 
   return (
     <RequireSite>

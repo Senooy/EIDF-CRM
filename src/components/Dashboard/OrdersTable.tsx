@@ -67,6 +67,7 @@ const OrdersTable = ({ orders, isLoading = false, itemsPerPage = 10 }: OrdersTab
     direction: "asc" | "desc";
   }>({ key: "date_created", direction: "desc" });
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const internalItemsPerPage = itemsPerPage || 10;
 
   const filteredAndSortedOrders = useMemo(() => {
     let result = [...orders];
@@ -160,20 +161,20 @@ const OrdersTable = ({ orders, isLoading = false, itemsPerPage = 10 }: OrdersTab
 
   // Calculer les commandes pour la page actuelle
   const paginatedOrders = useMemo(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
+    const startIndex = (currentPage - 1) * internalItemsPerPage;
+    const endIndex = startIndex + internalItemsPerPage;
     return filteredAndSortedOrders.slice(startIndex, endIndex);
-  }, [filteredAndSortedOrders, currentPage, itemsPerPage]);
+  }, [filteredAndSortedOrders, currentPage, internalItemsPerPage]);
 
   // Calculer le nombre total de pages
   const totalPages = useMemo(() => {
-    return Math.ceil(filteredAndSortedOrders.length / itemsPerPage);
-  }, [filteredAndSortedOrders, itemsPerPage]);
+    return Math.ceil(filteredAndSortedOrders.length / internalItemsPerPage);
+  }, [filteredAndSortedOrders, internalItemsPerPage]);
 
   // Réinitialiser la page actuelle lorsque les filtres changent
   useEffect(() => {
     setCurrentPage(1);
-  }, [statusFilter, searchQuery, clientFilter, dateRange, minTotal, maxTotal, itemsPerPage]);
+  }, [statusFilter, searchQuery, clientFilter, dateRange, minTotal, maxTotal, internalItemsPerPage]);
 
   const handleSort = (key: keyof WooCommerceOrder | "customer") => {
     setSortConfig(prev => ({
@@ -187,8 +188,8 @@ const OrdersTable = ({ orders, isLoading = false, itemsPerPage = 10 }: OrdersTab
   };
 
   // Calculer le nombre d'éléments à afficher
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = Math.min(startIndex + itemsPerPage, filteredAndSortedOrders.length);
+  const startIndex = (currentPage - 1) * internalItemsPerPage;
+  const endIndex = Math.min(startIndex + internalItemsPerPage, filteredAndSortedOrders.length);
 
   const uniqueStatuses = Array.from(new Set(orders.map(order => order.status)));
 

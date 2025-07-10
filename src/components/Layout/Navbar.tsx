@@ -6,6 +6,8 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useNavigate } from "react-router-dom";
 import { SiteSwitcher } from "./SiteSwitcher";
+import { SyncStatusButton } from "@/components/SyncStatus";
+import { logger } from "@/lib/logger";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -15,7 +17,7 @@ const Navbar = () => {
       await signOut(auth);
       navigate("/login");
     } catch (error) {
-      console.error("Error signing out", error);
+      logger.error("Error signing out", error, "Navbar");
     }
   };
 
@@ -35,6 +37,7 @@ const Navbar = () => {
         </div>
         
         <div className="flex items-center gap-2">
+          <SyncStatusButton />
           <Button variant="ghost" size="icon" className="text-gray-500">
             <Bell className="h-5 w-5" />
           </Button>

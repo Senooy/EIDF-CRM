@@ -1,4 +1,6 @@
 import { wpClientManager } from './wordpress-client';
+import { logger } from '@/lib/logger';
+import { ApiError } from '@/lib/error-handler';
 
 // Interfaces pour les métriques WordPress
 export interface PostMetrics {
@@ -172,10 +174,11 @@ export class WordPressAnalyticsService {
   
   // Posts Analytics
   async getPostMetrics(siteId?: number): Promise<PostMetrics> {
-    const client = await wpClientManager.getClient(siteId);
-    
-    // Récupérer tous les posts
-    const allPosts = await this.getAllPosts(client);
+    try {
+      const client = await wpClientManager.getClient(siteId);
+      
+      // Récupérer tous les posts
+      const allPosts = await this.getAllPosts(client);
     
     // Calculer les métriques
     const totalPosts = allPosts.length;
@@ -253,25 +256,41 @@ export class WordPressAnalyticsService {
       .slice(0, 10)
       .map(p => this.mapToPostDetail(p));
     
-    return {
-      totalPosts,
-      publishedPosts,
-      draftPosts,
-      recentPosts,
-      popularPosts,
-      postsPerCategory,
-      postsPerAuthor,
-      averageWordsPerPost,
-      postsLast30Days
-    };
+      return {
+        totalPosts,
+        publishedPosts,
+        draftPosts,
+        recentPosts,
+        popularPosts,
+        postsPerCategory,
+        postsPerAuthor,
+        averageWordsPerPost,
+        postsLast30Days
+      };
+    } catch (error) {
+      logger.error('Failed to get post metrics', error, 'WordPressAnalytics');
+      // Return empty metrics instead of throwing
+      return {
+        totalPosts: 0,
+        publishedPosts: 0,
+        draftPosts: 0,
+        recentPosts: [],
+        popularPosts: [],
+        postsPerCategory: [],
+        postsPerAuthor: [],
+        averageWordsPerPost: 0,
+        postsLast30Days: 0
+      };
+    }
   }
   
   // Comments Analytics
   async getCommentMetrics(siteId?: number): Promise<CommentMetrics> {
-    const client = await wpClientManager.getClient(siteId);
-    
-    // Récupérer tous les commentaires
-    const allComments = await this.getAllComments(client);
+    try {
+      const client = await wpClientManager.getClient(siteId);
+      
+      // Récupérer tous les commentaires
+      const allComments = await this.getAllComments(client);
     
     const totalComments = allComments.length;
     const approvedComments = allComments.filter(c => c.status === 'approved').length;
@@ -336,24 +355,38 @@ export class WordPressAnalyticsService {
       .sort((a, b) => b.commentCount - a.commentCount)
       .slice(0, 10);
     
-    return {
-      totalComments,
-      approvedComments,
-      pendingComments,
-      spamComments,
-      recentComments,
-      commentsLast30Days,
-      commentsByPost,
-      topCommenters
-    };
+      return {
+        totalComments,
+        approvedComments,
+        pendingComments,
+        spamComments,
+        recentComments,
+        commentsLast30Days,
+        commentsByPost,
+        topCommenters
+      };
+    } catch (error) {
+      logger.error('Failed to get comment metrics', error, 'WordPressAnalytics');
+      return {
+        totalComments: 0,
+        approvedComments: 0,
+        pendingComments: 0,
+        spamComments: 0,
+        recentComments: [],
+        commentsLast30Days: 0,
+        commentsByPost: [],
+        topCommenters: []
+      };
+    }
   }
   
   // Users Analytics
   async getUserMetrics(siteId?: number): Promise<UserMetrics> {
-    const client = await wpClientManager.getClient(siteId);
-    
-    // Récupérer tous les utilisateurs
-    const allUsers = await this.getAllUsers(client);
+    try {
+      const client = await wpClientManager.getClient(siteId);
+      
+      // Récupérer tous les utilisateurs
+      const allUsers = await this.getAllUsers(client);
     
     const totalUsers = allUsers.length;
     
@@ -408,21 +441,32 @@ export class WordPressAnalyticsService {
       });
     }
     
-    return {
-      totalUsers,
-      usersByRole,
-      newUsersLast30Days,
-      activeUsers,
-      userGrowthTrend
-    };
+      return {
+        totalUsers,
+        usersByRole,
+        newUsersLast30Days,
+        activeUsers,
+        userGrowthTrend
+      };
+    } catch (error) {
+      logger.error('Failed to get user metrics', error, 'WordPressAnalytics');
+      return {
+        totalUsers: 0,
+        usersByRole: [],
+        newUsersLast30Days: 0,
+        activeUsers: [],
+        userGrowthTrend: []
+      };
+    }
   }
   
   // Media Analytics
   async getMediaMetrics(siteId?: number): Promise<MediaMetrics> {
-    const client = await wpClientManager.getClient(siteId);
-    
-    // Récupérer tous les médias
-    const allMedia = await this.getAllMedia(client);
+    try {
+      const client = await wpClientManager.getClient(siteId);
+      
+      // Récupérer tous les médias
+      const allMedia = await this.getAllMedia(client);
     
     const totalMedia = allMedia.length;
     let totalSizeBytes = 0;
@@ -461,21 +505,32 @@ export class WordPressAnalyticsService {
       .slice(0, 10)
       .map(m => this.mapToMediaDetail(m));
     
-    return {
-      totalMedia,
-      totalSizeBytes,
-      mediaByType,
-      recentUploads,
-      largestFiles
-    };
+      return {
+        totalMedia,
+        totalSizeBytes,
+        mediaByType,
+        recentUploads,
+        largestFiles
+      };
+    } catch (error) {
+      logger.error('Failed to get media metrics', error, 'WordPressAnalytics');
+      return {
+        totalMedia: 0,
+        totalSizeBytes: 0,
+        mediaByType: [],
+        recentUploads: [],
+        largestFiles: []
+      };
+    }
   }
   
   // Pages Analytics
   async getPageMetrics(siteId?: number): Promise<PageMetrics> {
-    const client = await wpClientManager.getClient(siteId);
-    
-    // Récupérer toutes les pages
-    const allPages = await this.getAllPages(client);
+    try {
+      const client = await wpClientManager.getClient(siteId);
+      
+      // Récupérer toutes les pages
+      const allPages = await this.getAllPages(client);
     
     const totalPages = allPages.length;
     const publishedPages = allPages.filter(p => p.status === 'publish').length;
@@ -492,15 +547,27 @@ export class WordPressAnalyticsService {
       .slice(0, 10)
       .map(p => this.mapToPageDetail(p));
     
-    return {
-      totalPages,
-      publishedPages,
-      draftPages,
-      parentPages,
-      childPages,
-      pagesHierarchy,
-      recentlyUpdated
-    };
+      return {
+        totalPages,
+        publishedPages,
+        draftPages,
+        parentPages,
+        childPages,
+        pagesHierarchy,
+        recentlyUpdated
+      };
+    } catch (error) {
+      logger.error('Failed to get page metrics', error, 'WordPressAnalytics');
+      return {
+        totalPages: 0,
+        publishedPages: 0,
+        draftPages: 0,
+        parentPages: 0,
+        childPages: 0,
+        pagesHierarchy: [],
+        recentlyUpdated: []
+      };
+    }
   }
   
   // Méthodes utilitaires privées
@@ -510,19 +577,43 @@ export class WordPressAnalyticsService {
     let hasMore = true;
     
     while (hasMore) {
-      const response = await client.getPosts({ per_page: 100, page });
-      const posts = Array.isArray(response) ? response : response.data || [];
-      
-      if (posts.length > 0) {
-        allPosts = allPosts.concat(posts);
-        page++;
-      } else {
-        hasMore = false;
+      try {
+        logger.debug(`Fetching posts page ${page}`, undefined, 'WordPressAnalytics');
+        const response = await client.getPosts({ per_page: 100, page });
+        const posts = Array.isArray(response) ? response : response.data || [];
+        
+        if (posts.length > 0) {
+          allPosts = allPosts.concat(posts);
+          page++;
+        } else {
+          hasMore = false;
+        }
+        
+        if (page > 100) break; // Limite de sécurité
+      } catch (error) {
+        if (error instanceof ApiError) {
+          if (error.statusCode === 400 || error.statusCode === 404) {
+            // No more pages available or endpoint not found
+            logger.debug(`No more posts pages after page ${page - 1}`, undefined, 'WordPressAnalytics');
+            hasMore = false;
+          } else if (error.statusCode === 401 || error.statusCode === 403) {
+            // Authentication/permission error - stop and return what we have
+            logger.warn(`Authentication/permission error fetching posts page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          } else {
+            // Other API errors - log and continue with what we have
+            logger.error(`Error fetching posts page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          }
+        } else {
+          // Network or other errors - stop trying
+          logger.error(`Network error fetching posts page ${page}`, error, 'WordPressAnalytics');
+          hasMore = false;
+        }
       }
-      
-      if (page > 100) break; // Limite de sécurité
     }
     
+    logger.info(`Fetched ${allPosts.length} posts total`, undefined, 'WordPressAnalytics');
     return allPosts;
   }
   
@@ -532,19 +623,39 @@ export class WordPressAnalyticsService {
     let hasMore = true;
     
     while (hasMore) {
-      const response = await client.getComments({ per_page: 100, page });
-      const comments = Array.isArray(response) ? response : response.data || [];
-      
-      if (comments.length > 0) {
-        allComments = allComments.concat(comments);
-        page++;
-      } else {
-        hasMore = false;
+      try {
+        logger.debug(`Fetching comments page ${page}`, undefined, 'WordPressAnalytics');
+        const response = await client.getComments({ per_page: 100, page });
+        const comments = Array.isArray(response) ? response : response.data || [];
+        
+        if (comments.length > 0) {
+          allComments = allComments.concat(comments);
+          page++;
+        } else {
+          hasMore = false;
+        }
+        
+        if (page > 100) break;
+      } catch (error) {
+        if (error instanceof ApiError) {
+          if (error.statusCode === 400 || error.statusCode === 404) {
+            logger.debug(`No more comments pages after page ${page - 1}`, undefined, 'WordPressAnalytics');
+            hasMore = false;
+          } else if (error.statusCode === 401 || error.statusCode === 403) {
+            logger.warn(`Authentication/permission error fetching comments page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          } else {
+            logger.error(`Error fetching comments page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          }
+        } else {
+          logger.error(`Network error fetching comments page ${page}`, error, 'WordPressAnalytics');
+          hasMore = false;
+        }
       }
-      
-      if (page > 100) break;
     }
     
+    logger.info(`Fetched ${allComments.length} comments total`, undefined, 'WordPressAnalytics');
     return allComments;
   }
   
@@ -554,19 +665,39 @@ export class WordPressAnalyticsService {
     let hasMore = true;
     
     while (hasMore) {
-      const response = await client.getUsers({ per_page: 100, page });
-      const users = Array.isArray(response) ? response : response.data || [];
-      
-      if (users.length > 0) {
-        allUsers = allUsers.concat(users);
-        page++;
-      } else {
-        hasMore = false;
+      try {
+        logger.debug(`Fetching users page ${page}`, undefined, 'WordPressAnalytics');
+        const response = await client.getUsers({ per_page: 100, page });
+        const users = Array.isArray(response) ? response : response.data || [];
+        
+        if (users.length > 0) {
+          allUsers = allUsers.concat(users);
+          page++;
+        } else {
+          hasMore = false;
+        }
+        
+        if (page > 50) break;
+      } catch (error) {
+        if (error instanceof ApiError) {
+          if (error.statusCode === 400 || error.statusCode === 404) {
+            logger.debug(`No more users pages after page ${page - 1}`, undefined, 'WordPressAnalytics');
+            hasMore = false;
+          } else if (error.statusCode === 401 || error.statusCode === 403) {
+            logger.warn(`Authentication/permission error fetching users page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          } else {
+            logger.error(`Error fetching users page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          }
+        } else {
+          logger.error(`Network error fetching users page ${page}`, error, 'WordPressAnalytics');
+          hasMore = false;
+        }
       }
-      
-      if (page > 50) break;
     }
     
+    logger.info(`Fetched ${allUsers.length} users total`, undefined, 'WordPressAnalytics');
     return allUsers;
   }
   
@@ -576,19 +707,39 @@ export class WordPressAnalyticsService {
     let hasMore = true;
     
     while (hasMore) {
-      const response = await client.getMedia({ per_page: 100, page });
-      const media = Array.isArray(response) ? response : response.data || [];
-      
-      if (media.length > 0) {
-        allMedia = allMedia.concat(media);
-        page++;
-      } else {
-        hasMore = false;
+      try {
+        logger.debug(`Fetching media page ${page}`, undefined, 'WordPressAnalytics');
+        const response = await client.getMedia({ per_page: 100, page });
+        const media = Array.isArray(response) ? response : response.data || [];
+        
+        if (media.length > 0) {
+          allMedia = allMedia.concat(media);
+          page++;
+        } else {
+          hasMore = false;
+        }
+        
+        if (page > 100) break;
+      } catch (error) {
+        if (error instanceof ApiError) {
+          if (error.statusCode === 400 || error.statusCode === 404) {
+            logger.debug(`No more media pages after page ${page - 1}`, undefined, 'WordPressAnalytics');
+            hasMore = false;
+          } else if (error.statusCode === 401 || error.statusCode === 403) {
+            logger.warn(`Authentication/permission error fetching media page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          } else {
+            logger.error(`Error fetching media page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          }
+        } else {
+          logger.error(`Network error fetching media page ${page}`, error, 'WordPressAnalytics');
+          hasMore = false;
+        }
       }
-      
-      if (page > 100) break;
     }
     
+    logger.info(`Fetched ${allMedia.length} media items total`, undefined, 'WordPressAnalytics');
     return allMedia;
   }
   
@@ -598,19 +749,39 @@ export class WordPressAnalyticsService {
     let hasMore = true;
     
     while (hasMore) {
-      const response = await client.getPages({ per_page: 100, page });
-      const pages = Array.isArray(response) ? response : response.data || [];
-      
-      if (pages.length > 0) {
-        allPages = allPages.concat(pages);
-        page++;
-      } else {
-        hasMore = false;
+      try {
+        logger.debug(`Fetching pages page ${page}`, undefined, 'WordPressAnalytics');
+        const response = await client.getPages({ per_page: 100, page });
+        const pages = Array.isArray(response) ? response : response.data || [];
+        
+        if (pages.length > 0) {
+          allPages = allPages.concat(pages);
+          page++;
+        } else {
+          hasMore = false;
+        }
+        
+        if (page > 50) break;
+      } catch (error: any) {
+        if (error instanceof ApiError) {
+          if (error.statusCode === 400 || error.statusCode === 404) {
+            logger.debug(`No more pages after page ${page - 1}`, undefined, 'WordPressAnalytics');
+            hasMore = false;
+          } else if (error.statusCode === 401 || error.statusCode === 403) {
+            logger.warn(`Authentication/permission error fetching pages page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          } else {
+            logger.error(`Error fetching pages page ${page}`, error, 'WordPressAnalytics');
+            hasMore = false;
+          }
+        } else {
+          logger.error(`Network error fetching pages page ${page}`, error, 'WordPressAnalytics');
+          hasMore = false;
+        }
       }
-      
-      if (page > 50) break;
     }
     
+    logger.info(`Fetched ${allPages.length} pages total`, undefined, 'WordPressAnalytics');
     return allPages;
   }
   

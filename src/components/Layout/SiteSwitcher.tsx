@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { configService, WordPressSite } from '@/lib/db/config';
 import { useActiveSite } from '@/hooks/useActiveSite';
 import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export function SiteSwitcher() {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ export function SiteSwitcher() {
       const allSites = await configService.getAllSites();
       setSites(allSites);
     } catch (error) {
-      console.error('Error loading sites:', error);
+      logger.error('Error loading sites', error, 'SiteSwitcher');
     }
   };
 

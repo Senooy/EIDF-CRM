@@ -3,6 +3,7 @@ import { configService, WordPressSite } from '@/lib/db/config';
 import { wpClientManager, NoActiveSiteError } from '@/lib/api/wordpress-client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQueryClient } from '@tanstack/react-query';
+import { logger } from '@/lib/logger';
 
 export function useActiveSite() {
   const { user } = useAuth();
@@ -38,7 +39,7 @@ export function useActiveSite() {
         }
       }
     } catch (err) {
-      console.error('Error loading active site:', err);
+      logger.error('Error loading active site', err, 'useActiveSite');
       setError('Erreur lors du chargement du site actif');
     } finally {
       setLoading(false);
@@ -66,7 +67,7 @@ export function useActiveSite() {
       // Force page reload to ensure all components use the new site
       window.location.reload();
     } catch (err) {
-      console.error('Error switching site:', err);
+      logger.error('Error switching site', err, 'useActiveSite');
       throw new Error('Erreur lors du changement de site');
     }
   };

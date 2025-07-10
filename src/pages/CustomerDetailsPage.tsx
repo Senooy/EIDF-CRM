@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { getCustomerById, Customer, Order, getAllOrders } from "@/lib/woocommerce";
+import { getCustomerById, Customer, Order, getAllOrders } from "@/lib/woocommerce-multi";
 import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -46,16 +46,16 @@ const CustomerDetailsPage = () => {
     enabled: !!customerId, // Only run if customerId is valid
   });
 
-  // Uncomment and update customer orders fetching
+  // Customer orders fetching - keep using getAllOrders for now since it's customer-specific
   const {
-    data: customerOrders = [], // Default to empty array
+    data: customerOrders = [],
     isLoading: isLoadingOrders,
     error: ordersError
   } = useQuery<Order[]>({
     queryKey: ["woocommerce_customer_orders", customerId],
-    // Use the updated getAllOrders function
     queryFn: () => getAllOrders(customerId),
-    enabled: !!customerId && !!customer, // Run if customer loaded
+    enabled: !!customerId && !!customer,
+    staleTime: 1000 * 60 * 5,
   });
 
   // Combine loading states

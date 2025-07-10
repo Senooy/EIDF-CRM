@@ -15,38 +15,36 @@ import CustomerDetailsPage from "./pages/CustomerDetailsPage";
 import ProductsListPage from "./pages/ProductsListPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import SiteConfiguration from "./pages/Settings/SiteConfiguration";
+import SyncSettings from "./pages/Settings/SyncSettings";
 import WordPressDashboard from "./pages/WordPressDashboard";
 import WooCommerceDashboard from "./pages/WooCommerceDashboard";
+import { queryConfig } from "./lib/queryConfig";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { queryErrorHandler } from "./lib/error-handler";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-    },
-  },
-});
+const queryClient = new QueryClient(queryConfig);
 
 const ProtectedLayout = () => (
   <Outlet />
 );
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-          <Route
-            element={
-              <ProtectedRoute>
-                <ProtectedLayout />
-              </ProtectedRoute>
-            }
-          >
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route
+              element={
+                <ProtectedRoute>
+                  <ProtectedLayout />
+                </ProtectedRoute>
+              }
+            >
             <Route path="/" element={<Index />} />
             <Route path="/orders/:id" element={<OrderDetails />} />
             <Route path="/orders" element={<OrdersListPage />} />
@@ -57,6 +55,7 @@ const App = () => (
             <Route path="/wordpress" element={<WordPressDashboard />} />
             <Route path="/woocommerce" element={<WooCommerceDashboard />} />
             <Route path="/settings/sites" element={<SiteConfiguration />} />
+            <Route path="/settings/sync" element={<SyncSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Route>
@@ -64,6 +63,7 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

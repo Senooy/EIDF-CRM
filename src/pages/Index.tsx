@@ -1,9 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Order as WooCommerceOrder,
-  getAllOrders
+  Order as WooCommerceOrder
 } from "@/lib/woocommerce-multi";
+import { useCachedOrders } from "@/hooks/useCachedData";
 import { formatPrice, formatDate } from "@/utils/formatters";
 import KPICard from "@/components/Dashboard/KPICard";
 import OrdersTable from "@/components/Dashboard/OrdersTable";
@@ -13,10 +13,11 @@ import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import ActivityFeed from "@/components/Dashboard/ActivityFeed";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, Clock, CheckCircle, CreditCard, TrendingUp } from "lucide-react";
+import { ShoppingCart, Clock, CheckCircle, CreditCard, TrendingUp, RefreshCw, Database } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import * as ss from 'simple-statistics';
 import { RequireSite } from "@/components/RequireSite";
 
@@ -98,55 +99,63 @@ const Index = () => {
   const [selectedPeriodKey, setSelectedPeriodKey] = useState<PeriodKey>('all'); 
   // Add state for forecast mode
   const [forecastMode, setForecastMode] = useState<boolean>(false);
+  // Cache toggle
+  const [useCache, setUseCache] = useState(true);
 
-  // Fetch ALL orders data from WooCommerce
-  const { data: allOrders = [], isLoading: ordersLoading } = useQuery<WooCommerceOrder[]>({ 
-    queryKey: ["woocommerce_all_orders"], // Keep the query key simple
-    // Explicitly call with undefined to fetch ALL orders
-    queryFn: () => getAllOrders(), 
-    staleTime: 1000 * 60 * 5, 
+  // Use cached orders with filter based on period
+  const {
+    data: cachedOrders,
+    isLoading: cacheLoading,
+    isSyncing,
+    error: cacheError,
+    totalCount: cachedTotalCount,
+    lastSync,
+    isStale,
+    sync
+  } = useCachedOrders({
+    bypassCache: !useCache,
+    autoSync: false,
+    perPage: 9999, // Get all orders for dashboard
+    filter: selectedPeriodKey !== 'all' ? (order: any) => {
+      return isOrderInPeriod(order.date_created, selectedPeriodKey);
+    } : undefined,
+    sort: (a: any, b: any) => new Date(b.date_created).getTime() - new Date(a.date_created).getTime()
   });
+  
+  const ordersLoading = cacheLoading;
+  const allOrders = cachedOrders || [];
 
-  // Calculate Lifetime KPIs using useMemo, now filtered by period
+  // Calculate stats from cached orders
   const kpiStats = useMemo(() => {
-    // Filter orders based on the selected period first
-    console.log(`[Debug] Calculating KPIs for period: ${selectedPeriodKey}. Total orders before filter: ${allOrders.length}`);
-    const filteredOrders = allOrders.filter(order => isOrderInPeriod(order.date_created, selectedPeriodKey));
-    console.log(`[Debug] Total orders AFTER filter for period ${selectedPeriodKey}: ${filteredOrders.length}`);
+    if (!allOrders || allOrders.length === 0) {
+      return {
+        totalOrders: 0,
+        pendingOrders: 0,
+        completedOrders: 0,
+        revenueForPeriod: 0,
+      };
+    }
 
-    if (!filteredOrders || filteredOrders.length === 0) return {
-      totalOrders: 0,
-      pendingOrders: 0,
-      completedOrders: 0,
-      totalRevenueLifetime: 0,
-    };
-
-    // Calculate stats based on FILTERED orders
-    const completed = filteredOrders.filter(order => order.status === 'completed');
-    const pending = filteredOrders.filter(order => order.status === 'pending');
-    // Note: totalOrders should reflect the filtered count for the period, 
-    // unless we want 'Total commandes (période)' vs 'Total commandes (lifetime)'?
-    // Let's show stats for the period.
+    const completed = allOrders.filter(order => order.status === 'completed');
+    const pending = allOrders.filter(order => order.status === 'pending');
 
     const revenueForPeriod = completed.reduce((sum, order) => {
-        // Ensure 'total' is treated as a number, handling potential null/undefined/empty strings
         const orderTotal = parseFloat(order.total || '0');
         return sum + (isNaN(orderTotal) ? 0 : orderTotal);
     }, 0);
 
     return {
-      totalOrders: filteredOrders.length, // Orders in the selected period
-      pendingOrders: pending.length, // Pending in the selected period
-      completedOrders: completed.length, // Completed in the selected period
-      revenueForPeriod: revenueForPeriod, 
+      totalOrders: allOrders.length,
+      pendingOrders: pending.length,
+      completedOrders: completed.length,
+      revenueForPeriod: revenueForPeriod,
     };
-  }, [allOrders, selectedPeriodKey]);
+  }, [allOrders]);
 
-  // Format data for Revenue Chart using useMemo, now filtered by period
+  // Format data for Revenue Chart using useMemo
   const chartData = useMemo(() => {
-    const filteredRawOrders = allOrders.filter(order => 
-        isOrderInPeriod(order.date_created, selectedPeriodKey) && order.status === 'completed'
-    );
+    // Use all fetched orders for chart (they're already filtered by period)
+    const filteredRawOrders = allOrders.filter(order => order.status === 'completed');
 
     if (!filteredRawOrders || filteredRawOrders.length === 0) return [];
 
@@ -202,7 +211,7 @@ const Index = () => {
       }
     }
     return historicalData;
-  }, [allOrders, selectedPeriodKey, forecastMode]); // Add forecastMode to dependencies
+  }, [allOrders, forecastMode]); // Removed selectedPeriodKey as orders are already filtered
 
   const isLoading = ordersLoading;
 
@@ -251,6 +260,47 @@ const Index = () => {
                      ))}
                    </SelectContent>
                  </Select>
+                 
+                 {/* Cache Toggle */}
+                 <div className="flex items-center gap-2">
+                   <Switch
+                     id="use-cache"
+                     checked={useCache}
+                     onCheckedChange={setUseCache}
+                   />
+                   <Label htmlFor="use-cache" className="flex items-center gap-2 cursor-pointer">
+                     <Database className="h-4 w-4" />
+                     Cache
+                     {useCache && lastSync && (
+                       <Badge variant={isStale ? "secondary" : "default"} className="text-xs">
+                         {isStale ? "Obsolète" : "À jour"}
+                       </Badge>
+                     )}
+                   </Label>
+                 </div>
+                 
+                 {/* Sync Button */}
+                 {useCache && (
+                   <Button
+                     variant="outline"
+                     size="sm"
+                     onClick={sync}
+                     disabled={isSyncing}
+                   >
+                     {isSyncing ? (
+                       <>
+                         <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                         Sync...
+                       </>
+                     ) : (
+                       <>
+                         <RefreshCw className="h-4 w-4 mr-2" />
+                         Sync
+                       </>
+                     )}
+                   </Button>
+                 )}
+                 
                  {/* Forecast Toggle */}
                  <div className="flex items-center space-x-2">
                    <Switch 

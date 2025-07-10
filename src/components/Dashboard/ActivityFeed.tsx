@@ -1,4 +1,4 @@
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale'; // Import French locale for formatting
@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"; // Import Button
 import { useState } from "react";
 import ActivityModalContent from "@/components/Dashboard/ActivityModalContent"; // Added import
 
-import { getRecentOrders, getOrderNotes, Order, OrderNote } from "@/lib/woocommerce";
+import { getRecentOrdersWithNotes, Order, OrderNote } from "@/lib/woocommerce-multi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton"; // For loading state
 import { formatOrderNumber } from "@/utils/formatters";
@@ -37,53 +37,44 @@ const ActivityFeed = ({ numberOfOrders = 5 }: { numberOfOrders?: number }) => {
   // State for modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false); 
 
-  // 1. Fetch recent orders
-  const { data: recentOrders, isLoading: isLoadingOrders, error: ordersError } = useQuery<Order[]>({
-    queryKey: ["woocommerce_recent_orders", numberOfOrders],
-    queryFn: () => getRecentOrders(numberOfOrders),
+  // Fetch recent orders with notes in a single query
+  const { data: ordersWithNotes, isLoading: isLoadingOrders, error: ordersError } = useQuery({
+    queryKey: ["woocommerce_recent_orders_with_notes", numberOfOrders],
+    queryFn: () => getRecentOrdersWithNotes(numberOfOrders),
+    staleTime: 1000 * 60 * 2, // Cache for 2 minutes
   });
 
-  // 2. Prepare queries to fetch notes for each recent order
-  const orderIds = recentOrders?.map(order => order.id) ?? [];
-  const noteQueries = useQueries({
-    queries: orderIds.map(orderId => ({
-      queryKey: ["woocommerce_order_notes", orderId],
-      queryFn: () => getOrderNotes(orderId),
-      enabled: !!orderId, // Only run if orderId is valid
-    })),
-  });
-
-  // Check if notes are still loading
-  const isLoadingNotes = noteQueries.some(query => query.isLoading);
-  // Consolidate any note fetching errors
-  const notesError = noteQueries.find(query => query.error)?.error;
+  const isLoadingNotes = false; // No separate notes loading anymore
+  const notesError = null; // No separate notes errors
 
   // 3. Combine and sort data once everything is loaded
   let combinedActivities: ActivityItem[] = [];
-  if (!isLoadingOrders && !isLoadingNotes && recentOrders) {
-    // Add orders as 'new_order' activities
-    combinedActivities = recentOrders.map(order => ({
-      id: `order-${order.id}`,
-      type: 'new_order',
-      timestamp: new Date(order.date_created),
-      orderId: order.id,
-      order: order,
-    }));
+  if (!isLoadingOrders && ordersWithNotes) {
+    // Process orders with their notes
+    ordersWithNotes.forEach((orderWithNotes) => {
+      // OrderWithNotes has the structure where order has notes property
+      const order = orderWithNotes;
+      const notes = order.notes || [];
+      
+      // Add order as 'new_order' activity
+      combinedActivities.push({
+        id: `order-${order.id}`,
+        type: 'new_order',
+        timestamp: new Date(order.date_created),
+        orderId: order.id,
+        order: order,
+      });
 
-    // Add notes as 'note_added' activities
-    noteQueries.forEach((queryResult, index) => {
-      if (queryResult.data) {
-        const orderId = orderIds[index];
-        queryResult.data.forEach(note => {
-          combinedActivities.push({
-            id: `note-${note.id}`,
-            type: 'note_added',
-            timestamp: new Date(note.date_created),
-            orderId: orderId,
-            note: note,
-          });
+      // Add notes as 'note_added' activities
+      notes.forEach(note => {
+        combinedActivities.push({
+          id: `note-${note.id}`,
+          type: 'note_added',
+          timestamp: new Date(note.date_created),
+          orderId: order.id,
+          note: note,
         });
-      }
+      });
     });
 
     // Sort combined activities by timestamp, most recent first

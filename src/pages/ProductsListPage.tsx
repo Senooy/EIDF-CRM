@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getProductsPage, PaginatedProductsResponse, Product, getProductCategories, ProductCategory, getAllProducts } from '@/lib/woocommerce';
+import { Product, getProductCategories, ProductCategory, getAllProducts } from '@/lib/woocommerce';
+import { useCachedProducts } from '@/hooks/useCachedData';
 import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight, Eye, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Eye, Sparkles, RefreshCw, Database } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   Table,
@@ -32,6 +33,8 @@ import { useDebounce } from '@/hooks/use-debounce';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { SEOGenerationModal } from '@/components/SEOGenerationModal';
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -52,6 +55,9 @@ const ProductsListPage: React.FC = () => {
   const [maxPrice, setMaxPrice] = useState<string>('');
   const [sortBy, setSortBy] = useState<SortByOption>('');
   
+  // Cache toggle
+  const [useCache, setUseCache] = useState(true);
+  
   // SEO generation states
   const [showSEOModal, setShowSEOModal] = useState(false);
   const [allProductsForSEO, setAllProductsForSEO] = useState<Product[]>([]);
@@ -65,60 +71,75 @@ const ProductsListPage: React.FC = () => {
     queryFn: getProductCategories,
   });
 
-  const { 
-    data: paginatedProducts, 
-    isLoading, 
-    isError, 
-    error, 
-    isFetching,
-    isPlaceholderData
-  } = useQuery<PaginatedProductsResponse>({
-    queryKey: ['products', currentPage, debouncedSearchTerm, selectedCategory, stockStatus, minPrice, maxPrice, sortBy],
-    queryFn: () => {
-      const filters: { 
-        search?: string;
-        category?: string;
-        stock_status?: 'instock' | 'outofstock' | 'onbackorder';
-        min_price?: string;
-        max_price?: string;
-        orderby?: 'date' | 'id' | 'include' | 'title' | 'slug' | 'modified' | 'rand' | 'menu_order' | 'price' | 'popularity' | 'rating' | 'total_sales';
-        order?: 'asc' | 'desc';
-      } = {};
-
+  // Use cached products
+  const {
+    data: cachedProducts,
+    isLoading: cacheLoading,
+    isSyncing,
+    error: cacheError,
+    totalCount: cachedTotalCount,
+    lastSync,
+    isStale,
+    sync,
+    page: cachePage,
+    totalPages: cacheTotalPages,
+    goToPage: cacheGoToPage
+  } = useCachedProducts({
+    page: currentPage,
+    perPage: ITEMS_PER_PAGE,
+    bypassCache: !useCache,
+    autoSync: false,
+    filter: (product: Product) => {
+      // Apply search filter
       if (debouncedSearchTerm) {
-        filters.search = debouncedSearchTerm;
-      }
-      if (selectedCategory) {
-        filters.category = selectedCategory;
-      }
-      if (stockStatus) {
-        filters.stock_status = stockStatus;
-      }
-      if (minPrice) {
-        filters.min_price = minPrice;
-      }
-      if (maxPrice) {
-        filters.max_price = maxPrice;
-      }
-
-      if (sortBy === 'popularity') {
-        filters.orderby = 'popularity';
-      } else if (sortBy === 'total_sales') {
-        filters.orderby = 'total_sales'; // Assuming API supports this directly based on previous search
-      } else if (sortBy === 'price_asc') {
-        filters.orderby = 'price';
-        filters.order = 'asc';
-      } else if (sortBy === 'price_desc') {
-        filters.orderby = 'price';
-        filters.order = 'desc';
+        const searchLower = debouncedSearchTerm.toLowerCase();
+        const matchesSearch = product.name.toLowerCase().includes(searchLower) ||
+                             (product.sku && product.sku.toLowerCase().includes(searchLower));
+        if (!matchesSearch) return false;
       }
       
-      return getProductsPage(currentPage, ITEMS_PER_PAGE, filters);
+      // Apply category filter
+      if (selectedCategory) {
+        const hasCategory = product.categories?.some(cat => String(cat.id) === selectedCategory);
+        if (!hasCategory) return false;
+      }
+      
+      // Apply stock status filter
+      if (stockStatus && product.stock_status !== stockStatus) {
+        return false;
+      }
+      
+      // Apply price filters
+      const price = parseFloat(product.price || '0');
+      if (minPrice && price < parseFloat(minPrice)) return false;
+      if (maxPrice && price > parseFloat(maxPrice)) return false;
+      
+      return true;
     },
-    placeholderData: (previousData) => previousData,
-    // Refetch on window focus can be helpful but also aggressive
-    // refetchOnWindowFocus: false, 
+    sort: (a: Product, b: Product) => {
+      switch (sortBy) {
+        case 'popularity':
+          // Assuming we have a popularity field
+          return (b.rating_count || 0) - (a.rating_count || 0);
+        case 'total_sales':
+          return (b.total_sales || 0) - (a.total_sales || 0);
+        case 'price_asc':
+          return parseFloat(a.price || '0') - parseFloat(b.price || '0');
+        case 'price_desc':
+          return parseFloat(b.price || '0') - parseFloat(a.price || '0');
+        default:
+          // Default sort by date modified
+          return new Date(b.date_modified).getTime() - new Date(a.date_modified).getTime();
+      }
+    }
   });
+
+  const products = cachedProducts;
+  const totalPages = cacheTotalPages;
+  const totalProducts = cachedTotalCount;
+  const isLoading = cacheLoading;
+  const isError = !!cacheError;
+  const error = cacheError;
 
   // Callback when SEO generation is complete
   const handleSEOBatchComplete = () => {
@@ -128,23 +149,23 @@ const ProductsListPage: React.FC = () => {
 
   // Effect to reset to page 1 when filters change
   useEffect(() => {
-    if (!isPlaceholderData) { // Avoid resetting on initial load or placeholder data updates
-        setCurrentPage(1);
+    setCurrentPage(1);
+    if (useCache && cacheGoToPage) {
+      cacheGoToPage(1);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearchTerm, selectedCategory, stockStatus, minPrice, maxPrice, sortBy]);
-
-  const products = paginatedProducts?.products ?? [];
-  const totalPages = paginatedProducts?.totalPages ?? 0;
-  const totalProducts = paginatedProducts?.totalProducts ?? 0;
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNextPage = () => {
-    if (!isPlaceholderData && currentPage < totalPages) {
+    if (currentPage < totalPages) {
       setCurrentPage((prev) => prev + 1);
+      if (useCache && cacheGoToPage) {
+        cacheGoToPage(currentPage + 1);
+      }
     }
   };
 
@@ -260,14 +281,56 @@ const ProductsListPage: React.FC = () => {
                   <CardTitle>Produits</CardTitle>
                   <CardDescription>Gérez vos produits et consultez leurs performances de vente.</CardDescription>
                 </div>
-                <Button 
-                  onClick={handleOpenSEOModal}
-                  variant="outline" 
-                  size="sm"
-                >
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Générer SEO
-                </Button>
+                <div className="flex items-center gap-4">
+                  {/* Cache Toggle */}
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      id="use-cache"
+                      checked={useCache}
+                      onCheckedChange={setUseCache}
+                    />
+                    <Label htmlFor="use-cache" className="flex items-center gap-2 cursor-pointer">
+                      <Database className="h-4 w-4" />
+                      Cache local
+                      {useCache && lastSync && (
+                        <Badge variant={isStale ? "secondary" : "default"} className="text-xs">
+                          {isStale ? "Obsolète" : "À jour"}
+                        </Badge>
+                      )}
+                    </Label>
+                  </div>
+                  
+                  {/* Sync Button */}
+                  {useCache && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={sync}
+                      disabled={isSyncing}
+                    >
+                      {isSyncing ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                          Synchronisation...
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          Synchroniser
+                        </>
+                      )}
+                    </Button>
+                  )}
+                  
+                  <Button 
+                    onClick={handleOpenSEOModal}
+                    variant="outline" 
+                    size="sm"
+                  >
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Générer SEO
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             
@@ -356,7 +419,7 @@ const ProductsListPage: React.FC = () => {
                 />
               </div>
 
-              {isLoading && !paginatedProducts && (
+              {isLoading && (
                 <div className="space-y-4">
                   {Array.from({ length: isDesktop ? ITEMS_PER_PAGE : 3 }).map((_, i) => (
                     isDesktop
@@ -375,7 +438,7 @@ const ProductsListPage: React.FC = () => {
                 </Alert>
               )}
               
-              <div className={`transition-opacity duration-300 ${isPlaceholderData ? 'opacity-50' : 'opacity-100'}`}> 
+              <div className="transition-opacity duration-300"> 
                 {!isLoading && !isError && products.length === 0 && (
                     <p className="text-center text-muted-foreground py-10">Aucun produit trouvé.</p>
                 )}
@@ -428,7 +491,7 @@ const ProductsListPage: React.FC = () => {
                       variant="outline"
                       size="icon"
                       onClick={handleNextPage}
-                      disabled={isPlaceholderData || currentPage === totalPages}
+                      disabled={currentPage === totalPages}
                       aria-label="Aller à la page suivante"
                     >
                       <ChevronRight className="h-4 w-4" />

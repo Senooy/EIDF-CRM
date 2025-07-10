@@ -23,6 +23,8 @@ app.all('/proxy/*', async (req, res) => {
       return res.status(400).json({ error: 'Target URL is required' });
     }
 
+    console.log(`Proxying request to: ${targetUrl}`);
+
     // Forward the request
     const response = await axios({
       method: req.method,
@@ -31,19 +33,67 @@ app.all('/proxy/*', async (req, res) => {
         ...req.headers,
         host: undefined,
         'content-length': undefined,
+        'accept-encoding': 'gzip, deflate', // Ensure we can handle compressed responses
       },
       data: req.body,
       params: req.query,
-      responseType: 'stream'
+      responseType: 'arraybuffer', // Get raw data to handle encoding properly
+      validateStatus: () => true, // Don't throw on non-2xx status
     });
 
-    // Forward the response
+    // Forward the response status
     res.status(response.status);
-    Object.entries(response.headers).forEach(([key, value]) => {
-      res.setHeader(key, value as string);
-    });
     
-    response.data.pipe(res);
+    // Forward response headers
+    Object.entries(response.headers).forEach(([key, value]) => {
+      if (key.toLowerCase() !== 'content-encoding') { // Don't forward encoding header
+        res.setHeader(key, value as string);
+      }
+    });
+
+    // Convert arraybuffer to string and check content type
+    const contentType = response.headers['content-type'] || '';
+    let responseData: any;
+    
+    try {
+      responseData = Buffer.from(response.data).toString('utf-8');
+      
+      // If it's supposed to be JSON but isn't, try to extract error message
+      if (contentType.includes('application/json') || targetUrl.includes('wp-json')) {
+        try {
+          // Try to parse as JSON
+          const jsonData = JSON.parse(responseData);
+          res.json(jsonData);
+        } catch (jsonError) {
+          // If JSON parsing fails, check if it's HTML error page
+          if (responseData.includes('<!DOCTYPE') || responseData.includes('<html')) {
+            console.error('Received HTML instead of JSON:', responseData.substring(0, 500));
+            res.status(502).json({
+              error: 'Invalid response from WordPress',
+              message: 'Expected JSON but received HTML. This might be due to a plugin conflict or server error.',
+              details: responseData.substring(0, 200)
+            });
+          } else {
+            // Try to clean up the JSON
+            console.error('Invalid JSON received:', responseData.substring(0, 500));
+            res.status(502).json({
+              error: 'Invalid JSON response',
+              message: 'The server returned malformed JSON data',
+              rawData: responseData.substring(0, 500)
+            });
+          }
+        }
+      } else {
+        // For non-JSON responses, send as-is
+        res.send(responseData);
+      }
+    } catch (decodeError) {
+      console.error('Error decoding response:', decodeError);
+      res.status(502).json({
+        error: 'Response decoding error',
+        message: 'Failed to decode the server response'
+      });
+    }
   } catch (error: any) {
     console.error('Proxy error:', error.message);
     

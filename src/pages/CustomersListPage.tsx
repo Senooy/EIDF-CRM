@@ -1,16 +1,20 @@
 import { useQuery } from "@tanstack/react-query";
-import { Customer as WooCommerceCustomer, getAllCustomers, Order, getAllOrders } from "@/lib/woocommerce";
+import { Customer as WooCommerceCustomer } from "@/lib/woocommerce-multi";
+import { useCachedCustomers } from "@/hooks/useCachedData";
 import CustomersTable from "@/components/Dashboard/CustomersTable";
-import CustomerCard from "@/components/Dashboard/CustomerCard"; // Import the new card component
+import CustomerCard from "@/components/Dashboard/CustomerCard";
 import Navbar from "@/components/Layout/Navbar";
 import Sidebar from "@/components/Layout/Sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
-import { useMemo, useState, useEffect } from "react"; // Import useState, useEffect
-import { formatPrice } from "@/utils/formatters"; // Import formatPrice
-import { Input } from "@/components/ui/input"; // Import Input
-import { Button } from "@/components/ui/button"; // Import Button
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // Import Select components
+import { AlertCircle, RefreshCw, Database } from "lucide-react";
+import { useMemo, useState, useEffect } from "react";
+import { formatPrice } from "@/utils/formatters";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 const CustomersListPage = () => {
   // State for search term
@@ -20,13 +24,17 @@ const CustomersListPage = () => {
 
   // --- Pagination State ---
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default 10 items per page
+  const [itemsPerPage, setItemsPerPage] = useState(20); // Default 20 items per page
+  
+  // Cache toggle
+  const [useCache, setUseCache] = useState(true);
   // --- End Pagination State ---
 
   // Debounce effect
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
+      setCurrentPage(1); // Reset to page 1 when search changes
     }, 500); // 500ms delay
 
     // Cleanup function
@@ -35,54 +43,76 @@ const CustomersListPage = () => {
     };
   }, [searchTerm]);
 
-  // Fetch ALL customers data (keep, but simplify queryFn if context isn't needed)
+  // Use cached customers
   const {
-    data: allCustomers = [], // Initialize with empty array for safety
-    isLoading: customersLoading,
-    error: customersError,
-    isSuccess: customersSuccess // Use isSuccess to check if data is available
-  } = useQuery<WooCommerceCustomer[], Error>({ // Explicit types <TData, TError>
-    queryKey: ["woocommerce_all_customers", { search: debouncedSearchTerm }],
-    // Update queryFn if context isn't strictly necessary, pass filters directly
-    queryFn: () => getAllCustomers({ search: debouncedSearchTerm }), // Simplified queryFn
-    staleTime: 1000 * 60 * 5,
+    data: cachedCustomers,
+    isLoading: cacheLoading,
+    isSyncing,
+    error: cacheError,
+    totalCount: cachedTotalCount,
+    lastSync,
+    isStale,
+    sync,
+    page: cachePage,
+    totalPages: cacheTotalPages,
+    goToPage: cacheGoToPage
+  } = useCachedCustomers({
+    page: currentPage,
+    perPage: itemsPerPage,
+    bypassCache: !useCache,
+    autoSync: false,
+    filter: (customer: WooCommerceCustomer) => {
+      if (debouncedSearchTerm) {
+        const searchLower = debouncedSearchTerm.toLowerCase();
+        const fullName = `${customer.first_name} ${customer.last_name}`.toLowerCase();
+        const email = customer.email?.toLowerCase() || '';
+        const company = customer.billing?.company?.toLowerCase() || '';
+        
+        return fullName.includes(searchLower) || 
+               email.includes(searchLower) || 
+               company.includes(searchLower);
+      }
+      return true;
+    },
+    sort: (a: WooCommerceCustomer, b: WooCommerceCustomer) => {
+      // Sort by date created descending
+      return new Date(b.date_created).getTime() - new Date(a.date_created).getTime();
+    }
   });
 
-  // --- Pagination Logic ---
-  // Calculate total pages based on allCustomers directly
-  const totalPages = Math.ceil((allCustomers?.length || 0) / itemsPerPage);
-
-  // Paginate the allCustomers data
-  const paginatedCustomers = useMemo(() => {
-    // Ensure allCustomers is an array before slicing
-    if (!Array.isArray(allCustomers)) {
-        return [];
-    }
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return allCustomers.slice(startIndex, endIndex);
-    // Dependency is now just allCustomers, currentPage, and itemsPerPage
-  }, [allCustomers, currentPage, itemsPerPage]);
+  const allCustomers = cachedCustomers;
+  const totalPages = cacheTotalPages;
+  const totalCustomers = cachedTotalCount;
+  const paginatedCustomers = allCustomers;
+  const customersLoading = cacheLoading;
+  const customersError = cacheError;
+  const customersSuccess = !cacheLoading && !cacheError;
 
   const handlePreviousPage = () => {
     setCurrentPage((prev) => Math.max(prev - 1, 1));
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      if (useCache && cacheGoToPage) {
+        cacheGoToPage(currentPage + 1);
+      }
+    }
   };
 
   const handleItemsPerPageChange = (value: string) => {
     const newItemsPerPage = parseInt(value, 10);
     setItemsPerPage(newItemsPerPage);
     setCurrentPage(1); // Reset to page 1 when items per page changes
+    if (useCache && cacheGoToPage) {
+      cacheGoToPage(1);
+    }
   };
   // --- End Pagination Logic ---
 
-  // Simplify loading state: only depends on the main customer query now
+  // Simplify loading state
   const isLoading = customersLoading;
-
-  // Simplify error state: only depends on the main customer query now
   const isError = !!customersError;
 
   // Update ErrorDisplay to only reflect customersError
@@ -113,8 +143,51 @@ const CustomersListPage = () => {
       <div className="flex-1 flex flex-col">
         <Navbar />
         <main className="flex-1 p-4 md:p-6 bg-gray-50 overflow-y-auto">
-          <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-semibold text-gray-900">Clients</h1>
+          <div className="mb-6">
+              <div className="flex justify-between items-center mb-4">
+                  <h1 className="text-2xl font-semibold text-gray-900">Clients</h1>
+                  <div className="flex items-center gap-4">
+                    {/* Cache Toggle */}
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        id="use-cache"
+                        checked={useCache}
+                        onCheckedChange={setUseCache}
+                      />
+                      <Label htmlFor="use-cache" className="flex items-center gap-2 cursor-pointer">
+                        <Database className="h-4 w-4" />
+                        Cache local
+                        {useCache && lastSync && (
+                          <Badge variant={isStale ? "secondary" : "default"} className="text-xs">
+                            {isStale ? "Obsolète" : "À jour"}
+                          </Badge>
+                        )}
+                      </Label>
+                    </div>
+                    
+                    {/* Sync Button */}
+                    {useCache && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={sync}
+                        disabled={isSyncing}
+                      >
+                        {isSyncing ? (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                            Synchronisation...
+                          </>
+                        ) : (
+                          <>
+                            <RefreshCw className="h-4 w-4 mr-2" />
+                            Synchroniser
+                          </>
+                        )}
+                      </Button>
+                    )}
+                  </div>
+              </div>
               {/* Search Input */}
               <div className="w-full max-w-sm">
                   <Input
@@ -163,7 +236,7 @@ const CustomersListPage = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                        <span className="text-sm text-gray-700">
-                         Page {currentPage} sur {totalPages}
+                         Page {currentPage} sur {totalPages} ({totalCustomers} clients)
                        </span>
                       <Button 
                         variant="outline" 

@@ -1,5 +1,6 @@
 import { QueryFunctionContext } from "@tanstack/react-query";
 import { wpClientManager } from './api/wordpress-client';
+import { logger } from './logger';
 import type { 
   Order, 
   OrderNote, 
@@ -35,6 +36,37 @@ export type {
   UpdateProductPayload
 };
 
+// Pagination response types
+export interface PaginatedOrdersResponse {
+  orders: Order[];
+  totalOrders: number;
+  totalPages: number;
+}
+
+export interface PaginatedCustomersResponse {
+  customers: Customer[];
+  totalCustomers: number;
+  totalPages: number;
+}
+
+// Filter types for pagination
+export interface OrderFilters {
+  search?: string;
+  status?: string;
+  customer?: number;
+  after?: string;
+  before?: string;
+  orderby?: 'date' | 'id' | 'include' | 'title' | 'slug' | 'modified';
+  order?: 'asc' | 'desc';
+}
+
+export interface CustomerFilters {
+  search?: string;
+  role?: string;
+  orderby?: 'id' | 'include' | 'name' | 'registered_date';
+  order?: 'asc' | 'desc';
+}
+
 // Multi-site aware WooCommerce functions
 export const getOrders = async (siteId?: number): Promise<Order[]> => {
   try {
@@ -42,17 +74,18 @@ export const getOrders = async (siteId?: number): Promise<Order[]> => {
     const result = await client.getOrders({ per_page: 100, orderby: 'date', order: 'desc' });
     return Array.isArray(result) ? result : result.data || [];
   } catch (error) {
-    console.error('Error fetching WooCommerce orders:', error);
+    logger.error('Error fetching WooCommerce orders', error, 'WooCommerce');
     throw error;
   }
 };
+
 
 export const getOrderById = async (orderId: number, siteId?: number): Promise<Order> => {
   try {
     const client = await wpClientManager.getClient(siteId);
     return await client.getOrder(orderId);
   } catch (error) {
-    console.error(`Error fetching WooCommerce order ${orderId}:`, error);
+    logger.error(`Error fetching WooCommerce order ${orderId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -68,7 +101,143 @@ export const getRecentOrders = async (count: number = 10, siteId?: number): Prom
     });
     return Array.isArray(result) ? result : result.data || [];
   } catch (error) {
-    console.error(`Error fetching ${count} recent WooCommerce orders:`, error);
+    logger.error(`Error fetching ${count} recent WooCommerce orders`, error, 'WooCommerce');
+    throw error;
+  }
+};
+
+// Optimized function for ActivityFeed - fetches orders with their notes
+export interface OrderWithNotes extends Order {
+  notes?: OrderNote[];
+}
+
+// Optimized function for dashboard - fetches orders with aggregated stats
+export interface OrderStats {
+  total: number;
+  pending: number;
+  processing: number;
+  completed: number;
+  cancelled: number;
+  refunded: number;
+  failed: number;
+  totalRevenue: number;
+}
+
+export interface OrdersWithStats {
+  orders: Order[];
+  stats: OrderStats;
+}
+
+export const getRecentOrdersWithNotes = async (
+  count: number = 10, 
+  siteId?: number
+): Promise<OrderWithNotes[]> => {
+  try {
+    // First get recent orders
+    const orders = await getRecentOrders(count, siteId);
+    
+    // For now, return orders without notes to avoid JSON parsing errors
+    // TODO: Fix the notes endpoint JSON encoding issue
+    const ordersWithNotes = orders.map(order => ({
+      ...order,
+      notes: [] as OrderNote[]
+    }));
+    
+    return ordersWithNotes;
+  } catch (error) {
+    logger.error('Error fetching recent orders with notes', error, 'WooCommerce');
+    throw error;
+  }
+};
+
+// Optimized function for dashboard - gets limited orders with pre-calculated stats
+export const getOrdersWithStats = async (
+  dateFrom?: string,
+  siteId?: number
+): Promise<OrdersWithStats> => {
+  try {
+    const client = await wpClientManager.getClient(siteId);
+    
+    // Get only recent orders for display (not all orders)
+    const params: any = {
+      per_page: 100, // Limit to recent 100 orders
+      orderby: 'date',
+      order: 'desc'
+    };
+    
+    if (dateFrom) {
+      params.after = dateFrom + 'T00:00:00';
+    }
+    
+    const result = await client.getOrders(params);
+    const orders = Array.isArray(result) ? result : result.data || [];
+    
+    // Calculate stats from the fetched orders
+    const stats: OrderStats = {
+      total: orders.length,
+      pending: orders.filter(o => o.status === 'pending').length,
+      processing: orders.filter(o => o.status === 'processing').length,
+      completed: orders.filter(o => o.status === 'completed').length,
+      cancelled: orders.filter(o => o.status === 'cancelled').length,
+      refunded: orders.filter(o => o.status === 'refunded').length,
+      failed: orders.filter(o => o.status === 'failed').length,
+      totalRevenue: orders
+        .filter(o => ['completed', 'processing'].includes(o.status))
+        .reduce((sum, order) => sum + parseFloat(order.total || '0'), 0)
+    };
+    
+    return {
+      orders,
+      stats
+    };
+  } catch (error) {
+    logger.error('Error fetching orders with stats', error, 'WooCommerce');
+    throw error;
+  }
+};
+
+// Paginated orders function
+export const getOrdersPage = async (
+  page: number = 1,
+  perPage: number = 20,
+  filters: OrderFilters = {},
+  siteId?: number
+): Promise<PaginatedOrdersResponse> => {
+  logger.info(`Fetching orders page ${page} (perPage: ${perPage})...`, filters, 'WooCommerce');
+  try {
+    const client = await wpClientManager.getClient(siteId);
+    const params: any = {
+      page,
+      per_page: perPage,
+      orderby: filters.orderby || 'date',
+      order: filters.order || 'desc',
+    };
+
+    // Add optional filters
+    if (filters.search) params.search = filters.search;
+    if (filters.status) params.status = filters.status;
+    if (filters.customer) params.customer = filters.customer;
+    if (filters.after) params.after = filters.after;
+    if (filters.before) params.before = filters.before;
+
+    const result = await client.getOrders(params);
+    
+    if (result.pagination) {
+      return {
+        orders: result.data,
+        totalOrders: result.pagination.total || 0,
+        totalPages: result.pagination.totalPages || 0,
+      };
+    }
+
+    // Fallback for direct array response
+    return {
+      orders: Array.isArray(result) ? result : [],
+      totalOrders: 0,
+      totalPages: 1,
+    };
+  } catch (error) {
+    logger.error(`Error fetching WooCommerce orders page ${page}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -91,11 +260,11 @@ export const getAllOrders = async (
   const perPage = 100;
   let morePages = true;
 
-  console.log(`Starting to fetch all orders${customerId !== undefined ? ' for customer ' + customerId : ''}...`);
+  logger.info(`Starting to fetch all orders${customerId !== undefined ? ' for customer ' + customerId : ''}...`, undefined, 'WooCommerce');
 
   while (morePages) {
     try {
-      console.log(`Fetching orders page ${page}${customerId !== undefined ? ' for customer ' + customerId : ''}...`);
+      logger.info(`Fetching orders page ${page}${customerId !== undefined ? ' for customer ' + customerId : ''}...`, undefined, 'WooCommerce');
       const params: any = {
         per_page: perPage,
         page: page,
@@ -118,18 +287,18 @@ export const getAllOrders = async (
       }
 
       if (page > 500) {
-         console.warn("Stopped fetching orders after 500 pages to prevent potential infinite loop.");
+         logger.warn("Stopped fetching orders after 500 pages to prevent potential infinite loop.", undefined, 'WooCommerce');
          morePages = false;
       }
 
     } catch (error) {
-      console.error(`Error fetching WooCommerce orders page ${page}:`, error);
+      logger.error(`Error fetching WooCommerce orders page ${page}`, error, 'WooCommerce');
       morePages = false;
       throw error;
     }
   }
 
-  console.log(`Finished fetching orders${customerId !== undefined ? ' for customer ' + customerId : ''}. Total found: ${allOrders.length}`);
+  logger.info(`Finished fetching orders${customerId !== undefined ? ' for customer ' + customerId : ''}. Total found: ${allOrders.length}`, undefined, 'WooCommerce');
   return allOrders;
 };
 
@@ -138,7 +307,7 @@ export const updateOrderStatus = async (orderId: number, status: string, siteId?
     const client = await wpClientManager.getClient(siteId);
     return await client.updateOrder(orderId, { status });
   } catch (error) {
-    console.error(`Error updating status for WooCommerce order ${orderId}:`, error);
+    logger.error(`Error updating status for WooCommerce order ${orderId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -148,7 +317,7 @@ export const getOrderNotes = async (orderId: number, siteId?: number): Promise<O
     const client = await wpClientManager.getClient(siteId);
     return await client.getWooCommerceData(`orders/${orderId}/notes`);
   } catch (error) {
-    console.error(`Error fetching notes for WooCommerce order ${orderId}:`, error);
+    logger.error(`Error fetching notes for WooCommerce order ${orderId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -162,7 +331,7 @@ export const createOrderNote = async (
     const client = await wpClientManager.getClient(siteId);
     return await client.postWooCommerceData(`orders/${orderId}/notes`, noteData);
   } catch (error) {
-    console.error(`Error creating note for WooCommerce order ${orderId}:`, error);
+    logger.error(`Error creating note for WooCommerce order ${orderId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -172,7 +341,7 @@ export const createRefund = async (orderId: number, refundData: RefundPayload, s
     const client = await wpClientManager.getClient(siteId);
     return await client.postWooCommerceData(`orders/${orderId}/refunds`, refundData);
   } catch (error) {
-    console.error(`Error creating refund for WooCommerce order ${orderId}:`, error);
+    logger.error(`Error creating refund for WooCommerce order ${orderId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -183,7 +352,7 @@ export const getOrderTotalsReport = async (siteId?: number): Promise<OrderTotals
     const client = await wpClientManager.getClient(siteId);
     return await client.getReports('orders/totals');
   } catch (error) {
-    console.error('Error fetching WooCommerce order totals report:', error);
+    logger.error('Error fetching WooCommerce order totals report', error, 'WooCommerce');
     throw error;
   }
 };
@@ -214,7 +383,50 @@ export const getSalesReport = async (
 
     return await client.getReports('sales', params);
   } catch (error) {
-    console.error('Error fetching WooCommerce sales report:', error);
+    logger.error('Error fetching WooCommerce sales report', error, 'WooCommerce');
+    throw error;
+  }
+};
+
+// Paginated customers function
+export const getCustomersPage = async (
+  page: number = 1,
+  perPage: number = 20,
+  filters: CustomerFilters = {},
+  siteId?: number
+): Promise<PaginatedCustomersResponse> => {
+  logger.info(`Fetching customers page ${page} (perPage: ${perPage})...`, filters, 'WooCommerce');
+  try {
+    const client = await wpClientManager.getClient(siteId);
+    const params: any = {
+      page,
+      per_page: perPage,
+      orderby: filters.orderby || 'registered_date',
+      order: filters.order || 'desc',
+      role: filters.role || 'customer',
+    };
+
+    // Add optional filters
+    if (filters.search) params.search = filters.search;
+
+    const result = await client.getCustomers(params);
+    
+    if (result.pagination) {
+      return {
+        customers: result.data,
+        totalCustomers: result.pagination.total || 0,
+        totalPages: result.pagination.totalPages || 0,
+      };
+    }
+
+    // Fallback for direct array response
+    return {
+      customers: Array.isArray(result) ? result : [],
+      totalCustomers: 0,
+      totalPages: 1,
+    };
+  } catch (error) {
+    logger.error(`Error fetching WooCommerce customers page ${page}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -230,11 +442,11 @@ export const getAllCustomers = async (
   const perPage = 100;
   let morePages = true;
 
-  console.log("Starting to fetch all customers...", filters);
+  logger.info("Starting to fetch all customers...", filters, 'WooCommerce');
 
   while (morePages) {
     try {
-      console.log(`Fetching customers page ${page}...`);
+      logger.info(`Fetching customers page ${page}...`, undefined, 'WooCommerce');
       const params: any = {
         per_page: perPage,
         page: page,
@@ -259,18 +471,18 @@ export const getAllCustomers = async (
       }
 
       if (page > 500) { 
-         console.warn("Stopped fetching customers after 500 pages.");
+         logger.warn("Stopped fetching customers after 500 pages.", undefined, 'WooCommerce');
          morePages = false;
       }
 
     } catch (error) {
-      console.error(`Error fetching WooCommerce customers page ${page}:`, error);
+      logger.error(`Error fetching WooCommerce customers page ${page}`, error, 'WooCommerce');
       morePages = false;
       throw error;
     }
   }
 
-  console.log(`Finished fetching customers. Total found: ${allCustomers.length}`);
+  logger.info(`Finished fetching customers. Total found: ${allCustomers.length}`, undefined, 'WooCommerce');
   return allCustomers;
 };
 
@@ -279,7 +491,7 @@ export const getCustomerById = async (customerId: number, siteId?: number): Prom
     const client = await wpClientManager.getClient(siteId);
     return await client.getCustomer(customerId);
   } catch (error) {
-    console.error(`Error fetching WooCommerce customer ${customerId}:`, error);
+    logger.error(`Error fetching WooCommerce customer ${customerId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -302,11 +514,11 @@ export const getAllProducts = async (
   const perPage = 100;
   let morePages = true;
 
-  console.log("Starting to fetch all products...", filters);
+  logger.info("Starting to fetch all products...", filters, 'WooCommerce');
 
   while (morePages) {
     try {
-      console.log(`Fetching products page ${page}...`);
+      logger.info(`Fetching products page ${page}...`, undefined, 'WooCommerce');
       const params: any = {
         per_page: perPage,
         page: page,
@@ -331,18 +543,18 @@ export const getAllProducts = async (
       }
 
       if (page > 500) {
-         console.warn("Stopped fetching products after 500 pages.");
+         logger.warn("Stopped fetching products after 500 pages.", undefined, 'WooCommerce');
          morePages = false;
       }
 
     } catch (error) {
-      console.error(`Error fetching WooCommerce products page ${page}:`, error);
+      logger.error(`Error fetching WooCommerce products page ${page}`, error, 'WooCommerce');
       morePages = false;
       throw error;
     }
   }
 
-  console.log(`Finished fetching products. Total found: ${allProducts.length}`);
+  logger.info(`Finished fetching products. Total found: ${allProducts.length}`, undefined, 'WooCommerce');
   return allProducts;
 };
 
@@ -363,7 +575,7 @@ export const getProductsPage = async (
   } = {},
   siteId?: number
 ): Promise<PaginatedProductsResponse> => {
-  console.log(`Fetching products page ${page} (perPage: ${perPage})...`, filters.search ? filters.search : '');
+  logger.info(`Fetching products page ${page} (perPage: ${perPage})...`, filters.search ? filters.search : '', 'WooCommerce');
   try {
     const client = await wpClientManager.getClient(siteId);
     const params: any = {
@@ -395,20 +607,20 @@ export const getProductsPage = async (
       totalPages: 1,
     };
   } catch (error) {
-    console.error(`Error fetching WooCommerce products page ${page}:`, error);
+    logger.error(`Error fetching WooCommerce products page ${page}`, error, 'WooCommerce');
     throw error;
   }
 };
 
 export const getProductById = async (productId: number, siteId?: number): Promise<Product> => {
   try {
-    console.log(`Fetching product with ID: ${productId}...`);
+    logger.info(`Fetching product with ID: ${productId}...`, undefined, 'WooCommerce');
     const client = await wpClientManager.getClient(siteId);
     const product = await client.getProduct(productId);
-    console.log(`Successfully fetched product ${productId}.`);
+    logger.info(`Successfully fetched product ${productId}.`, undefined, 'WooCommerce');
     return product;
   } catch (error) {
-    console.error(`Error fetching WooCommerce product ${productId}:`, error);
+    logger.error(`Error fetching WooCommerce product ${productId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -419,7 +631,7 @@ export const updateProduct = async (
   siteId?: number
 ): Promise<Product> => {
   try {
-    console.log(`Updating product ${productId}...`, payload);
+    logger.info(`Updating product ${productId}...`, payload, 'WooCommerce');
     const client = await wpClientManager.getClient(siteId);
     
     const filteredPayload = Object.entries(payload).reduce((acc, [key, value]) => {
@@ -434,10 +646,10 @@ export const updateProduct = async (
     }
 
     const updatedProduct = await client.updateProduct(productId, filteredPayload);
-    console.log(`Successfully updated product ${productId}.`);
+    logger.info(`Successfully updated product ${productId}.`, undefined, 'WooCommerce');
     return updatedProduct;
   } catch (error) {
-    console.error(`Error updating WooCommerce product ${productId}:`, error);
+    logger.error(`Error updating WooCommerce product ${productId}`, error, 'WooCommerce');
     throw error;
   }
 };
@@ -452,7 +664,7 @@ export const getProductCategories = async (siteId?: number): Promise<ProductCate
     });
     return Array.isArray(result) ? result : result.data || [];
   } catch (error) {
-    console.error('Error fetching WooCommerce product categories:', error);
+    logger.error('Error fetching WooCommerce product categories', error, 'WooCommerce');
     throw error;
   }
 };
@@ -477,6 +689,8 @@ export const getWordPressStats = async (siteId?: number) => {
     media: media.pagination?.total || 0
   };
 };
+
+
 
 // Re-export the client manager for direct use
 export { wpClientManager };

@@ -9,9 +9,11 @@ import {
   Activity,
   Clock,
   FolderOpen,
-  Loader2
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +21,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useActiveSite } from '@/hooks/useActiveSite';
 import { RequireSite } from '@/components/RequireSite';
 import { wpAnalytics } from '@/lib/api/wordpress-analytics';
+import { checkProxyStatus } from '@/lib/api/proxy-check';
 import { 
   AreaChart, 
   Area, 
@@ -41,44 +44,60 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'
 
 export default function WordPressDashboard() {
   const { activeSite, hasActiveSite } = useActiveSite();
+  const [proxyError, setProxyError] = useState<string | null>(null);
+  
+  // Check proxy status on mount
+  useEffect(() => {
+    checkProxyStatus().then(status => {
+      if (!status.isRunning && import.meta.env.DEV) {
+        setProxyError(status.error || status.message);
+      }
+    });
+  }, []);
   
   // Queries pour les différentes métriques
-  const { data: postMetrics, isLoading: loadingPosts } = useQuery({
+  const { data: postMetrics, isLoading: loadingPosts, error: postsError } = useQuery({
     queryKey: ['wp-posts', activeSite?.id],
     queryFn: () => wpAnalytics.getPostMetrics(activeSite?.id),
     enabled: hasActiveSite(),
     staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: 1,
   });
 
-  const { data: commentMetrics, isLoading: loadingComments } = useQuery({
+  const { data: commentMetrics, isLoading: loadingComments, error: commentsError } = useQuery({
     queryKey: ['wp-comments', activeSite?.id],
     queryFn: () => wpAnalytics.getCommentMetrics(activeSite?.id),
     enabled: hasActiveSite(),
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
-  const { data: userMetrics, isLoading: loadingUsers } = useQuery({
+  const { data: userMetrics, isLoading: loadingUsers, error: usersError } = useQuery({
     queryKey: ['wp-users', activeSite?.id],
     queryFn: () => wpAnalytics.getUserMetrics(activeSite?.id),
     enabled: hasActiveSite(),
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
-  const { data: mediaMetrics, isLoading: loadingMedia } = useQuery({
+  const { data: mediaMetrics, isLoading: loadingMedia, error: mediaError } = useQuery({
     queryKey: ['wp-media', activeSite?.id],
     queryFn: () => wpAnalytics.getMediaMetrics(activeSite?.id),
     enabled: hasActiveSite(),
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
-  const { data: pageMetrics, isLoading: loadingPages } = useQuery({
+  const { data: pageMetrics, isLoading: loadingPages, error: pagesError } = useQuery({
     queryKey: ['wp-pages', activeSite?.id],
     queryFn: () => wpAnalytics.getPageMetrics(activeSite?.id),
     enabled: hasActiveSite(),
     staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 
   const isLoading = loadingPosts || loadingComments || loadingUsers || loadingMedia || loadingPages;
+  const hasErrors = postsError || commentsError || usersError || mediaError || pagesError;
 
   // Formatter pour les tailles de fichiers
   const formatFileSize = (bytes: number): string => {
@@ -103,6 +122,36 @@ export default function WordPressDashboard() {
               </p>
             </div>
 
+            {/* Proxy Error Alert */}
+            {proxyError && import.meta.env.DEV && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Serveur proxy non disponible</AlertTitle>
+                <AlertDescription>
+                  <p className="mb-2">{proxyError}</p>
+                  <p className="font-mono text-sm bg-destructive/10 p-2 rounded mt-2">
+                    npm run start:proxy
+                  </p>
+                </AlertDescription>
+              </Alert>
+            )}
+
+            {/* API Error Alert */}
+            {hasErrors && !proxyError && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Erreur de connexion</AlertTitle>
+                <AlertDescription>
+                  Certaines données n'ont pas pu être chargées. Vérifiez que :
+                  <ul className="list-disc ml-6 mt-2">
+                    <li>Les identifiants WordPress sont corrects</li>
+                    <li>L'API REST WordPress est activée sur votre site</li>
+                    <li>Les permissions d'application sont configurées</li>
+                  </ul>
+                </AlertDescription>
+              </Alert>
+            )}
+
             {/* KPI Cards */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
               <Card>
@@ -113,6 +162,11 @@ export default function WordPressDashboard() {
                 <CardContent>
                   {loadingPosts ? (
                     <Skeleton className="h-8 w-24" />
+                  ) : postsError ? (
+                    <div className="flex items-center gap-2 text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="text-sm">Erreur de chargement</span>
+                    </div>
                   ) : (
                     <>
                       <div className="text-2xl font-bold">{postMetrics?.totalPosts || 0}</div>
@@ -136,6 +190,11 @@ export default function WordPressDashboard() {
                 <CardContent>
                   {loadingComments ? (
                     <Skeleton className="h-8 w-24" />
+                  ) : commentsError ? (
+                    <div className="flex items-center gap-2 text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="text-sm">Erreur de chargement</span>
+                    </div>
                   ) : (
                     <>
                       <div className="text-2xl font-bold">{commentMetrics?.totalComments || 0}</div>
@@ -160,6 +219,11 @@ export default function WordPressDashboard() {
                 <CardContent>
                   {loadingUsers ? (
                     <Skeleton className="h-8 w-24" />
+                  ) : usersError ? (
+                    <div className="flex items-center gap-2 text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="text-sm">Erreur de chargement</span>
+                    </div>
                   ) : (
                     <>
                       <div className="text-2xl font-bold">{userMetrics?.totalUsers || 0}</div>
@@ -185,6 +249,11 @@ export default function WordPressDashboard() {
                 <CardContent>
                   {loadingMedia ? (
                     <Skeleton className="h-8 w-24" />
+                  ) : mediaError ? (
+                    <div className="flex items-center gap-2 text-destructive">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="text-sm">Erreur de chargement</span>
+                    </div>
                   ) : (
                     <>
                       <div className="text-2xl font-bold">{mediaMetrics?.totalMedia || 0}</div>
@@ -353,8 +422,8 @@ export default function WordPressDashboard() {
                       <div className="space-y-3">
                         {loadingComments ? (
                           <>
-                            <Skeleton className="h-12 w-full" />
-                            <Skeleton className="h-12 w-full" />
+                            <Skeleton key="skeleton-1" className="h-12 w-full" />
+                            <Skeleton key="skeleton-2" className="h-12 w-full" />
                           </>
                         ) : (
                           commentMetrics?.topCommenters.map((commenter, index) => (

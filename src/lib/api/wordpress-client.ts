@@ -1,23 +1,25 @@
 import { configService } from '@/lib/db/config';
+import { ApplicationError, ApiError, NetworkError, errorHandler } from '@/lib/error-handler';
+import { logger } from '@/lib/logger';
 
 // Custom error classes for better error handling
-export class NoActiveSiteError extends Error {
+export class NoActiveSiteError extends ApplicationError {
   constructor() {
-    super('Aucun site actif configuré. Veuillez sélectionner un site dans les paramètres.');
+    super('Aucun site actif configuré. Veuillez sélectionner un site dans les paramètres.', 'NO_ACTIVE_SITE');
     this.name = 'NoActiveSiteError';
   }
 }
 
-export class SiteNotFoundError extends Error {
+export class SiteNotFoundError extends ApplicationError {
   constructor(siteId: number) {
-    super(`Site avec l'ID ${siteId} non trouvé. Veuillez vérifier la configuration.`);
+    super(`Site avec l'ID ${siteId} non trouvé. Veuillez vérifier la configuration.`, 'SITE_NOT_FOUND', { siteId });
     this.name = 'SiteNotFoundError';
   }
 }
 
-export class MissingCredentialsError extends Error {
+export class MissingCredentialsError extends ApplicationError {
   constructor(siteId: number, credType: 'WordPress' | 'WooCommerce') {
-    super(`Les identifiants ${credType} ne sont pas configurés pour ce site (ID: ${siteId}). Veuillez les ajouter dans les paramètres.`);
+    super(`Les identifiants ${credType} ne sont pas configurés pour ce site (ID: ${siteId}). Veuillez les ajouter dans les paramètres.`, 'MISSING_CREDENTIALS', { siteId, credType });
     this.name = 'MissingCredentialsError';
   }
 }
@@ -82,7 +84,15 @@ export class WordPressClient {
 
   // WordPress API Methods
   async getWordPressData(endpoint: string, params?: Record<string, any>): Promise<any> {
-    const url = new URL(`${this.config.baseUrl}/wp-json/wp/v2/${endpoint}`);
+    let url: URL;
+    
+    if (USE_PROXY) {
+      // Use proxy for development
+      url = new URL(`${PROXY_URL}${this.config.baseUrl}/wp-json/wp/v2/${endpoint}`);
+    } else {
+      // Direct URL for production
+      url = new URL(`${this.config.baseUrl}/wp-json/wp/v2/${endpoint}`);
+    }
     
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -90,27 +100,87 @@ export class WordPressClient {
       });
     }
 
-    const response = await fetch(url.toString(), {
-      method: 'GET',
-      headers: await this.getWPHeaders(),
-    });
+    logger.debug(`WordPress API request: GET ${url.toString()}`, { proxy: USE_PROXY }, 'WordPressClient');
 
-    if (!response.ok) {
-      throw new Error(`WordPress API error: ${response.status} ${response.statusText}`);
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: await this.getWPHeaders(),
+      });
+
+      if (!response.ok) {
+        let errorMessage = `WordPress API error: ${response.status} ${response.statusText}`;
+        let errorDetails: any = null;
+        
+        try {
+          const errorData = await response.json();
+          if (errorData.message) {
+            errorMessage = errorData.message;
+          }
+          errorDetails = errorData;
+        } catch (e) {
+          // Response might not be JSON
+          try {
+            const errorText = await response.text();
+            if (errorText) {
+              errorMessage += ` - ${errorText.substring(0, 200)}`;
+            }
+          } catch (textError) {
+            // Ignore text parsing errors
+          }
+        }
+        
+        logger.error(`WordPress API error for ${endpoint}`, { 
+          status: response.status, 
+          message: errorMessage,
+          details: errorDetails,
+          url: url.toString()
+        }, 'WordPressClient');
+        
+        throw new ApiError(errorMessage, response.status, errorDetails);
+      }
+
+      const data = await response.json();
+      logger.debug(`WordPress API response for ${endpoint}`, { 
+        count: Array.isArray(data) ? data.length : 1 
+      }, 'WordPressClient');
+      
+      return data;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      
+      logger.error(`WordPress API network error for ${endpoint}`, error, 'WordPressClient');
+      throw new NetworkError(`Failed to connect to WordPress API: ${error.message}`);
     }
-
-    return response.json();
   }
 
   async postWordPressData(endpoint: string, data: any): Promise<any> {
-    const response = await fetch(`${this.config.baseUrl}/wp-json/wp/v2/${endpoint}`, {
+    let url: URL;
+    
+    if (USE_PROXY) {
+      // Use proxy for development
+      url = new URL(`${PROXY_URL}${this.config.baseUrl}/wp-json/wp/v2/${endpoint}`);
+    } else {
+      // Direct URL for production
+      url = new URL(`${this.config.baseUrl}/wp-json/wp/v2/${endpoint}`);
+    }
+    
+    logger.debug(`WordPress API request: POST ${url.toString()}`, { proxy: USE_PROXY }, 'WordPressClient');
+    
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: await this.getWPHeaders(),
       body: JSON.stringify(data),
     });
 
     if (!response.ok) {
-      throw new Error(`WordPress API error: ${response.status} ${response.statusText}`);
+      logger.error(`WordPress API error for POST ${endpoint}`, { 
+        status: response.status, 
+        statusText: response.statusText
+      }, 'WordPressClient');
+      throw new ApiError(`WordPress API error: ${response.statusText}`, response.status);
     }
 
     return response.json();
@@ -118,7 +188,15 @@ export class WordPressClient {
 
   // WooCommerce API Methods
   async getWooCommerceData(endpoint: string, params?: Record<string, any>): Promise<any> {
-    const url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    let url: URL;
+    
+    if (USE_PROXY) {
+      // Use proxy for development
+      url = new URL(`${PROXY_URL}${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    } else {
+      // Direct URL for production
+      url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    }
     
     // Add authentication parameters
     url.searchParams.append('consumer_key', this.config.wooConsumerKey || '');
@@ -138,8 +216,29 @@ export class WordPressClient {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`WooCommerce API error: ${response.status} ${response.statusText} - ${errorText}`);
+      let errorMessage = `WooCommerce API error: ${response.status} ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = errorData.error;
+          if (errorData.message) {
+            errorMessage += `: ${errorData.message}`;
+          }
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        }
+      } catch (e) {
+        // If response is not JSON, try to get text
+        try {
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage += ` - ${errorText.substring(0, 200)}`;
+          }
+        } catch (textError) {
+          // Ignore text parsing errors
+        }
+      }
+      throw new ApiError(errorMessage, 401);
     }
 
     // Extract pagination info from headers
@@ -163,7 +262,15 @@ export class WordPressClient {
   }
 
   async postWooCommerceData(endpoint: string, data: any): Promise<any> {
-    const url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    let url: URL;
+    
+    if (USE_PROXY) {
+      // Use proxy for development
+      url = new URL(`${PROXY_URL}${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    } else {
+      // Direct URL for production
+      url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    }
     
     // Add authentication parameters
     url.searchParams.append('consumer_key', this.config.wooConsumerKey || '');
@@ -178,14 +285,22 @@ export class WordPressClient {
     });
 
     if (!response.ok) {
-      throw new Error(`WooCommerce API error: ${response.status} ${response.statusText}`);
+      throw new ApiError(`WooCommerce API error: ${response.statusText}`, response.status);
     }
 
     return response.json();
   }
 
   async putWooCommerceData(endpoint: string, data: any): Promise<any> {
-    const url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    let url: URL;
+    
+    if (USE_PROXY) {
+      // Use proxy for development
+      url = new URL(`${PROXY_URL}${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    } else {
+      // Direct URL for production
+      url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
+    }
     
     // Add authentication parameters
     url.searchParams.append('consumer_key', this.config.wooConsumerKey || '');
@@ -200,7 +315,7 @@ export class WordPressClient {
     });
 
     if (!response.ok) {
-      throw new Error(`WooCommerce API error: ${response.status} ${response.statusText}`);
+      throw new ApiError(`WooCommerce API error: ${response.statusText}`, response.status);
     }
 
     return response.json();
@@ -221,7 +336,7 @@ export class WordPressClient {
     });
 
     if (!response.ok) {
-      throw new Error(`WooCommerce API error: ${response.status} ${response.statusText}`);
+      throw new ApiError(`WooCommerce API error: ${response.statusText}`, response.status);
     }
 
     return response.json();
