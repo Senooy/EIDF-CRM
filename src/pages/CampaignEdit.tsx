@@ -247,7 +247,11 @@ export default function CampaignEdit() {
                 <EmailTemplateEditor
                   content={campaignData.body}
                   onChange={(content) => setCampaignData({ ...campaignData, body: content })}
-                  disabled={!canEdit}
+                  onTemplateSelect={(template) => setCampaignData({ 
+                    ...campaignData, 
+                    subject: template.subject, 
+                    body: template.body 
+                  })}
                 />
               </TabsContent>
 
@@ -255,7 +259,6 @@ export default function CampaignEdit() {
                 <RecipientSelector
                   selectedSegment={campaignData.recipientSegment}
                   onSegmentChange={(segment) => setCampaignData({ ...campaignData, recipientSegment: segment })}
-                  disabled={!canEdit}
                 />
               </TabsContent>
 

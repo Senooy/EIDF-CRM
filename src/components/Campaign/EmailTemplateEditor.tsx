@@ -15,9 +15,10 @@ import { availableVariables, substituteVariables, extractVariablesFromContent, g
 interface EmailTemplateEditorProps {
   content: string;
   onChange: (content: string) => void;
+  onTemplateSelect?: (template: { subject: string; body: string }) => void;
 }
 
-export default function EmailTemplateEditor({ content, onChange }: EmailTemplateEditorProps) {
+export default function EmailTemplateEditor({ content, onChange, onTemplateSelect }: EmailTemplateEditorProps) {
   const [editMode, setEditMode] = useState<'visual' | 'html'>('visual');
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
@@ -77,6 +78,7 @@ export default function EmailTemplateEditor({ content, onChange }: EmailTemplate
   const handleTemplateSelect = (templateId: string) => {
     if (templateId === 'none') {
       setSelectedTemplate('');
+      onChange('');
       return;
     }
     
@@ -85,16 +87,36 @@ export default function EmailTemplateEditor({ content, onChange }: EmailTemplate
       setSelectedTemplate(templateId);
       onChange(template.body);
       
-      const titleMatch = template.body.match(/<h1[^>]*>(.*?)<\/h1>/);
-      const subtitleMatch = template.body.match(/<h2[^>]*>(.*?)<\/h2>/);
-      const bodyMatch = template.body.match(/<p[^>]*>(.*?)<\/p>/);
+      // Notifier la page parent du changement de template (pour remplir l'objet aussi)
+      if (onTemplateSelect) {
+        onTemplateSelect({
+          subject: template.subject,
+          body: template.body
+        });
+      }
       
-      setVisualContent({
-        ...visualContent,
-        title: titleMatch ? titleMatch[1] : '',
-        subtitle: subtitleMatch ? subtitleMatch[1] : '',
-        body: bodyMatch ? bodyMatch[1] : '',
-      });
+      // Traitement spécial pour le template EIDF (contenu texte brut)
+      if (templateId === 'template-eidf') {
+        // Pour le template EIDF, utiliser le contenu brut directement
+        setVisualContent({
+          ...visualContent,
+          title: 'Solutions sur-mesure en ventilation professionnelle',
+          subtitle: template.subject,
+          body: template.body,
+        });
+      } else {
+        // Pour les autres templates HTML, parser le contenu
+        const titleMatch = template.body.match(/<h1[^>]*>(.*?)<\/h1>/);
+        const subtitleMatch = template.body.match(/<h2[^>]*>(.*?)<\/h2>/);
+        const bodyMatch = template.body.match(/<p[^>]*>(.*?)<\/p>/);
+        
+        setVisualContent({
+          ...visualContent,
+          title: titleMatch ? titleMatch[1] : '',
+          subtitle: subtitleMatch ? subtitleMatch[1] : '',
+          body: bodyMatch ? bodyMatch[1] : template.body,
+        });
+      }
     }
   };
 

@@ -23,13 +23,21 @@ const CAMPAIGN_STATS_COLLECTION = 'campaign_stats';
 const EMAIL_TEMPLATES_COLLECTION = 'email_templates';
 
 // For demo purposes, we'll use mock data with Firestore structure
-let useMockData = false;
+let useMockData = true;
 
 export const campaignService = {
   // Get all campaigns
   async getCampaigns(): Promise<Campaign[]> {
     if (useMockData) {
-      return generateMockCampaigns(10);
+      // Combiner les campagnes mockées et les campagnes sauvegardées
+      const mockCampaigns = generateMockCampaigns(1);
+      const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+      
+      // Fusionner et trier par date de création
+      const allCampaigns = [...mockCampaigns, ...savedCampaigns];
+      allCampaigns.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      
+      return allCampaigns;
     }
     
     try {
@@ -45,14 +53,19 @@ export const campaignService = {
       } as Campaign));
     } catch (error) {
       console.error('Error fetching campaigns:', error);
-      return generateMockCampaigns(10);
+      // Fallback vers les campagnes mockées + sauvegardées
+      const mockCampaigns = generateMockCampaigns(1);
+      const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+      const allCampaigns = [...mockCampaigns, ...savedCampaigns];
+      allCampaigns.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      return allCampaigns;
     }
   },
 
   // Get single campaign
   async getCampaign(id: string): Promise<Campaign | null> {
     if (useMockData) {
-      const campaigns = generateMockCampaigns(10);
+      const campaigns = generateMockCampaigns(1);
       return campaigns.find(c => c.id === id) || null;
     }
     
@@ -73,7 +86,34 @@ export const campaignService = {
   // Create campaign
   async createCampaign(campaign: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>): Promise<string> {
     if (useMockData) {
-      return `campaign-${Date.now()}`;
+      // Sauvegarde locale pour les tests
+      const campaignId = `campaign-${Date.now()}`;
+      const newCampaign: Campaign = {
+        ...campaign,
+        id: campaignId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        stats: {
+          sent: 0,
+          delivered: 0,
+          opened: 0,
+          clicked: 0,
+          converted: 0,
+          bounced: 0,
+          unsubscribed: 0,
+          spamReported: 0,
+          revenue: 0,
+          lastUpdated: new Date().toISOString()
+        }
+      };
+      
+      // Sauvegarder dans localStorage pour persistance
+      const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+      savedCampaigns.push(newCampaign);
+      localStorage.setItem('campaigns', JSON.stringify(savedCampaigns));
+      
+      console.log('Campaign saved locally:', newCampaign);
+      return campaignId;
     }
     
     try {
@@ -105,8 +145,34 @@ export const campaignService = {
       
       return docRef.id;
     } catch (error) {
-      console.error('Error creating campaign:', error);
-      throw error;
+      console.error('Error creating campaign in Firestore, falling back to local storage:', error);
+      
+      // Fallback vers localStorage en cas d'erreur Firebase
+      const campaignId = `campaign-${Date.now()}`;
+      const newCampaign: Campaign = {
+        ...campaign,
+        id: campaignId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        stats: {
+          sent: 0,
+          delivered: 0,
+          opened: 0,
+          clicked: 0,
+          converted: 0,
+          bounced: 0,
+          unsubscribed: 0,
+          spamReported: 0,
+          revenue: 0,
+          lastUpdated: new Date().toISOString()
+        }
+      };
+      
+      const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+      savedCampaigns.push(newCampaign);
+      localStorage.setItem('campaigns', JSON.stringify(savedCampaigns));
+      
+      return campaignId;
     }
   },
 
@@ -150,7 +216,7 @@ export const campaignService = {
     if (useMockData) {
       // Simulate real-time updates with mock data
       const interval = setInterval(() => {
-        const campaigns = generateMockCampaigns(10);
+        const campaigns = generateMockCampaigns(1);
         const campaign = campaigns.find(c => c.id === campaignId);
         if (campaign) {
           callback(campaign.stats);

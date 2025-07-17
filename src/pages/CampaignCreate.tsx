@@ -188,6 +188,11 @@ export default function CampaignCreate() {
             <EmailTemplateEditor
               content={campaignData.body}
               onChange={(content) => setCampaignData({ ...campaignData, body: content })}
+              onTemplateSelect={(template) => setCampaignData({ 
+                ...campaignData, 
+                subject: template.subject, 
+                body: template.body 
+              })}
             />
           </TabsContent>
 
