@@ -26,14 +26,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Listen for authentication state changes
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-      setLoading(false);
-    });
+    console.log('AuthProvider useEffect running');
+    try {
+      // Listen for authentication state changes
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        console.log('Auth state changed:', user);
+        setCurrentUser(user);
+        setLoading(false);
+      });
 
-    // Cleanup subscription on unmount
-    return unsubscribe;
+      // Cleanup subscription on unmount
+      return unsubscribe;
+    } catch (error) {
+      console.error('Error in AuthProvider useEffect:', error);
+      setLoading(false);
+    }
   }, []);
 
   const value = {
@@ -41,10 +48,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
   };
 
-  // Don't render children until loading is complete
+  console.log('AuthProvider rendering, loading:', loading);
+
+  // Always render children, but provide loading state
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 }; 

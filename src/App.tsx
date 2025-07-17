@@ -18,6 +18,9 @@ import SiteConfiguration from "./pages/Settings/SiteConfiguration";
 import SyncSettings from "./pages/Settings/SyncSettings";
 import WordPressDashboard from "./pages/WordPressDashboard";
 import WooCommerceDashboard from "./pages/WooCommerceDashboard";
+import CampaignDashboard from "./pages/CampaignDashboard";
+import CampaignCreate from "./pages/CampaignCreate";
+import CampaignEdit from "./pages/CampaignEdit";
 import { queryConfig } from "./lib/queryConfig";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { queryErrorHandler } from "./lib/error-handler";
@@ -54,6 +57,10 @@ const App = () => (
             <Route path="/products/:id" element={<ProductDetailsPage />} />
             <Route path="/wordpress" element={<WordPressDashboard />} />
             <Route path="/woocommerce" element={<WooCommerceDashboard />} />
+            <Route path="/campaigns" element={<CampaignDashboard />} />
+            <Route path="/campaigns/create" element={<CampaignCreate />} />
+            <Route path="/campaigns/:id" element={<CampaignDashboard />} />
+            <Route path="/campaigns/:id/edit" element={<CampaignEdit />} />
             <Route path="/settings/sites" element={<SiteConfiguration />} />
             <Route path="/settings/sync" element={<SyncSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

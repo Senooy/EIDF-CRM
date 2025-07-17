@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-// import { getFirestore } from "firebase/firestore"; // Uncomment if you need Firestore
+import { getFirestore } from "firebase/firestore";
 // import { getAnalytics } from "firebase/analytics"; // Uncomment if you need Analytics
 
 // TODO: Replace with your actual Firebase project configuration
@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase services
 const auth = getAuth(app);
-// const firestore = getFirestore(app); // Uncomment if needed
+const firestore = getFirestore(app);
 // const analytics = getAnalytics(app); // Uncomment if needed
 
-export { auth /*, firestore, analytics */ }; // Export the services you need 
+export { auth, firestore /*, analytics */ }; // Export the services you need 

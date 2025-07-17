@@ -9,12 +9,14 @@ import {
   BarChart2,
   Package,
   Globe,
+  Mail,
 } from "lucide-react";
 
 const navItems = [
   { name: "Dashboard", href: "/", icon: Home },
   { name: "WordPress", href: "/wordpress", icon: Globe },
   { name: "WooCommerce", href: "/woocommerce", icon: ShoppingCart },
+  { name: "Campagnes", href: "/campaigns", icon: Mail },
   { name: "Commandes", href: "/orders", icon: Package },
   { name: "Clients", href: "/customers", icon: Users },
   { name: "Produits", href: "/products", icon: Package },
