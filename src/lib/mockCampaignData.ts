@@ -45,6 +45,20 @@ Chargé d'affaires – EIDF
 🌐 https://eco-industrie-france.com`
 ];
 
+// Statistiques initiales - tout part de 0 et évolue progressivement
+const initialStats = {
+  sent: 0, // Commence à 0, évolue vers 290
+  delivered: 0,
+  opened: 0,
+  clicked: 0,
+  converted: 0,
+  bounced: 0,
+  unsubscribed: 0,
+  spamReported: 0,
+  revenue: 0,
+  lastUpdated: new Date().toISOString()
+};
+
 export function generateMockCampaign(index: number): Campaign {
   const now = new Date();
   const createdDays = Math.floor(Math.random() * 30) + 1;
@@ -55,30 +69,30 @@ export function generateMockCampaign(index: number): Campaign {
   // Campagne EIDF : exactement 290 emails (comme demandé)
   const recipientCount = 290;
   
-  const stats = generateCampaignStats(recipientCount, isEidfCampaign);
-  
   const statuses: Campaign['status'][] = ['draft', 'scheduled', 'sending', 'sent', 'paused'];
   const status = index < 5 ? 'sent' : statuses[Math.floor(Math.random() * statuses.length)];
   
   let subject = emailSubjects[index % emailSubjects.length];
   let body = emailBodies[index % emailBodies.length];
   
-  // Substitution des variables pour la campagne EIDF
-  const randomEntreprise = eidfVariables.entreprises[Math.floor(Math.random() * eidfVariables.entreprises.length)];
-  const randomPrenom = eidfVariables.prenoms[Math.floor(Math.random() * eidfVariables.prenoms.length)];
-  const randomNom = eidfVariables.noms[Math.floor(Math.random() * eidfVariables.noms.length)];
-  const randomVille = eidfVariables.villes[Math.floor(Math.random() * eidfVariables.villes.length)];
-  const randomRegion = eidfVariables.regions[Math.floor(Math.random() * eidfVariables.regions.length)];
-  const randomSurface = eidfVariables.surfaces[Math.floor(Math.random() * eidfVariables.surfaces.length)];
+  // Variables fixes pour éviter les changements constants
+  const fixedVariables = {
+    entreprise: 'Climatech Pro',
+    prenom: 'Jean',
+    nom: 'Dupont',
+    ville: 'Lyon',
+    region: 'Rhône-Alpes',
+    surface: '2000 m²'
+  };
   
-  subject = subject.replace('{{nom_entreprise}}', randomEntreprise);
+  subject = subject.replace('{{nom_entreprise}}', fixedVariables.entreprise);
   body = body
-    .replace(/\{\{nom_entreprise\}\}/g, randomEntreprise)
-    .replace(/\{\{prenom_contact\}\}/g, randomPrenom)
-    .replace(/\{\{nom_contact\}\}/g, randomNom)
-    .replace(/\{\{ville\}\}/g, randomVille)
-    .replace(/\{\{region\}\}/g, randomRegion)
-    .replace(/\{\{surface_atelier\}\}/g, randomSurface);
+    .replace(/\{\{nom_entreprise\}\}/g, fixedVariables.entreprise)
+    .replace(/\{\{prenom_contact\}\}/g, fixedVariables.prenom)
+    .replace(/\{\{nom_contact\}\}/g, fixedVariables.nom)
+    .replace(/\{\{ville\}\}/g, fixedVariables.ville)
+    .replace(/\{\{region\}\}/g, fixedVariables.region)
+    .replace(/\{\{surface_atelier\}\}/g, fixedVariables.surface);
   
   return {
     id: `campaign-${index + 1}`,
@@ -92,7 +106,7 @@ export function generateMockCampaign(index: number): Campaign {
     updatedAt: new Date(createdAt.getTime() + Math.random() * 24 * 60 * 60 * 1000).toISOString(),
     createdBy: 'user-1',
     recipientCount,
-    stats
+    stats: { ...initialStats }
   };
 }
 
@@ -204,36 +218,89 @@ export function startCampaignUpdates(updateCallback: (campaigns: Campaign[]) => 
   
   campaignUpdateInterval = setInterval(() => {
     campaigns.forEach((campaign) => {
-      if (campaign.status === 'sent' && Math.random() > 0.7) {
+      if (campaign.status === 'sent') {
         const stats = campaign.stats;
+        const targetSent = 290; // Objectif : 290 emails
         
-        // Évolution spécifique EIDF (BtoB)
-        const maxOpenRate = 0.35; // 35% max
-        const maxClickRate = 0.04; // 4% max
-        const maxConversionRate = 0.12; // 12% max
-        
-        // Ouvertures progressives (BtoB plus lent)
-        if (Math.random() > 0.6 && stats.opened < stats.delivered * maxOpenRate) {
-          stats.opened += Math.floor(Math.random() * 2) + 1;
+        // Phase 1: Envoi des emails (rapide au début)
+        if (stats.sent < targetSent) {
+          const remaining = targetSent - stats.sent;
+          let increment = Math.min(
+            Math.floor(Math.random() * 8) + 2, // 2-10 emails par update
+            remaining
+          );
+          
+          // Ralentir vers la fin
+          if (remaining < 20) {
+            increment = Math.min(Math.floor(Math.random() * 3) + 1, remaining);
+          }
+          
+          stats.sent += increment;
+          
+          // Calcul automatique des delivered/bounced
+          const newDelivered = Math.floor(stats.sent * (0.95 + Math.random() * 0.03));
+          const newBounced = stats.sent - newDelivered;
+          
+          stats.delivered = newDelivered;
+          stats.bounced = newBounced;
         }
         
-        // Clics sur demande de devis
-        if (Math.random() > 0.85 && stats.clicked < stats.opened * maxClickRate) {
-          stats.clicked += 1;
+        // Phase 2: Ouvertures (après delivery)
+        if (stats.delivered > 0) {
+          const maxOpened = Math.floor(stats.delivered * (0.25 + Math.random() * 0.10)); // 25-35%
+          if (stats.opened < maxOpened && Math.random() > 0.6) {
+            stats.opened += Math.floor(Math.random() * 3) + 1;
+            stats.opened = Math.min(stats.opened, maxOpened);
+          }
         }
         
-        // Conversions (demandes de devis)
-        if (Math.random() > 0.95 && stats.converted < stats.clicked * maxConversionRate) {
-          stats.converted += 1;
-          stats.revenue += (15000 + Math.random() * 30000); // 15-45k€ par projet
+        // Phase 3: Clics (après ouvertures)
+        if (stats.opened > 0) {
+          const maxClicked = Math.floor(stats.opened * (0.02 + Math.random() * 0.03)); // 2-5%
+          if (stats.clicked < maxClicked && Math.random() > 0.8) {
+            stats.clicked += Math.random() > 0.5 ? 1 : 0;
+            stats.clicked = Math.min(stats.clicked, maxClicked);
+          }
+        }
+        
+        // Phase 4: Conversions (après clics)
+        if (stats.clicked > 0) {
+          const maxConverted = Math.floor(stats.clicked * (0.08 + Math.random() * 0.07)); // 8-15%
+          if (stats.converted < maxConverted && Math.random() > 0.95) {
+            stats.converted += 1;
+            stats.revenue += (15000 + Math.random() * 30000); // 15-45k€ par projet
+            stats.converted = Math.min(stats.converted, maxConverted);
+          }
+        }
+        
+        // Calcul des désabonnements et spam
+        if (stats.delivered > 0) {
+          const maxUnsubscribed = Math.floor(stats.delivered * 0.003); // 0.3%
+          const maxSpam = Math.floor(stats.delivered * 0.001); // 0.1%
+          
+          if (stats.unsubscribed < maxUnsubscribed && Math.random() > 0.9) {
+            stats.unsubscribed += Math.random() > 0.7 ? 1 : 0;
+          }
+          
+          if (stats.spamReported < maxSpam && Math.random() > 0.98) {
+            stats.spamReported += Math.random() > 0.8 ? 1 : 0;
+          }
         }
         
         stats.lastUpdated = new Date().toISOString();
+        
+        // Sauvegarder dans localStorage pour persistance
+        const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+        const campaignIndex = savedCampaigns.findIndex((c: Campaign) => c.id === campaign.id);
+        if (campaignIndex !== -1) {
+          savedCampaigns[campaignIndex].stats = stats;
+          localStorage.setItem('campaigns', JSON.stringify(savedCampaigns));
+        }
       }
     });
     
     updateCallback([...campaigns]);
-  }, 5000);
+  }, 3000); // Mises à jour toutes les 3 secondes
   
   updateCallback(campaigns);
 }

@@ -21,6 +21,7 @@ import WooCommerceDashboard from "./pages/WooCommerceDashboard";
 import CampaignDashboard from "./pages/CampaignDashboard";
 import CampaignCreate from "./pages/CampaignCreate";
 import CampaignEdit from "./pages/CampaignEdit";
+import CampaignDetails from "./pages/CampaignDetails";
 import { queryConfig } from "./lib/queryConfig";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { queryErrorHandler } from "./lib/error-handler";
@@ -59,7 +60,7 @@ const App = () => (
             <Route path="/woocommerce" element={<WooCommerceDashboard />} />
             <Route path="/campaigns" element={<CampaignDashboard />} />
             <Route path="/campaigns/create" element={<CampaignCreate />} />
-            <Route path="/campaigns/:id" element={<CampaignDashboard />} />
+            <Route path="/campaigns/:id" element={<CampaignDetails />} />
             <Route path="/campaigns/:id/edit" element={<CampaignEdit />} />
             <Route path="/settings/sites" element={<SiteConfiguration />} />
             <Route path="/settings/sync" element={<SyncSettings />} />

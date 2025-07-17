@@ -29,15 +29,18 @@ export const campaignService = {
   // Get all campaigns
   async getCampaigns(): Promise<Campaign[]> {
     if (useMockData) {
-      // Combiner les campagnes mockées et les campagnes sauvegardées
-      const mockCampaigns = generateMockCampaigns(1);
+      // Récupérer les campagnes sauvegardées avec les stats mises à jour
       const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
       
-      // Fusionner et trier par date de création
-      const allCampaigns = [...mockCampaigns, ...savedCampaigns];
-      allCampaigns.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+      // Si pas de campagnes sauvegardées, générer la campagne initiale
+      if (savedCampaigns.length === 0) {
+        const initialCampaign = generateMockCampaigns(1)[0];
+        localStorage.setItem('campaigns', JSON.stringify([initialCampaign]));
+        return [initialCampaign];
+      }
       
-      return allCampaigns;
+      // Retourner les campagnes sauvegardées (avec stats persistantes)
+      return savedCampaigns.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     }
     
     try {
@@ -65,8 +68,16 @@ export const campaignService = {
   // Get single campaign
   async getCampaign(id: string): Promise<Campaign | null> {
     if (useMockData) {
-      const campaigns = generateMockCampaigns(1);
-      return campaigns.find(c => c.id === id) || null;
+      const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+      const campaign = savedCampaigns.find((c: Campaign) => c.id === id);
+      
+      if (campaign) {
+        return campaign;
+      }
+      
+      // Fallback vers les campagnes mockées si pas trouvé dans le localStorage
+      const mockCampaigns = generateMockCampaigns(1);
+      return mockCampaigns.find(c => c.id === id) || null;
     }
     
     try {
@@ -214,12 +225,20 @@ export const campaignService = {
     callback: (stats: CampaignStats) => void
   ): () => void {
     if (useMockData) {
-      // Simulate real-time updates with mock data
+      // Simulate real-time updates with persistent data
       const interval = setInterval(() => {
-        const campaigns = generateMockCampaigns(1);
-        const campaign = campaigns.find(c => c.id === campaignId);
+        const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
+        const campaign = savedCampaigns.find((c: Campaign) => c.id === campaignId);
+        
         if (campaign) {
           callback(campaign.stats);
+        } else {
+          // Fallback si pas trouvé dans localStorage
+          const mockCampaigns = generateMockCampaigns(1);
+          const mockCampaign = mockCampaigns.find(c => c.id === campaignId);
+          if (mockCampaign) {
+            callback(mockCampaign.stats);
+          }
         }
       }, 5000);
       
