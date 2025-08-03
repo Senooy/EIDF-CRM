@@ -82,7 +82,7 @@ export default function CampaignDashboard() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader 
         title="Campagnes Email"
         description="Gérez et analysez vos campagnes marketing"
@@ -93,7 +93,7 @@ export default function CampaignDashboard() {
           </Button>
         }
       />
-      <div className="container mx-auto px-6 space-y-6">
+      <div className="container mx-auto px-6 space-y-4">
         {/* Stats section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <CampaignKPICard

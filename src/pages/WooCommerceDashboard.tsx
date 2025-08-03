@@ -92,13 +92,13 @@ export default function WooCommerceDashboard() {
 
   return (
     <RequireSite>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <PageHeader 
           title="Analytics WooCommerce Avancées"
           description={`Métriques approfondies pour ${activeSite?.name}`}
         />
         
-        <div className="container mx-auto px-6 space-y-6">
+        <div className="container mx-auto px-6 space-y-4">
 
           {/* Alertes importantes */}
           {stockPredictions && stockPredictions.criticalStock.length > 0 && (

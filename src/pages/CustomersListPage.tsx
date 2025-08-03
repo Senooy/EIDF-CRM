@@ -138,7 +138,7 @@ const CustomersListPage = () => {
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <PageHeader 
         title="Clients"
         description={`${totalCustomers} clients au total`}
@@ -187,7 +187,7 @@ const CustomersListPage = () => {
         }
       />
       
-      <div className="container mx-auto px-6 space-y-6">
+      <div className="container mx-auto px-6 space-y-4">
         {/* Search Input */}
         <div className="w-full max-w-sm">
             <Input

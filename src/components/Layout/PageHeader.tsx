@@ -69,11 +69,11 @@ export function PageHeader({
 
   return (
     <div className={cn(
-      "sticky top-14 z-20 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
+      "border-b bg-background",
       className
     )}>
-      <div className="container mx-auto px-6 py-4">
-        <Breadcrumb className="mb-2">
+      <div className="px-6 py-3">
+        <Breadcrumb className="mb-1.5">
           <BreadcrumbList>
             {crumbs.map((crumb, index) => (
               <React.Fragment key={index}>
@@ -81,13 +81,13 @@ export function PageHeader({
                 <BreadcrumbItem>
                   {crumb.href ? (
                     <BreadcrumbLink asChild>
-                      <Link to={crumb.href} className="flex items-center gap-1">
+                      <Link to={crumb.href} className="flex items-center gap-1 text-sm">
                         {index === 0 && <Home className="h-3 w-3" />}
                         {crumb.label}
                       </Link>
                     </BreadcrumbLink>
                   ) : (
-                    <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                    <BreadcrumbPage className="text-sm">{crumb.label}</BreadcrumbPage>
                   )}
                 </BreadcrumbItem>
               </React.Fragment>
@@ -97,11 +97,11 @@ export function PageHeader({
         
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight animate-fade-in">
+            <h1 className="text-2xl font-bold tracking-tight animate-fade-in">
               {title}
             </h1>
             {description && (
-              <p className="text-muted-foreground animate-fade-up">
+              <p className="text-sm text-muted-foreground animate-fade-up">
                 {description}
               </p>
             )}

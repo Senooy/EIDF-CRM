@@ -221,7 +221,7 @@ const Index = () => {
 
   return (
     <RequireSite>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <PageHeader 
           title="Tableau de bord"
           description="Vue d'ensemble de vos sites WordPress"
@@ -297,7 +297,7 @@ const Index = () => {
           }
         />
         
-        <div className="container mx-auto px-6 space-y-6">
+        <div className="container mx-auto px-6 space-y-4">
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <KPICard 

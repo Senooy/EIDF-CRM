@@ -72,7 +72,7 @@ const OrdersListPage = () => {
 
   return (
     <RequireSite>
-      <div className="space-y-6">
+      <div className="space-y-4">
         <PageHeader 
           title="Toutes les commandes"
           description={`${totalOrders} commandes au total`}
