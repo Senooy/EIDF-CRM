@@ -39,8 +39,8 @@ import {
   Legend,
   Treemap
 } from 'recharts';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
+import { PageHeader } from '@/components/Layout/PageHeader';
+import { PageSkeleton } from '@/components/ui/loading-skeleton';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
@@ -86,23 +86,23 @@ export default function WooCommerceDashboard() {
 
   const isLoading = loadingCart || loadingCLV || loadingCohort || loadingStock || loadingPromo;
 
+  if (isLoading) {
+    return <PageSkeleton />;
+  }
+
   return (
     <RequireSite>
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold">Analytics WooCommerce Avancées</h1>
-            <p className="text-muted-foreground">
-              Métriques approfondies pour {activeSite?.name}
-            </p>
-          </div>
+      <div className="space-y-6">
+        <PageHeader 
+          title="Analytics WooCommerce Avancées"
+          description={`Métriques approfondies pour ${activeSite?.name}`}
+        />
+        
+        <div className="container mx-auto px-6 space-y-6">
 
           {/* Alertes importantes */}
           {stockPredictions && stockPredictions.criticalStock.length > 0 && (
-            <Alert className="mb-6">
+            <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertTitle>Stock critique</AlertTitle>
               <AlertDescription>
@@ -112,7 +112,7 @@ export default function WooCommerceDashboard() {
           )}
 
           {/* KPI Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Taux d'abandon</CardTitle>
@@ -650,9 +650,8 @@ export default function WooCommerceDashboard() {
               </Card>
             </TabsContent>
           </Tabs>
-        </main>
+        </div>
       </div>
-    </div>
     </RequireSite>
   );
 }

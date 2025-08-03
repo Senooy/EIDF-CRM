@@ -3,9 +3,9 @@ import { Customer as WooCommerceCustomer } from "@/lib/woocommerce-multi";
 import { useCachedCustomers } from "@/hooks/useCachedData";
 import CustomersTable from "@/components/Dashboard/CustomersTable";
 import CustomerCard from "@/components/Dashboard/CustomerCard";
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
+import { PageHeader } from "@/components/Layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { AlertCircle, RefreshCw, Database } from "lucide-react";
 import { useMemo, useState, useEffect } from "react";
 import { formatPrice } from "@/utils/formatters";
@@ -138,15 +138,12 @@ const CustomersListPage = () => {
   );
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-4 md:p-6 bg-gray-50 overflow-y-auto">
-          <div className="mb-6">
-              <div className="flex justify-between items-center mb-4">
-                  <h1 className="text-2xl font-semibold text-gray-900">Clients</h1>
-                  <div className="flex items-center gap-4">
+    <div className="space-y-6">
+      <PageHeader 
+        title="Clients"
+        description={`${totalCustomers} clients au total`}
+        actions={
+          <div className="flex items-center gap-4">
                     {/* Cache Toggle */}
                     <div className="flex items-center gap-2">
                       <Switch
@@ -186,21 +183,23 @@ const CustomersListPage = () => {
                         )}
                       </Button>
                     )}
-                  </div>
-              </div>
-              {/* Search Input */}
-              <div className="w-full max-w-sm">
-                  <Input
-                      type="search" 
-                      placeholder="Rechercher par nom, email..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full"
-                  />
-              </div>
           </div>
-          
-          {isLoading && <LoadingSkeleton />}
+        }
+      />
+      
+      <div className="container mx-auto px-6 space-y-6">
+        {/* Search Input */}
+        <div className="w-full max-w-sm">
+            <Input
+                type="search" 
+                placeholder="Rechercher par nom, email..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full"
+            />
+        </div>
+        
+        {isLoading && <LoadingSkeleton />}
 
           {isError && <ErrorDisplay />}
 
@@ -324,7 +323,6 @@ const CustomersListPage = () => {
               </div>
             </>
           )}
-        </main>
       </div>
     </div>
   );

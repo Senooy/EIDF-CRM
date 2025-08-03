@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Product, getProductCategories, ProductCategory, getAllProducts } from '@/lib/woocommerce';
 import { useCachedProducts } from '@/hooks/useCachedData';
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
+import { PageHeader } from '@/components/Layout/PageHeader';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PageSkeleton, TableSkeleton } from '@/components/ui/loading-skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, Eye, Sparkles, RefreshCw, Database } from "lucide-react";
@@ -269,11 +269,12 @@ const ProductsListPage: React.FC = () => {
   );
 
   return (
-    <div className="flex min-h-screen w-full bg-muted/40">
-      <Sidebar />
-      <div className="flex flex-1 flex-col">
-        <Navbar />
-        <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+    <div className="space-y-6">
+      <PageHeader 
+        title="Produits"
+        description={`${totalProducts} produits au total`}
+      />
+      <div className="container mx-auto px-6 space-y-6">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
@@ -502,7 +503,6 @@ const ProductsListPage: React.FC = () => {
 
             </CardContent>
           </Card>
-        </main>
         
         {/* Modale SEO */}
         <SEOGenerationModal 

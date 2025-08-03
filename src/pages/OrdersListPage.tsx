@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { Order as WooCommerceOrder, getOrdersPage, PaginatedOrdersResponse } from "@/lib/woocommerce-multi";
 import OrdersTable from "@/components/Dashboard/OrdersTable";
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
+import { PageHeader } from "@/components/Layout/PageHeader";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { AlertCircle, RefreshCw, Database } from "lucide-react";
 import { RequireSite } from "@/components/RequireSite";
 import { Button } from "@/components/ui/button";
@@ -72,15 +72,12 @@ const OrdersListPage = () => {
 
   return (
     <RequireSite>
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-          <div className="mb-6">
-              <div className="flex items-center justify-between">
-                <h1 className="text-2xl font-semibold text-gray-900">Toutes les commandes</h1>
-                <div className="flex items-center gap-4">
+      <div className="space-y-6">
+        <PageHeader 
+          title="Toutes les commandes"
+          description={`${totalOrders} commandes au total`}
+          actions={
+            <div className="flex items-center gap-4">
                   {/* Cache Toggle */}
                   <div className="flex items-center gap-2">
                     <Switch
@@ -120,22 +117,15 @@ const OrdersListPage = () => {
                       )}
                     </Button>
                   )}
-                </div>
-              </div>
-          </div>
-          
-          {isLoading && (
-            // Basic Loading Skeleton for the table area
-            <div className="space-y-4">
-              <Skeleton className="h-10 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
             </div>
-          )}
+          }
+        />
+        
+        <div className="container mx-auto px-6">
+          {isLoading && <TableSkeleton />}
 
           {isError && (
-             <div className="text-red-600 flex items-center p-4 border border-red-200 bg-red-50 rounded">
+             <div className="text-destructive flex items-center p-4 border border-destructive/20 bg-destructive/10 rounded-lg">
               <AlertCircle className="h-5 w-5 mr-2" />
               {error?.message || "Erreur lors du chargement des commandes. Veuillez réessayer plus tard."}
             </div>
@@ -147,8 +137,8 @@ const OrdersListPage = () => {
               
               {/* Pagination Controls */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between mt-6 px-6">
-                  <div className="text-sm text-gray-600">
+                <div className="flex items-center justify-between mt-6">
+                  <div className="text-sm text-muted-foreground">
                     Page {currentPage} sur {totalPages} (Total : {totalOrders} commandes)
                   </div>
                   <div className="flex items-center gap-2">
@@ -176,9 +166,8 @@ const OrdersListPage = () => {
               )}
             </>
           )}
-        </main>
+        </div>
       </div>
-    </div>
     </RequireSite>
   );
 };

@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
+import React, { useState, useEffect } from 'react';
+import { PageHeader } from '@/components/Layout/PageHeader';
+import { PageSkeleton } from '@/components/ui/loading-skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Mail, MousePointerClick, TrendingUp, Users, BarChart3, Filter } from 'lucide-react';
@@ -77,26 +77,24 @@ export default function CampaignDashboard() {
   const overallKPIs = calculateOverallKPIs();
   const sentCampaigns = campaigns.filter(c => c.status === 'sent');
 
-  return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-          <div className="container mx-auto space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Campagnes de Mailing</h1>
-            <p className="text-muted-foreground mt-1">
-              Gérez et analysez vos campagnes d'email marketing
-            </p>
-          </div>
-          <Button onClick={() => navigate('/campaigns/create')} size="lg">
-            <Plus className="h-5 w-5 mr-2" />
-            Nouvelle Campagne
-          </Button>
-        </div>
+  if (loading) {
+    return <PageSkeleton />;
+  }
 
+  return (
+    <div className="space-y-6">
+      <PageHeader 
+        title="Campagnes Email"
+        description="Gérez et analysez vos campagnes marketing"
+        actions={
+          <Button onClick={() => navigate('/campaigns/create')} className="gap-2">
+            <Plus className="h-4 w-4" />
+            Nouvelle campagne
+          </Button>
+        }
+      />
+      <div className="container mx-auto px-6 space-y-6">
+        {/* Stats section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <CampaignKPICard
             title="Emails Envoyés"
@@ -162,8 +160,6 @@ export default function CampaignDashboard() {
             <CampaignList campaigns={campaigns} loading={loading} />
           </CardContent>
         </Card>
-          </div>
-        </main>
       </div>
     </div>
   );
