@@ -37,8 +37,6 @@ import {
   ResponsiveContainer,
   Legend
 } from 'recharts';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82CA9D'];
 
@@ -110,21 +108,17 @@ export default function WordPressDashboard() {
 
   return (
     <RequireSite>
-      <div className="flex h-screen bg-gray-100">
-        <Sidebar />
-        <div className="flex-1 flex flex-col overflow-hidden">
-          <Navbar />
-          <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold">Dashboard WordPress</h1>
-              <p className="text-muted-foreground">
-                Vue d'ensemble de {activeSite?.name}
-              </p>
-            </div>
+      <div className="container mx-auto p-6 space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard WordPress</h1>
+          <p className="text-muted-foreground">
+            Vue d'ensemble de {activeSite?.name}
+          </p>
+        </div>
 
-            {/* Proxy Error Alert */}
-            {proxyError && import.meta.env.DEV && (
-              <Alert variant="destructive" className="mb-6">
+        {/* Proxy Error Alert */}
+        {proxyError && import.meta.env.DEV && (
+          <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Serveur proxy non disponible</AlertTitle>
                 <AlertDescription>
@@ -133,12 +127,12 @@ export default function WordPressDashboard() {
                     npm run start:proxy
                   </p>
                 </AlertDescription>
-              </Alert>
-            )}
+          </Alert>
+        )}
 
-            {/* API Error Alert */}
-            {hasErrors && !proxyError && (
-              <Alert variant="destructive" className="mb-6">
+        {/* API Error Alert */}
+        {hasErrors && !proxyError && (
+          <Alert variant="destructive">
                 <AlertCircle className="h-4 w-4" />
                 <AlertTitle>Erreur de connexion</AlertTitle>
                 <AlertDescription>
@@ -149,11 +143,11 @@ export default function WordPressDashboard() {
                     <li>Les permissions d'application sont configurées</li>
                   </ul>
                 </AlertDescription>
-              </Alert>
-            )}
+          </Alert>
+        )}
 
-            {/* KPI Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+        {/* KPI Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Articles</CardTitle>
@@ -264,10 +258,10 @@ export default function WordPressDashboard() {
                   )}
                 </CardContent>
               </Card>
-            </div>
+        </div>
 
-            {/* Tabs avec visualisations */}
-            <Tabs defaultValue="content" className="space-y-4">
+        {/* Tabs avec visualisations */}
+        <Tabs defaultValue="content" className="space-y-4">
               <TabsList>
                 <TabsTrigger value="content">Contenu</TabsTrigger>
                 <TabsTrigger value="engagement">Engagement</TabsTrigger>
@@ -565,9 +559,7 @@ export default function WordPressDashboard() {
                   </Card>
                 </div>
               </TabsContent>
-            </Tabs>
-          </main>
-        </div>
+        </Tabs>
       </div>
     </RequireSite>
   );

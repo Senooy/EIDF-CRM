@@ -9,8 +9,6 @@ import KPICard from "@/components/Dashboard/KPICard";
 import OrdersTable from "@/components/Dashboard/OrdersTable";
 import RevenueChart from "@/components/Dashboard/RevenueChart";
 import OrderStatusPieChart from "@/components/Dashboard/OrderStatusPieChart";
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
 import ActivityFeed from "@/components/Dashboard/ActivityFeed";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Clock, CheckCircle, CreditCard, TrendingUp, RefreshCw, Database } from "lucide-react";
@@ -20,6 +18,8 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import * as ss from 'simple-statistics';
 import { RequireSite } from "@/components/RequireSite";
+import { PageHeader } from "@/components/Layout/PageHeader";
+import { PageSkeleton } from "@/components/ui/loading-skeleton";
 
 // Re-introduce time periods, adding 'all'
 const timePeriods = {
@@ -216,158 +216,144 @@ const Index = () => {
   const isLoading = ordersLoading;
 
   if (isLoading) {
-    return (
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50">
-            <div className="animate-pulse space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[1, 2, 3, 4].map(i => (
-                  <div key={i} className="h-32 bg-gray-200 rounded-xl"></div>
-                ))}
-              </div>
-              <div className="h-80 bg-gray-200 rounded-xl"></div>
-              <div className="h-96 bg-gray-200 rounded-xl"></div>
-            </div>
-          </main>
-        </div>
-      </div>
-    );
+    return <PageSkeleton />;
   }
 
   return (
     <RequireSite>
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-              <h1 className="text-2xl font-semibold text-gray-900">Tableau de bord</h1>
-              <div className="flex flex-col sm:flex-row items-center gap-4">
-                 {/* Period Selector */}
-                 <Select value={selectedPeriodKey} onValueChange={(value) => setSelectedPeriodKey(value as PeriodKey)}>
-                   <SelectTrigger className="w-full sm:w-[180px]">
-                     <SelectValue placeholder="Sélectionner période" />
-                   </SelectTrigger>
-                   <SelectContent>
-                     {(Object.keys(timePeriods) as PeriodKey[]).map(key => (
-                        <SelectItem key={key} value={key}>
-                          {timePeriods[key].label}
-                        </SelectItem>
-                     ))}
-                   </SelectContent>
-                 </Select>
-                 
-                 {/* Cache Toggle */}
-                 <div className="flex items-center gap-2">
-                   <Switch
-                     id="use-cache"
-                     checked={useCache}
-                     onCheckedChange={setUseCache}
-                   />
-                   <Label htmlFor="use-cache" className="flex items-center gap-2 cursor-pointer">
-                     <Database className="h-4 w-4" />
-                     Cache
-                     {useCache && lastSync && (
-                       <Badge variant={isStale ? "secondary" : "default"} className="text-xs">
-                         {isStale ? "Obsolète" : "À jour"}
-                       </Badge>
-                     )}
-                   </Label>
-                 </div>
-                 
-                 {/* Sync Button */}
-                 {useCache && (
-                   <Button
-                     variant="outline"
-                     size="sm"
-                     onClick={sync}
-                     disabled={isSyncing}
-                   >
-                     {isSyncing ? (
-                       <>
-                         <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                         Sync...
-                       </>
-                     ) : (
-                       <>
-                         <RefreshCw className="h-4 w-4 mr-2" />
-                         Sync
-                       </>
-                     )}
-                   </Button>
+      <div className="space-y-6">
+        <PageHeader 
+          title="Tableau de bord"
+          description="Vue d'ensemble de vos sites WordPress"
+          actions={
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+             {/* Period Selector */}
+             <Select value={selectedPeriodKey} onValueChange={(value) => setSelectedPeriodKey(value as PeriodKey)}>
+               <SelectTrigger className="w-full sm:w-[180px] hover:border-primary transition-colors">
+                 <SelectValue placeholder="Sélectionner période" />
+               </SelectTrigger>
+               <SelectContent>
+                 {(Object.keys(timePeriods) as PeriodKey[]).map(key => (
+                    <SelectItem key={key} value={key}>
+                      {timePeriods[key].label}
+                    </SelectItem>
+                 ))}
+               </SelectContent>
+             </Select>
+             
+             {/* Cache Toggle */}
+             <div className="flex items-center gap-2">
+               <Switch
+                 id="use-cache"
+                 checked={useCache}
+                 onCheckedChange={setUseCache}
+               />
+               <Label htmlFor="use-cache" className="flex items-center gap-2 cursor-pointer">
+                 <Database className="h-4 w-4" />
+                 Cache
+                 {useCache && lastSync && (
+                   <Badge variant={isStale ? "secondary" : "default"} className="text-xs">
+                     {isStale ? "Obsolète" : "À jour"}
+                   </Badge>
                  )}
-                 
-                 {/* Forecast Toggle */}
-                 <div className="flex items-center space-x-2">
-                   <Switch 
-                     id="forecast-mode"
-                     checked={forecastMode}
-                     onCheckedChange={setForecastMode}
-                   />
-                   <Label htmlFor="forecast-mode" className="flex items-center gap-1">
-                     <TrendingUp className="h-4 w-4" />
-                     Prévision
-                   </Label>
-                 </div>
-              </div>
-          </div>
-          
+               </Label>
+             </div>
+             
+             {/* Sync Button */}
+             {useCache && (
+               <Button
+                 variant="outline"
+                 size="sm"
+                 onClick={sync}
+                 disabled={isSyncing}
+               >
+                 {isSyncing ? (
+                   <>
+                     <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                     Sync...
+                   </>
+                 ) : (
+                   <>
+                     <RefreshCw className="h-4 w-4 mr-2" />
+                     Sync
+                   </>
+                 )}
+               </Button>
+             )}
+             
+             {/* Forecast Toggle */}
+             <div className="flex items-center space-x-2">
+               <Switch 
+                 id="forecast-mode"
+                 checked={forecastMode}
+                 onCheckedChange={setForecastMode}
+               />
+               <Label htmlFor="forecast-mode" className="flex items-center gap-1">
+                 <TrendingUp className="h-4 w-4" />
+                 Prévision
+               </Label>
+             </div>
+            </div>
+          }
+        />
+        
+        <div className="container mx-auto px-6 space-y-6">
           {/* KPI Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <KPICard 
-              title="Total commandes" 
-              value={kpiStats.totalOrders}
-              icon={<ShoppingCart className="h-5 w-5" />}
-            />
-            <KPICard 
-              title="En attente" 
-              value={kpiStats.pendingOrders}
-              icon={<Clock className="h-5 w-5" />}
-            />
-            <KPICard 
-              title="Terminées" 
-              value={kpiStats.completedOrders}
-              icon={<CheckCircle className="h-5 w-5" />}
-            />
-            <KPICard 
-              title={`CA (${timePeriods[selectedPeriodKey].label})`}
-              value={formatPrice(kpiStats.revenueForPeriod)}
-              icon={<CreditCard className="h-5 w-5" />}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <KPICard 
+            title="Total commandes" 
+            value={kpiStats.totalOrders}
+            icon={<ShoppingCart className="h-5 w-5" />}
+            color="primary"
+            trend={{ value: 12.5, isPositive: true }}
+          />
+          <KPICard 
+            title="En attente" 
+            value={kpiStats.pendingOrders}
+            icon={<Clock className="h-5 w-5" />}
+            color="warning"
+            trend={{ value: 3.2, isPositive: false }}
+          />
+          <KPICard 
+            title="Terminées" 
+            value={kpiStats.completedOrders}
+            icon={<CheckCircle className="h-5 w-5" />}
+            color="success"
+            trend={{ value: 8.1, isPositive: true }}
+          />
+          <KPICard 
+            title={`CA (${timePeriods[selectedPeriodKey].label})`}
+            value={formatPrice(kpiStats.revenueForPeriod)}
+            icon={<CreditCard className="h-5 w-5" />}
+            color="default"
+            trend={{ value: 15.3, isPositive: true }}
+          />
           </div>
           
-          {/* Charts & Activity Section - Adjusting breakpoints */}
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6"> 
-            {/* Revenue Chart */}
-            {/* Spans 1 col on md+, 1 on xl+ */}
-            <div className="md:col-span-1 xl:col-span-1">
-              <RevenueChart 
-                data={chartData} 
-                periodLabel={timePeriods[selectedPeriodKey].label} 
-                isForecasting={forecastMode}
-              />
-            </div>
-            {/* Order Status Pie Chart */}
-            {/* Spans 1 col on md+, 1 on xl+ */}
-            <div className="md:col-span-1 xl:col-span-1">
-               <OrderStatusPieChart orders={allOrders} />
-            </div>
-            {/* Activity Feed */}
-            {/* Spans 2 cols on md/lg (full width below), 1 col on xl+ */}
-            <div className="md:col-span-2 xl:col-span-1">
-              <ActivityFeed numberOfOrders={5} /> 
-            </div>
+          {/* Charts & Activity Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6"> 
+          {/* Revenue Chart */}
+          <div className="md:col-span-1 xl:col-span-1">
+            <RevenueChart 
+              data={chartData} 
+              periodLabel={timePeriods[selectedPeriodKey].label} 
+              isForecasting={forecastMode}
+            />
           </div>
-          
+          {/* Order Status Pie Chart */}
+          <div className="md:col-span-1 xl:col-span-1">
+             <OrderStatusPieChart orders={allOrders} />
+          </div>
+          {/* Activity Feed */}
+          <div className="md:col-span-2 xl:col-span-1">
+            <ActivityFeed numberOfOrders={5} /> 
+          </div>
+          </div>
+        
           {/* Orders Table */}
           <OrdersTable orders={allOrders} />
-        </main>
+        </div>
       </div>
-    </div>
     </RequireSite>
   );
 };
