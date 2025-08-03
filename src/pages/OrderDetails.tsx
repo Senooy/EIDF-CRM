@@ -13,8 +13,6 @@ import {
 } from "@/lib/woocommerce";
 import { formatDate, formatOrderNumber, formatPrice } from "@/utils/formatters";
 import OrderStatusBadge from "@/components/Dashboard/OrderStatusBadge";
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -187,28 +185,18 @@ const OrderDetails = () => {
 
   if (isLoading || !order) {
     return (
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50">
+      <div className="container mx-auto px-6 py-8">
             <div className="animate-pulse space-y-6">
               <div className="h-8 bg-gray-200 rounded w-1/4"></div>
               <div className="h-64 bg-gray-200 rounded-xl"></div>
               <div className="h-96 bg-gray-200 rounded-xl"></div>
             </div>
-          </main>
-        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-4 md:p-6 bg-gray-50 overflow-y-auto">
+    <div className="container mx-auto px-6 py-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6">
             <div className="flex items-center space-x-2 mb-4 sm:mb-0">
               <Button variant="ghost" onClick={handleBackToList} className="mr-2">
@@ -509,8 +497,6 @@ const OrderDetails = () => {
             </Card>
 
           </div>
-        </main>
-      </div>
     </div>
   );
 };

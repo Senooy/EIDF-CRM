@@ -1,8 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getCustomerById, Customer, Order, getAllOrders } from "@/lib/woocommerce-multi";
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle, ArrowLeft, User, Mail, Phone, MapPin, ShoppingCart, Calendar, DollarSign } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -69,29 +67,20 @@ const CustomerDetailsPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+      <div className="container mx-auto px-6 py-8">
             <Skeleton className="h-8 w-48 mb-6" />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Skeleton className="h-64 md:col-span-1" />
               <Skeleton className="h-96 md:col-span-2" />
             </div>
-          </main>
-        </div>
       </div>
     );
   }
 
   if (error || !customer) {
     return (
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50 flex flex-col items-center justify-center">
+      <div className="container mx-auto px-6 py-8">
+        <div className="flex flex-col items-center justify-center min-h-[400px]">
             <AlertCircle className="h-12 w-12 text-red-500 mb-4" />
             <h2 className="text-xl font-semibold text-red-600 mb-2">
               {customerError ? "Erreur lors du chargement du client" : ordersError ? "Erreur lors du chargement des commandes" : "Client non trouvé"}
@@ -102,18 +91,13 @@ const CustomerDetailsPage = () => {
             <Button asChild>
               <Link to="/customers"><ArrowLeft className="mr-2 h-4 w-4" /> Retour à la liste des clients</Link>
             </Button>
-          </main>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
+    <div className="container mx-auto px-6 py-8">
           <div className="mb-6">
             <Button asChild variant="outline" size="sm" className="mb-4">
                 <Link to="/customers"><ArrowLeft className="mr-2 h-4 w-4" /> Clients</Link>
@@ -207,8 +191,6 @@ const CustomerDetailsPage = () => {
             </CardContent>
           </Card>
            */}
-        </main>
-      </div>
     </div>
   );
 };

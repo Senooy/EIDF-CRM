@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
 import { useCampaigns } from '@/hooks/useCampaigns';
 import { campaignService } from '@/services/campaignService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -122,19 +120,11 @@ export default function CampaignEdit() {
 
   if (loading) {
     return (
-      <div className="flex h-screen">
-        <Sidebar />
-        <div className="flex-1 flex flex-col">
-          <Navbar />
-          <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-            <div className="container mx-auto max-w-6xl">
+      <div className="container mx-auto px-6 py-8">
               <div className="flex items-center justify-center h-64">
                 <Loader2 className="h-8 w-8 animate-spin" />
                 <span className="ml-2">Chargement de la campagne...</span>
               </div>
-            </div>
-          </main>
-        </div>
       </div>
     );
   }

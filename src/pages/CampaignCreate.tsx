@@ -1,7 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Navbar from '@/components/Layout/Navbar';
-import Sidebar from '@/components/Layout/Sidebar';
 import { useCampaigns } from '@/hooks/useCampaigns';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -101,12 +99,7 @@ export default function CampaignCreate() {
   };
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-          <div className="container mx-auto max-w-6xl">
+    <div className="container mx-auto px-6 py-8">
         <div className="flex items-center gap-4 mb-6">
           <Button
             variant="ghost"
@@ -230,9 +223,6 @@ export default function CampaignCreate() {
             </Button>
           </div>
         </div>
-          </div>
-        </main>
-      </div>
     </div>
   );
 }

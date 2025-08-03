@@ -2,8 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getProductById, Product, updateProduct, UpdateProductPayload } from '@/lib/woocommerce';
-import Navbar from "@/components/Layout/Navbar";
-import Sidebar from "@/components/Layout/Sidebar";
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -234,11 +232,7 @@ const ProductDetailsPage: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-4 md:p-6">
+    <div className="container mx-auto px-6 py-8">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
             <div>
               <Button variant="outline" size="sm" asChild className="mb-2 mr-4">
@@ -476,8 +470,6 @@ const ProductDetailsPage: React.FC = () => {
               </div>
             </div>
           )}
-        </main>
-      </div>
       
       {/* AI Content Generator Modal */}
       {product && (
