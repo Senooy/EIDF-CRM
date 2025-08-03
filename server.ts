@@ -10,6 +10,7 @@ import {
   BatchGenerationResult 
 } from './src/lib/gemini-service.js';
 import { generateAllContentSingleCall } from './src/lib/gemini-single-call.js';
+import { AuthRequest, authenticateUser } from './src/server/middleware/auth';
 
 // Load server environment variables
 dotenv.config({ path: '.env.server' });
@@ -56,16 +57,24 @@ app.use(cors());
 app.use(express.json());
 
 // Helper type for async request handlers
-type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<unknown>;
+type AsyncRequestHandler = (req: AuthRequest, res: Response, next: NextFunction) => Promise<unknown>;
 
 // Middleware to wrap async handlers and catch errors
 const asyncHandler = (fn: AsyncRequestHandler) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  (req: AuthRequest, res: Response, next: NextFunction) => {
     Promise.resolve(fn(req, res, next)).catch(next);
   };
 
+// Health check endpoint (public)
+app.get('/health', (req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// Apply authentication middleware to all other routes
+app.use('/api', authenticateUser);
+
 // WooCommerce proxy routes
-app.get('/api/wc/orders', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/orders', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log('Proxying GET /orders request');
     const response = await woocommerceApi.get('/orders', { params: req.query });
@@ -84,7 +93,7 @@ app.get('/api/wc/orders', asyncHandler(async (req: Request, res: Response) => {
   }
 }));
 
-app.get('/api/wc/orders/:id', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/orders/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying GET /orders/${req.params.id} request`);
     const response = await woocommerceApi.get(`/orders/${req.params.id}`);
@@ -94,7 +103,7 @@ app.get('/api/wc/orders/:id', asyncHandler(async (req: Request, res: Response) =
   }
 }));
 
-app.put('/api/wc/orders/:id', asyncHandler(async (req: Request, res: Response) => {
+app.put('/api/wc/orders/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying PUT /orders/${req.params.id} request`);
     const response = await woocommerceApi.put(`/orders/${req.params.id}`, req.body);
@@ -104,7 +113,7 @@ app.put('/api/wc/orders/:id', asyncHandler(async (req: Request, res: Response) =
   }
 }));
 
-app.get('/api/wc/orders/:id/notes', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/orders/:id/notes', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying GET /orders/${req.params.id}/notes request`);
     const response = await woocommerceApi.get(`/orders/${req.params.id}/notes`);
@@ -114,7 +123,7 @@ app.get('/api/wc/orders/:id/notes', asyncHandler(async (req: Request, res: Respo
   }
 }));
 
-app.post('/api/wc/orders/:id/notes', asyncHandler(async (req: Request, res: Response) => {
+app.post('/api/wc/orders/:id/notes', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying POST /orders/${req.params.id}/notes request`);
     const response = await woocommerceApi.post(`/orders/${req.params.id}/notes`, req.body);
@@ -124,7 +133,7 @@ app.post('/api/wc/orders/:id/notes', asyncHandler(async (req: Request, res: Resp
   }
 }));
 
-app.post('/api/wc/orders/:id/refunds', asyncHandler(async (req: Request, res: Response) => {
+app.post('/api/wc/orders/:id/refunds', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying POST /orders/${req.params.id}/refunds request`);
     const response = await woocommerceApi.post(`/orders/${req.params.id}/refunds`, req.body);
@@ -135,7 +144,7 @@ app.post('/api/wc/orders/:id/refunds', asyncHandler(async (req: Request, res: Re
 }));
 
 // Customers endpoints
-app.get('/api/wc/customers', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/customers', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log('Proxying GET /customers request');
     const response = await woocommerceApi.get('/customers', { params: req.query });
@@ -154,7 +163,7 @@ app.get('/api/wc/customers', asyncHandler(async (req: Request, res: Response) =>
   }
 }));
 
-app.get('/api/wc/customers/:id', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/customers/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying GET /customers/${req.params.id} request`);
     const response = await woocommerceApi.get(`/customers/${req.params.id}`);
@@ -165,7 +174,7 @@ app.get('/api/wc/customers/:id', asyncHandler(async (req: Request, res: Response
 }));
 
 // Products endpoints
-app.get('/api/wc/products', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/products', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log('Proxying GET /products request');
     const response = await woocommerceApi.get('/products', { params: req.query });
@@ -184,7 +193,7 @@ app.get('/api/wc/products', asyncHandler(async (req: Request, res: Response) => 
   }
 }));
 
-app.get('/api/wc/products/:id', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/products/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying GET /products/${req.params.id} request`);
     const response = await woocommerceApi.get(`/products/${req.params.id}`);
@@ -194,7 +203,7 @@ app.get('/api/wc/products/:id', asyncHandler(async (req: Request, res: Response)
   }
 }));
 
-app.put('/api/wc/products/:id', asyncHandler(async (req: Request, res: Response) => {
+app.put('/api/wc/products/:id', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log(`Proxying PUT /products/${req.params.id} request`);
     const response = await woocommerceApi.put(`/products/${req.params.id}`, req.body);
@@ -204,7 +213,7 @@ app.put('/api/wc/products/:id', asyncHandler(async (req: Request, res: Response)
   }
 }));
 
-app.get('/api/wc/products/categories', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/products/categories', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log('Proxying GET /products/categories request');
     const response = await woocommerceApi.get('/products/categories', { params: req.query });
@@ -215,7 +224,7 @@ app.get('/api/wc/products/categories', asyncHandler(async (req: Request, res: Re
 }));
 
 // Reports endpoints
-app.get('/api/wc/reports/orders/totals', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/reports/orders/totals', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log('Proxying GET /reports/orders/totals request');
     const response = await woocommerceApi.get('/reports/orders/totals');
@@ -225,7 +234,7 @@ app.get('/api/wc/reports/orders/totals', asyncHandler(async (req: Request, res: 
   }
 }));
 
-app.get('/api/wc/reports/sales', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/wc/reports/sales', asyncHandler(async (req: AuthRequest, res: Response) => {
   try {
     console.log('Proxying GET /reports/sales request');
     const response = await woocommerceApi.get('/reports/sales', { params: req.query });
@@ -236,7 +245,7 @@ app.get('/api/wc/reports/sales', asyncHandler(async (req: Request, res: Response
 }));
 
 // AI Content Generation endpoints
-app.post('/api/ai/generate-product-content', asyncHandler(async (req: Request, res: Response) => {
+app.post('/api/ai/generate-product-content', asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!genAI) {
     res.status(503).json({ message: 'AI service not configured' });
     return;
@@ -262,7 +271,7 @@ app.post('/api/ai/generate-product-content', asyncHandler(async (req: Request, r
 }));
 
 // Single-call AI generation endpoint
-app.post('/api/ai/generate-single-call', asyncHandler(async (req: Request, res: Response) => {
+app.post('/api/ai/generate-single-call', asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!genAI) {
     res.status(503).json({ message: 'AI service not configured' });
     return;
@@ -288,7 +297,7 @@ app.post('/api/ai/generate-single-call', asyncHandler(async (req: Request, res: 
   }
 }));
 
-app.post('/api/ai/batch-generate', asyncHandler(async (req: Request, res: Response) => {
+app.post('/api/ai/batch-generate', asyncHandler(async (req: AuthRequest, res: Response) => {
   if (!genAI) {
     res.status(503).json({ message: 'AI service not configured' });
     return;
@@ -392,7 +401,7 @@ app.post('/api/ai/batch-generate', asyncHandler(async (req: Request, res: Respon
 }));
 
 // Test endpoint for AI service
-app.get('/api/ai/test', asyncHandler(async (req: Request, res: Response) => {
+app.get('/api/ai/test', asyncHandler(async (req: AuthRequest, res: Response) => {
   res.json({
     configured: !!genAI,
     apiKeyPresent: !!GEMINI_API_KEY

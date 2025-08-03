@@ -49,26 +49,26 @@ const App = () => (
                 </ProtectedRoute>
               }
             >
-            <Route path="/" element={<Index />} />
-            <Route path="/orders/:id" element={<OrderDetails />} />
-            <Route path="/orders" element={<OrdersListPage />} />
-            <Route path="/customers" element={<CustomersListPage />} />
-            <Route path="/customer/:id" element={<CustomerDetailsPage />} />
-            <Route path="/products" element={<ProductsListPage />} />
-            <Route path="/products/:id" element={<ProductDetailsPage />} />
-            <Route path="/wordpress" element={<WordPressDashboard />} />
-            <Route path="/woocommerce" element={<WooCommerceDashboard />} />
-            <Route path="/campaigns" element={<CampaignDashboard />} />
-            <Route path="/campaigns/create" element={<CampaignCreate />} />
-            <Route path="/campaigns/:id" element={<CampaignDetails />} />
-            <Route path="/campaigns/:id/edit" element={<CampaignEdit />} />
-            <Route path="/settings/sites" element={<SiteConfiguration />} />
-            <Route path="/settings/sync" element={<SyncSettings />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+              <Route path="/" element={<Index />} />
+              <Route path="/orders/:id" element={<OrderDetails />} />
+              <Route path="/orders" element={<OrdersListPage />} />
+              <Route path="/customers" element={<CustomersListPage />} />
+              <Route path="/customer/:id" element={<CustomerDetailsPage />} />
+              <Route path="/products" element={<ProductsListPage />} />
+              <Route path="/products/:id" element={<ProductDetailsPage />} />
+              <Route path="/wordpress" element={<WordPressDashboard />} />
+              <Route path="/woocommerce" element={<WooCommerceDashboard />} />
+              <Route path="/campaigns" element={<CampaignDashboard />} />
+              <Route path="/campaigns/create" element={<CampaignCreate />} />
+              <Route path="/campaigns/:id" element={<CampaignDetails />} />
+              <Route path="/campaigns/:id/edit" element={<CampaignEdit />} />
+              <Route path="/settings/sites" element={<SiteConfiguration />} />
+              <Route path="/settings/sync" element={<SyncSettings />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Route>
+          </Routes>
+        </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
   </ErrorBoundary>
