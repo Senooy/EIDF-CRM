@@ -33,15 +33,35 @@ sudo su -
 
 ### Étape 2: Télécharger et Lancer le Script
 
+**Option A: Repository Public**
 ```bash
-# Télécharger le script d'installation
-curl -fsSL https://raw.githubusercontent.com/votre-repo/EIDF-CRM/main/scripts/debian-vps-nuke-setup.sh -o debian-vps-setup.sh
-
-# Rendre exécutable
+# Si le repository est public
+curl -fsSL https://raw.githubusercontent.com/Senooy/EIDF-CRM/main/scripts/debian-vps-nuke-setup.sh -o debian-vps-setup.sh
 chmod +x debian-vps-setup.sh
 
-# Lancer l'installation (remplacer par vos vraies valeurs)
+# Remplacez par vos vraies valeurs :
+# example.com → votre domaine
+# admin@example.com → votre email admin
 ./debian-vps-setup.sh example.com admin@example.com
+```
+
+**Option B: Repository Privé**
+```bash
+# 1. Cloner le repository sur votre machine locale avec authentification
+git clone https://github.com/Senooy/EIDF-CRM.git
+cd EIDF-CRM
+
+# 2. Copier le script sur le VPS (depuis votre machine locale)
+scp scripts/debian-vps-nuke-setup.sh root@VOTRE_IP:/root/
+
+# 3. Sur le VPS, rendre exécutable et lancer
+ssh root@VOTRE_IP
+chmod +x /root/debian-vps-nuke-setup.sh
+
+# Remplacez par vos vraies valeurs :
+# example.com → votre domaine (ex: monentreprise.com)
+# admin@example.com → votre email admin (ex: admin@monentreprise.com)
+./debian-vps-nuke-setup.sh example.com admin@example.com
 ```
 
 Le script va:
@@ -129,7 +149,8 @@ apt install -y postfix postfix-pcre opendkim opendkim-tools opendmarc \
                mailutils rsyslog logrotate fail2ban ufw
 
 # Configuration automatique avec notre script
-curl -fsSL https://raw.githubusercontent.com/votre-repo/EIDF-CRM/main/scripts/postfix-setup.sh -o postfix-setup.sh
+# Si repo privé, copier d'abord: scp scripts/postfix-setup.sh root@VOTRE_IP:/root/
+# Sinon télécharger: curl -fsSL https://raw.githubusercontent.com/Senooy/EIDF-CRM/main/scripts/postfix-setup.sh -o postfix-setup.sh
 chmod +x postfix-setup.sh
 ./postfix-setup.sh votre-domaine.com VOTRE_IP
 ```
@@ -158,7 +179,11 @@ adduser --system --group --home /opt/eidf-crm eidf
 
 # Cloner le repository
 cd /opt
-git clone https://github.com/votre-repo/EIDF-CRM.git eidf-crm
+# Pour repo privé: utiliser SSH ou token d'accès personnel
+# git clone https://github.com/Senooy/EIDF-CRM.git eidf-crm
+# OU copier les fichiers depuis votre machine locale:
+# scp -r ./EIDF-CRM root@VOTRE_IP:/opt/eidf-crm
+git clone https://github.com/Senooy/EIDF-CRM.git eidf-crm
 chown -R eidf:eidf /opt/eidf-crm
 
 # Installation des dépendances
@@ -264,7 +289,7 @@ _dmarc.votre-domaine.com.   TXT     "v=DMARC1; p=quarantine; rua=mailto:dmarc@vo
 
 ```bash
 # Configuration avancée Fail2Ban
-curl -fsSL https://raw.githubusercontent.com/votre-repo/EIDF-CRM/main/scripts/debian-security.sh -o security.sh
+curl -fsSL https://raw.githubusercontent.com/Senooy/EIDF-CRM/main/scripts/debian-security.sh -o security.sh
 chmod +x security.sh
 ./security.sh
 

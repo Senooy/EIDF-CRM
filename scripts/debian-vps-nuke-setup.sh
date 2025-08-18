@@ -107,9 +107,9 @@ apt-get update
 apt-get upgrade -y
 
 log "Installation des outils de base..."
-apt-get install -y curl wget git vim htop unzip software-properties-common \
+apt-get install -y curl wget git vim htop unzip \
                    apt-transport-https ca-certificates gnupg lsb-release \
-                   build-essential python3-dev python3-pip bc
+                   build-essential python3-dev python3-pip bc dirmngr
 
 log "Configuration du timezone et hostname..."
 timedatectl set-timezone Europe/Paris
@@ -422,10 +422,18 @@ adduser --system --group --home "$APP_DIR" --shell /bin/bash eidf
 
 log "Clone du repository..."
 if [ ! -d "$APP_DIR" ]; then
-    git clone https://github.com/youneskhelifi/EIDF-CRM.git "$APP_DIR"
+    # Tentative de clone depuis GitHub (nécessite repo public ou authentification)
+    if git clone https://github.com/Senooy/EIDF-CRM.git "$APP_DIR" 2>/dev/null; then
+        success "Repository cloné depuis GitHub"
+    else
+        error "Impossible de cloner le repository depuis GitHub. Assurez-vous que:"
+        error "1. Le repository est public, OU"
+        error "2. Vous avez configuré l'authentification SSH/token, OU" 
+        error "3. Copiez manuellement les fichiers avec: scp -r ./EIDF-CRM root@$IP_ADDRESS:/opt/eidf-crm"
+    fi
 else
     cd "$APP_DIR"
-    git pull origin main
+    git pull origin main || warning "Impossible de mettre à jour le repository"
 fi
 
 chown -R eidf:eidf "$APP_DIR"
