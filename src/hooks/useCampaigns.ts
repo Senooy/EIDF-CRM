@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
-import { campaignService } from '@/services/campaignService';
 import { Campaign, EmailTemplate } from '@/types/campaign';
 import { toast } from 'sonner';
+// Import both services for gradual migration
+import { campaignService } from '@/services/campaignService';
+import { useCampaigns as useNewCampaigns } from '@/hooks/useCampaignApi';
 
 export const useCampaigns = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);

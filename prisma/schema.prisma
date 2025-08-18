@@ -53,6 +53,13 @@ model Organization {
   apiCredentials  ApiCredential[]
   activityLogs    ActivityLog[]
   invitations     Invitation[]
+  campaigns       Campaign[]
+  emailTemplates  EmailTemplate[]
+  emailSegments   EmailSegment[]
+  smtpConfiguration SmtpConfiguration?
+  ipWarmupSchedule IpWarmupSchedule[]
+  unsubscribeList UnsubscribeList[]
+  bounceList      BounceList[]
   
   @@index([slug])
 }
@@ -207,4 +214,313 @@ model Invitation {
   @@unique([organizationId, email])
   @@index([token])
   @@index([email])
+}
+
+// Email Campaign Status
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  PAUSED
+  CANCELLED
+  FAILED
+}
+
+// Email Recipient Status
+enum RecipientStatus {
+  PENDING
+  SENDING
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  BOUNCED
+  UNSUBSCRIBED
+  FAILED
+}
+
+// Email Campaign model
+model Campaign {
+  id                String       @id @default(cuid())
+  organizationId    String
+  name              String
+  subject           String
+  body              String       @db.Text
+  plainTextBody     String?      @db.Text
+  status            CampaignStatus @default(DRAFT)
+  
+  // Scheduling
+  scheduledAt       DateTime?
+  startedAt         DateTime?
+  completedAt       DateTime?
+  
+  // Sending configuration
+  dailyLimit        Int          @default(100)
+  hourlyLimit       Int          @default(20)
+  delayBetweenMin   Int          @default(3)   // seconds
+  delayBetweenMax   Int          @default(15)  // seconds
+  
+  // Sender information
+  fromEmail         String?
+  fromName          String?
+  replyToEmail      String?
+  
+  // Template and segmentation
+  templateId        String?
+  segmentId         String?
+  
+  // Statistics
+  totalRecipients   Int          @default(0)
+  sentCount         Int          @default(0)
+  deliveredCount    Int          @default(0)
+  openedCount       Int          @default(0)
+  clickedCount      Int          @default(0)
+  bouncedCount      Int          @default(0)
+  unsubscribedCount Int          @default(0)
+  spamReportedCount Int          @default(0)
+  
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+  createdBy         String
+  
+  // Relations
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  template          EmailTemplate? @relation(fields: [templateId], references: [id])
+  segment           EmailSegment? @relation(fields: [segmentId], references: [id])
+  recipients        CampaignRecipient[]
+  activities        CampaignActivity[]
+  
+  @@index([organizationId, status])
+  @@index([status, scheduledAt])
+}
+
+// Campaign Recipients
+model CampaignRecipient {
+  id              String       @id @default(cuid())
+  campaignId      String
+  email           String
+  firstName       String?
+  lastName        String?
+  customData      Json?        // Variables for personalization
+  
+  status          RecipientStatus @default(PENDING)
+  sendAttempts    Int          @default(0)
+  lastAttemptAt   DateTime?
+  
+  // Timestamps
+  sentAt          DateTime?
+  deliveredAt     DateTime?
+  openedAt        DateTime?
+  firstOpenedAt   DateTime?
+  clickedAt       DateTime?
+  firstClickedAt  DateTime?
+  bouncedAt       DateTime?
+  unsubscribedAt  DateTime?
+  
+  // Email tracking
+  messageId       String?      @unique
+  trackingId      String?      @unique @default(cuid())
+  
+  // Error handling
+  lastError       String?
+  
+  createdAt       DateTime     @default(now())
+  
+  // Relations
+  campaign        Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  activities      CampaignActivity[]
+  
+  @@index([campaignId, status])
+  @@index([email])
+  @@index([trackingId])
+}
+
+// Campaign Activity Tracking
+model CampaignActivity {
+  id              String       @id @default(cuid())
+  campaignId      String
+  recipientId     String
+  action          String       // 'sent', 'delivered', 'opened', 'clicked', 'bounced', 'unsubscribed', 'spam_reported'
+  timestamp       DateTime     @default(now())
+  
+  // Optional metadata
+  userAgent       String?
+  ipAddress       String?
+  linkUrl         String?
+  
+  // Relations
+  campaign        Campaign     @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  recipient       CampaignRecipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  
+  @@index([campaignId, action, timestamp])
+  @@index([recipientId, action])
+}
+
+// Email Templates
+model EmailTemplate {
+  id              String       @id @default(cuid())
+  organizationId  String
+  name            String
+  subject         String
+  body            String       @db.Text
+  plainTextBody   String?      @db.Text
+  category        String       @default("custom") // 'promotional', 'transactional', 'newsletter', 'welcome', 'custom'
+  variables       Json?        // Available variables for personalization
+  thumbnailUrl    String?
+  
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  createdBy       String
+  
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaigns       Campaign[]
+  
+  @@index([organizationId, category])
+}
+
+// Email Segments
+model EmailSegment {
+  id              String       @id @default(cuid())
+  organizationId  String
+  name            String
+  description     String?
+  criteria        Json         // Segment criteria as JSON
+  estimatedSize   Int          @default(0)
+  lastCalculated  DateTime?
+  
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  createdBy       String
+  
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  campaigns       Campaign[]
+  
+  @@index([organizationId])
+}
+
+// SMTP Configuration per organization
+model SmtpConfiguration {
+  id              String       @id @default(cuid())
+  organizationId  String       @unique
+  
+  // SMTP settings
+  host            String       @default("localhost")
+  port            Int          @default(25)
+  secure          Boolean      @default(false)
+  username        String?
+  password        String?      // Encrypted
+  
+  // Sender information
+  fromEmail       String
+  fromName        String
+  replyToEmail    String?
+  
+  // Rate limiting
+  maxPerDay       Int          @default(500)
+  maxPerHour      Int          @default(50)
+  minDelaySeconds Int          @default(3)
+  maxDelaySeconds Int          @default(15)
+  
+  // Features
+  trackingEnabled Boolean      @default(true)
+  dedicatedIp     String?      // IP dédiée pour warm-up
+  
+  isActive        Boolean      @default(true)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  // Relations
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@index([organizationId])
+}
+
+// Warmup Status and Growth Pattern
+enum WarmupStatus {
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum WarmupGrowthPattern {
+  linear
+  exponential
+  conservative
+}
+
+// IP Warmup Schedule
+model IpWarmupSchedule {
+  id               String                @id @default(cuid())
+  organizationId   String
+  ipAddress        String
+  startDate        DateTime
+  endDate          DateTime
+  totalDuration    Int                   // En jours
+  maxDailyVolume   Int
+  growthPattern    WarmupGrowthPattern   @default(conservative)
+  status           WarmupStatus          @default(SCHEDULED)
+  currentDay       Int                   @default(0)
+  emailsSentToday  Int                   @default(0)
+  totalEmailsSent  Int                   @default(0)
+  dailyTargets     String?               // JSON string of daily targets
+  lastEmailSentAt  DateTime?
+  completedAt      DateTime?
+  
+  // Provider-specific counters
+  gmailSentToday   Int                   @default(0)
+  outlookSentToday Int                   @default(0)
+  yahooSentToday   Int                   @default(0)
+  
+  createdAt        DateTime              @default(now())
+  updatedAt        DateTime              @updatedAt
+
+  // Relations
+  organization     Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, ipAddress])
+  @@index([organizationId, status])
+}
+
+// Unsubscribe List
+model UnsubscribeList {
+  id              String       @id @default(cuid())
+  organizationId  String?      // NULL for global unsubscribes
+  email           String
+  reason          String?
+  source          String?      // 'campaign', 'manual', 'bounce'
+  campaignId      String?
+  
+  createdAt       DateTime     @default(now())
+  
+  // Relations
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@unique([organizationId, email])
+  @@index([email])
+}
+
+// Bounce List for reputation management
+model BounceList {
+  id              String       @id @default(cuid())
+  organizationId  String?      // NULL for global bounces
+  email           String
+  bounceType      String       // 'hard', 'soft', 'complaint'
+  bounceReason    String?
+  bounceCount     Int          @default(1)
+  
+  firstBounceAt   DateTime     @default(now())
+  lastBounceAt    DateTime     @default(now())
+  
+  // Relations
+  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  @@unique([organizationId, email])
+  @@index([email, bounceType])
 }

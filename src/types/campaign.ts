@@ -1,17 +1,40 @@
 export interface Campaign {
   id: string;
+  organizationId: string;
   name: string;
   subject: string;
   body: string;
-  status: 'draft' | 'scheduled' | 'sending' | 'sent' | 'paused';
-  scheduledDate?: string;
-  sentDate?: string;
+  plainTextBody?: string;
+  status: 'DRAFT' | 'SCHEDULED' | 'SENDING' | 'SENT' | 'PAUSED' | 'CANCELLED';
+  templateId?: string;
+  segmentId?: string;
+  fromEmail?: string;
+  fromName?: string;
+  replyToEmail?: string;
+  scheduledAt?: string;
+  startedAt?: string;
+  completedAt?: string;
   createdAt: string;
   updatedAt: string;
   createdBy: string;
-  recipientCount: number;
-  recipientSegment?: RecipientSegment;
+  totalRecipients: number;
+  sentCount: number;
+  deliveredCount: number;
+  openedCount: number;
+  clickedCount: number;
+  bouncedCount: number;
+  unsubscribedCount: number;
+  dailyLimit: number;
+  hourlyLimit: number;
+  delayBetweenMin: number;
+  delayBetweenMax: number;
   template?: EmailTemplate;
+  segment?: RecipientSegment;
+  recipients?: CampaignRecipient[];
+  activities?: CampaignActivity[];
+  _count?: {
+    recipients: number;
+  };
   stats: CampaignStats;
 }
 
@@ -57,29 +80,41 @@ export interface CampaignRecipient {
   id: string;
   campaignId: string;
   email: string;
-  customerId?: string;
-  status: 'pending' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'converted' | 'bounced' | 'unsubscribed';
+  firstName?: string;
+  lastName?: string;
+  customData?: Record<string, any>;
+  status: 'PENDING' | 'SENDING' | 'SENT' | 'DELIVERED' | 'OPENED' | 'CLICKED' | 'BOUNCED' | 'UNSUBSCRIBED' | 'FAILED' | 'CANCELLED';
+  trackingId: string;
+  messageId?: string;
   sentAt?: string;
   deliveredAt?: string;
   openedAt?: string;
+  firstOpenedAt?: string;
   clickedAt?: string;
-  convertedAt?: string;
+  firstClickedAt?: string;
   bouncedAt?: string;
   unsubscribedAt?: string;
-  revenue?: number;
+  sendAttempts: number;
+  lastAttemptAt?: string;
+  lastError?: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CampaignActivity {
   id: string;
   campaignId: string;
   recipientId: string;
-  action: 'sent' | 'delivered' | 'opened' | 'clicked' | 'converted' | 'bounced' | 'unsubscribed' | 'spam_reported';
+  action: 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'unsubscribed';
   timestamp: string;
-  metadata?: {
-    linkUrl?: string;
-    userAgent?: string;
-    ipAddress?: string;
-    revenue?: number;
+  userAgent?: string;
+  ipAddress?: string;
+  linkUrl?: string;
+  createdAt: string;
+  recipient?: {
+    email: string;
+    firstName?: string;
+    lastName?: string;
   };
 }
 

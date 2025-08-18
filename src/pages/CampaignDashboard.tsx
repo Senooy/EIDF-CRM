@@ -3,23 +3,32 @@ import { PageHeader } from '@/components/Layout/PageHeader';
 import { PageSkeleton } from '@/components/ui/loading-skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Mail, MousePointerClick, TrendingUp, Users, BarChart3, Filter } from 'lucide-react';
+import { Plus, Mail, MousePointerClick, TrendingUp, Users, BarChart3, Filter, Activity, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Campaign, CampaignKPI } from '@/types/campaign';
-import { useCampaigns } from '@/hooks/useCampaigns';
+import { useCampaigns } from '@/hooks/useCampaignApi';
+import { useQueueStats } from '@/hooks/useCampaignApi';
 import CampaignList from '@/components/Campaign/CampaignList';
 import CampaignKPICard from '@/components/Campaign/CampaignKPICard';
 import CampaignConversionFunnel from '@/components/Campaign/CampaignConversionFunnel';
 import CampaignPerformanceChart from '@/components/Campaign/CampaignPerformanceChart';
-import { developmentUtils } from '@/utils/developmentUtils';
 
 export default function CampaignDashboard() {
   const navigate = useNavigate();
-  const { campaigns, loading } = useCampaigns();
+  const { 
+    campaigns, 
+    loading, 
+    error, 
+    sendCampaign, 
+    pauseCampaign, 
+    resumeCampaign, 
+    deleteCampaign 
+  } = useCampaigns({ autoRefresh: true, refreshInterval: 30000 });
+  const { stats: queueStats } = useQueueStats({ autoRefresh: true, refreshInterval: 5000 });
   const [selectedPeriod, setSelectedPeriod] = useState('all');
 
   const calculateOverallKPIs = (): CampaignKPI => {
-    const sentCampaigns = campaigns.filter(c => c.status === 'sent');
+    const sentCampaigns = campaigns.filter(c => c.status === 'SENT' || c.status === 'SENDING');
     
     if (sentCampaigns.length === 0) {
       return {
@@ -36,17 +45,17 @@ export default function CampaignDashboard() {
     }
 
     const totals = sentCampaigns.reduce((acc, campaign) => {
-      const stats = campaign.stats;
       return {
-        sent: acc.sent + stats.sent,
-        delivered: acc.delivered + stats.delivered,
-        opened: acc.opened + stats.opened,
-        clicked: acc.clicked + stats.clicked,
-        converted: acc.converted + stats.converted,
-        bounced: acc.bounced + stats.bounced,
-        unsubscribed: acc.unsubscribed + stats.unsubscribed,
-        spamReported: acc.spamReported + stats.spamReported,
-        revenue: acc.revenue + stats.revenue
+        sent: acc.sent + campaign.sentCount,
+        delivered: acc.delivered + campaign.deliveredCount,
+        opened: acc.opened + campaign.openedCount,
+        clicked: acc.clicked + campaign.clickedCount,
+        bounced: acc.bounced + campaign.bouncedCount,
+        unsubscribed: acc.unsubscribed + campaign.unsubscribedCount,
+        // Mock conversion data since we don't track this yet
+        converted: acc.converted + 0,
+        spamReported: acc.spamReported + 0,
+        revenue: acc.revenue + 0
       };
     }, {
       sent: 0,
@@ -60,8 +69,6 @@ export default function CampaignDashboard() {
       revenue: 0
     });
 
-    const campaignCost = sentCampaigns.length * 50;
-
     return {
       deliveryRate: totals.sent > 0 ? (totals.delivered / totals.sent) * 100 : 0,
       openRate: totals.sent > 0 ? (totals.opened / totals.sent) * 100 : 0,
@@ -71,12 +78,12 @@ export default function CampaignDashboard() {
       unsubscribeRate: totals.delivered > 0 ? (totals.unsubscribed / totals.delivered) * 100 : 0,
       spamRate: totals.delivered > 0 ? (totals.spamReported / totals.delivered) * 100 : 0,
       averageOrderValue: totals.converted > 0 ? totals.revenue / totals.converted : 0,
-      roi: campaignCost > 0 ? ((totals.revenue - campaignCost) / campaignCost) * 100 : 0
+      roi: 0 // Not implemented yet
     };
   };
 
   const overallKPIs = calculateOverallKPIs();
-  const sentCampaigns = campaigns.filter(c => c.status === 'sent');
+  const sentCampaigns = campaigns.filter(c => c.status === 'SENT');
 
   if (loading) {
     return <PageSkeleton />;
@@ -99,10 +106,10 @@ export default function CampaignDashboard() {
       />
       <div className="container mx-auto px-6 space-y-4">
         {/* Stats section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <CampaignKPICard
             title="Emails Envoyés"
-            value={sentCampaigns.reduce((sum, c) => sum + c.stats.sent, 0)}
+            value={sentCampaigns.reduce((sum, c) => sum + c.sentCount, 0)}
             icon={Mail}
             description="Total des emails envoyés"
             trend={12.5}
@@ -118,10 +125,72 @@ export default function CampaignDashboard() {
             title="Taux de Clic"
             value={`${overallKPIs.clickRate.toFixed(2)}%`}
             icon={MousePointerClick}
-            description="CTR moyen (proche de 0)"
+            description="CTR moyen"
             trend={0.01}
           />
+          {queueStats && (
+            <CampaignKPICard
+              title="Queue Status"
+              value={`${queueStats.active + queueStats.waiting}`}
+              icon={Activity}
+              description={`${queueStats.active} actifs, ${queueStats.waiting} en attente`}
+              trend={0}
+            />
+          )}
         </div>
+
+        {/* Queue Stats Card */}
+        {queueStats && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="h-5 w-5" />
+                Statut de la Queue d'Envoi
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{queueStats.active}</div>
+                  <div className="text-sm text-gray-500">Actifs</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-yellow-600">{queueStats.waiting}</div>
+                  <div className="text-sm text-gray-500">En attente</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">{queueStats.delayed}</div>
+                  <div className="text-sm text-gray-500">Programmés</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">{queueStats.completed}</div>
+                  <div className="text-sm text-gray-500">Terminés</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-red-600">{queueStats.failed}</div>
+                  <div className="text-sm text-gray-500">Échecs</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {error && (
+          <Card className="border-red-200 bg-red-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-700">
+                <AlertCircle className="h-5 w-5" />
+                Erreur de Connexion
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-600">{error}</p>
+              <p className="text-sm text-red-500 mt-2">
+                Vérifiez que le serveur backend est démarré et accessible.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card className="lg:col-span-2">
@@ -154,7 +223,14 @@ export default function CampaignDashboard() {
             </div>
           </CardHeader>
           <CardContent>
-            <CampaignList campaigns={campaigns} loading={loading} />
+            <CampaignList 
+              campaigns={campaigns} 
+              loading={loading}
+              onSendCampaign={sendCampaign}
+              onPauseCampaign={pauseCampaign}
+              onResumeCampaign={resumeCampaign}
+              onDeleteCampaign={deleteCampaign}
+            />
           </CardContent>
         </Card>
       </div>
