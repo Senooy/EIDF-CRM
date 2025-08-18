@@ -426,14 +426,30 @@ if [ ! -d "$APP_DIR" ]; then
     if git clone https://github.com/Senooy/EIDF-CRM.git "$APP_DIR" 2>/dev/null; then
         success "Repository cloné depuis GitHub"
     else
-        error "Impossible de cloner le repository depuis GitHub. Assurez-vous que:"
-        error "1. Le repository est public, OU"
-        error "2. Vous avez configuré l'authentification SSH/token, OU" 
-        error "3. Copiez manuellement les fichiers avec: scp -r ./EIDF-CRM root@$IP_ADDRESS:/opt/eidf-crm"
+        warning "Impossible de cloner le repository depuis GitHub (repository privé)"
+        warning "Veuillez copier manuellement les fichiers avec:"
+        warning "scp -r ./EIDF-CRM root@$IP_ADDRESS:/opt/eidf-crm"
+        warning "Puis relancer le script ou continuer manuellement"
+        
+        # Créer le répertoire pour éviter l'erreur
+        mkdir -p "$APP_DIR"
+        echo "Le script s'arrête ici. Copiez les fichiers puis continuez manuellement." > "$APP_DIR/README_DEPLOY.txt"
+        exit 1
     fi
 else
     cd "$APP_DIR"
-    git pull origin main || warning "Impossible de mettre à jour le repository"
+    if [ -d ".git" ]; then
+        git pull origin main || warning "Impossible de mettre à jour le repository"
+    else
+        warning "Répertoire existe mais n'est pas un repository git"
+    fi
+fi
+
+# Vérifier que package.json existe
+if [ ! -f "$APP_DIR/package.json" ]; then
+    error "package.json introuvable dans $APP_DIR"
+    error "Le repository n'a pas été copié correctement."
+    error "Copiez manuellement avec: scp -r ./EIDF-CRM/* root@$IP_ADDRESS:/opt/eidf-crm/"
 fi
 
 chown -R eidf:eidf "$APP_DIR"
