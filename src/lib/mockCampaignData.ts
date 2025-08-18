@@ -66,7 +66,7 @@ export function generateMockCampaign(index: number): Campaign {
   
   // Variables fixes pour éviter les changements constants
   const fixedVariables = {
-    entreprise: 'Climatech Pro',
+    entreprise: 'EIDF',
     prenom: 'Jean',
     nom: 'Dupont',
     ville: 'Lyon',

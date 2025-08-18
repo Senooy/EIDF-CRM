@@ -328,7 +328,7 @@ export function generateMockCustomers(count: number = 25): WooCommerceCustomer[]
   const customers: WooCommerceCustomer[] = [];
   const firstNames = ['Jean', 'Marie', 'Pierre', 'Sophie', 'Alain', 'Claire', 'Michel', 'Isabelle', 'Laurent', 'Nathalie'];
   const lastNames = ['Dupont', 'Martin', 'Bernard', 'Dubois', 'Moreau', 'Simon', 'Laurent', 'Leroy', 'Roux', 'David'];
-  const companies = ['Climatech Pro', 'Ventilation Expert', 'AirFlow Solutions', 'CVC Technique', 'Aéraulique Plus'];
+  const companies = ['EIDF'];
 
   for (let i = 0; i < count; i++) {
     const firstName = firstNames[i % firstNames.length];

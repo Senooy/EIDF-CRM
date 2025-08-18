@@ -181,12 +181,12 @@ export default function EmailTemplateEditor({ content, onChange, onTemplateSelec
             </Tabs>
             
             {/* Variables disponibles */}
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+            <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
               <h4 className="text-sm font-medium mb-3">Variables disponibles</h4>
               <div className="space-y-3">
                 {['contact', 'entreprise', 'general'].map(category => (
                   <div key={category}>
-                    <p className="text-xs font-medium text-gray-600 mb-2 capitalize">{category}</p>
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2 capitalize">{category}</p>
                     <div className="flex flex-wrap gap-2">
                       {getVariablesByCategory(category as any).map(variable => (
                         <Badge 

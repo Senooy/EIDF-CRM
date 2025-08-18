@@ -83,8 +83,8 @@ export default function EmailPreview({ subject, content }: EmailPreviewProps) {
         </CardHeader>
         <CardContent>
           <div className={`mx-auto transition-all duration-300 ${getPreviewWidth()}`}>
-            <div className="border rounded-lg overflow-hidden bg-white">
-              <div className="border-b p-4 bg-gray-50">
+            <div className="border rounded-lg overflow-hidden bg-white dark:bg-gray-800">
+              <div className="border-b p-4 bg-gray-50 dark:bg-gray-700">
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold">
                     E
@@ -159,7 +159,7 @@ export default function EmailPreview({ subject, content }: EmailPreviewProps) {
               <div>
                 <label className="text-sm font-medium">Adresses email de test</label>
                 <textarea
-                  className="w-full mt-2 p-3 border rounded-lg"
+                  className="w-full mt-2 p-3 border rounded-lg dark:bg-gray-800 dark:border-gray-600"
                   rows={3}
                   placeholder="email1@example.com, email2@example.com..."
                   defaultValue="test@eidf-crm.com"

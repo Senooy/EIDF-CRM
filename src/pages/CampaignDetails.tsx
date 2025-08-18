@@ -64,12 +64,12 @@ export default function CampaignDetails() {
 
   const getStatusColor = (status: Campaign['status']) => {
     switch (status) {
-      case 'draft': return 'bg-gray-500';
+      case 'draft': return 'bg-gray-50 dark:bg-gray-8000';
       case 'scheduled': return 'bg-blue-500';
       case 'sending': return 'bg-yellow-500';
       case 'sent': return 'bg-green-500';
       case 'paused': return 'bg-orange-500';
-      default: return 'bg-gray-500';
+      default: return 'bg-gray-50 dark:bg-gray-8000';
     }
   };
 
@@ -102,7 +102,7 @@ export default function CampaignDetails() {
               <div className="flex items-center justify-center h-64">
                 <div className="text-center">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-                  <p className="mt-2 text-gray-600">Chargement des détails...</p>
+                  <p className="mt-2 text-gray-600 dark:text-gray-300 dark:text-gray-400">Chargement des détails...</p>
                 </div>
               </div>
       </div>
@@ -114,37 +114,23 @@ export default function CampaignDetails() {
       title: 'Emails envoyés',
       value: stats.sent.toLocaleString(),
       icon: Mail,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      color: 'text-blue-600 dark:text-blue-400',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/20'
     },
     {
       title: 'Taux d\'ouverture',
       value: formatPercentage(stats.opened, stats.delivered),
       icon: Eye,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
+      color: 'text-green-600 dark:text-green-400',
+      bgColor: 'bg-green-50 dark:bg-green-900/20'
     },
     {
       title: 'Taux de clic',
       value: formatPercentage(stats.clicked, stats.opened),
       icon: MousePointer,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      color: 'text-purple-600 dark:text-purple-400',
+      bgColor: 'bg-purple-50 dark:bg-purple-900/20'
     },
-    {
-      title: 'Conversions',
-      value: stats.converted.toString(),
-      icon: ShoppingCart,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
-    },
-    {
-      title: 'Chiffre d\'affaires',
-      value: formatCurrency(stats.revenue),
-      icon: Euro,
-      color: 'text-emerald-600',
-      bgColor: 'bg-emerald-50'
-    }
   ];
 
   return (
@@ -165,7 +151,7 @@ export default function CampaignDetails() {
                     <Badge className={`${getStatusColor(campaign.status)} text-white`}>
                       {getStatusText(campaign.status)}
                     </Badge>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-500 dark:text-gray-400 dark:text-gray-400">
                       Créée le {format(new Date(campaign.createdAt), 'dd MMMM yyyy à HH:mm', { locale: fr })}
                     </span>
                   </div>
@@ -190,13 +176,13 @@ export default function CampaignDetails() {
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               {kpiCards.map((kpi, index) => (
                 <Card key={index}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-gray-600 mb-1">{kpi.title}</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-400 mb-1">{kpi.title}</p>
                         <p className="text-2xl font-bold">{kpi.value}</p>
                       </div>
                       <div className={`p-3 rounded-full ${kpi.bgColor}`}>
@@ -229,31 +215,31 @@ export default function CampaignDetails() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="text-center p-4 bg-blue-50 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600">{stats.delivered}</div>
-                          <div className="text-sm text-gray-600">Délivrés</div>
-                          <div className="text-xs text-gray-500">
+                        <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.delivered}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">Délivrés</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {formatPercentage(stats.delivered, stats.sent)}
                           </div>
                         </div>
-                        <div className="text-center p-4 bg-red-50 rounded-lg">
-                          <div className="text-2xl font-bold text-red-600">{stats.bounced}</div>
-                          <div className="text-sm text-gray-600">Bounces</div>
-                          <div className="text-xs text-gray-500">
+                        <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                          <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.bounced}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">Bounces</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {formatPercentage(stats.bounced, stats.sent)}
                           </div>
                         </div>
-                        <div className="text-center p-4 bg-yellow-50 rounded-lg">
-                          <div className="text-2xl font-bold text-yellow-600">{stats.unsubscribed}</div>
-                          <div className="text-sm text-gray-600">Désabonnés</div>
-                          <div className="text-xs text-gray-500">
+                        <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
+                          <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.unsubscribed}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300">Désabonnés</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {formatPercentage(stats.unsubscribed, stats.delivered)}
                           </div>
                         </div>
-                        <div className="text-center p-4 bg-gray-50 rounded-lg">
-                          <div className="text-2xl font-bold text-gray-600">{stats.spamReported}</div>
-                          <div className="text-sm text-gray-600">Spam signalé</div>
-                          <div className="text-xs text-gray-500">
+                        <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.spamReported}</div>
+                          <div className="text-sm text-gray-600 dark:text-gray-300">Spam signalé</div>
+                          <div className="text-xs text-gray-500 dark:text-gray-400">
                             {formatPercentage(stats.spamReported, stats.delivered)}
                           </div>
                         </div>
@@ -271,27 +257,27 @@ export default function CampaignDetails() {
                     </CardHeader>
                     <CardContent className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Objet</label>
+                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-400">Objet</label>
                         <p className="text-sm">{campaign.subject}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Destinataires</label>
+                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Destinataires</label>
                         <p className="text-sm">{campaign.recipientCount?.toLocaleString()} contacts</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Créé par</label>
+                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Créé par</label>
                         <p className="text-sm">{campaign.createdBy}</p>
                       </div>
                       {campaign.sentDate && (
                         <div>
-                          <label className="text-sm font-medium text-gray-500">Date d'envoi</label>
+                          <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Date d'envoi</label>
                           <p className="text-sm">
                             {format(new Date(campaign.sentDate), 'dd MMMM yyyy à HH:mm', { locale: fr })}
                           </p>
                         </div>
                       )}
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Dernière mise à jour</label>
+                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Dernière mise à jour</label>
                         <p className="text-sm">
                           {format(new Date(stats.lastUpdated), 'dd MMMM yyyy à HH:mm', { locale: fr })}
                         </p>
@@ -370,12 +356,12 @@ export default function CampaignDetails() {
                   <CardContent>
                     <div className="space-y-4">
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Objet</label>
-                        <p className="text-sm p-3 bg-gray-50 rounded-lg">{campaign.subject}</p>
+                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400 dark:text-gray-400">Objet</label>
+                        <p className="text-sm p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">{campaign.subject}</p>
                       </div>
                       <div>
-                        <label className="text-sm font-medium text-gray-500">Corps du message</label>
-                        <div className="p-3 bg-gray-50 rounded-lg max-h-96 overflow-y-auto">
+                        <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Corps du message</label>
+                        <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg max-h-96 overflow-y-auto">
                           <pre className="text-sm whitespace-pre-wrap">{campaign.body}</pre>
                         </div>
                       </div>
@@ -398,7 +384,7 @@ export default function CampaignDetails() {
                       <p className="text-lg font-medium text-gray-900">
                         {campaign.recipientCount?.toLocaleString()} destinataires
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         Segment : {campaign.recipientSegment?.name || 'Tous les contacts'}
                       </p>
                     </div>

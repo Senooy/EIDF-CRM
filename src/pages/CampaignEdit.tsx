@@ -136,12 +136,7 @@ export default function CampaignEdit() {
   const canEdit = campaign.status === 'draft' || campaign.status === 'scheduled';
 
   return (
-    <div className="flex h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col">
-        <Navbar />
-        <main className="flex-1 p-6 bg-gray-50 overflow-y-auto">
-          <div className="container mx-auto max-w-6xl">
+    <div className="container mx-auto px-6 py-8 max-w-6xl">
             <div className="flex items-center gap-4 mb-6">
               <Button
                 variant="ghost"
@@ -161,8 +156,8 @@ export default function CampaignEdit() {
             </div>
 
             {!canEdit && (
-              <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-yellow-800">
+              <div className="mb-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+                <p className="text-yellow-800 dark:text-yellow-200">
                   Cette campagne ne peut plus être modifiée car elle a déjà été envoyée.
                 </p>
               </div>
@@ -275,9 +270,6 @@ export default function CampaignEdit() {
                 </div>
               </div>
             )}
-          </div>
-        </main>
-      </div>
     </div>
   );
 }

@@ -38,7 +38,7 @@ export const availableVariables: TemplateVariable[] = [
     placeholder: '{{nom_entreprise}}',
     description: 'Nom de l\'entreprise cliente',
     category: 'entreprise',
-    defaultValue: 'Climatech Pro'
+    defaultValue: 'EIDF'
   },
   {
     name: 'ville',
