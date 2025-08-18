@@ -163,7 +163,7 @@ curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
 apt-get install -y nodejs
 
 log "Installation de PM2..."
-npm install -g pm2 @prisma/cli
+npm install -g pm2 prisma
 
 log "Configuration PM2 pour le démarrage automatique..."
 pm2 startup systemd -u root --hp /root
