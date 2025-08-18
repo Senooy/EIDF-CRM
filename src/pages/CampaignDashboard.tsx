@@ -11,6 +11,7 @@ import CampaignList from '@/components/Campaign/CampaignList';
 import CampaignKPICard from '@/components/Campaign/CampaignKPICard';
 import CampaignConversionFunnel from '@/components/Campaign/CampaignConversionFunnel';
 import CampaignPerformanceChart from '@/components/Campaign/CampaignPerformanceChart';
+import { developmentUtils } from '@/utils/developmentUtils';
 
 export default function CampaignDashboard() {
   const navigate = useNavigate();
@@ -63,8 +64,8 @@ export default function CampaignDashboard() {
 
     return {
       deliveryRate: totals.sent > 0 ? (totals.delivered / totals.sent) * 100 : 0,
-      openRate: totals.delivered > 0 ? (totals.opened / totals.delivered) * 100 : 0,
-      clickRate: totals.opened > 0 ? (totals.clicked / totals.opened) * 100 : 0,
+      openRate: totals.sent > 0 ? (totals.opened / totals.sent) * 100 : 0,
+      clickRate: totals.sent > 0 ? (totals.clicked / totals.sent) * 100 : 0,
       conversionRate: totals.clicked > 0 ? (totals.converted / totals.clicked) * 100 : 0,
       bounceRate: totals.sent > 0 ? (totals.bounced / totals.sent) * 100 : 0,
       unsubscribeRate: totals.delivered > 0 ? (totals.unsubscribed / totals.delivered) * 100 : 0,
@@ -87,15 +88,18 @@ export default function CampaignDashboard() {
         title="Campagnes Email"
         description="Gérez et analysez vos campagnes marketing"
         actions={
-          <Button onClick={() => navigate('/campaigns/create')} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Nouvelle campagne
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate('/campaigns/create')} className="gap-2">
+              <Plus className="h-4 w-4" />
+              Nouvelle campagne
+            </Button>
+           
+          </div>
         }
       />
       <div className="container mx-auto px-6 space-y-4">
         {/* Stats section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <CampaignKPICard
             title="Emails Envoyés"
             value={sentCampaigns.reduce((sum, c) => sum + c.stats.sent, 0)}
@@ -116,13 +120,6 @@ export default function CampaignDashboard() {
             icon={MousePointerClick}
             description="CTR moyen (proche de 0)"
             trend={0.01}
-          />
-          <CampaignKPICard
-            title="Revenus Générés"
-            value={`${sentCampaigns.reduce((sum, c) => sum + c.stats.revenue, 0).toFixed(0)}€`}
-            icon={TrendingUp}
-            description="Total des conversions"
-            trend={18.7}
           />
         </div>
 

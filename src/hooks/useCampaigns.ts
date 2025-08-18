@@ -12,6 +12,8 @@ export const useCampaigns = () => {
     try {
       setLoading(true);
       setError(null);
+      // Force la régénération des campagnes avec les bonnes stats
+      campaignService.forceRefreshCampaigns();
       const data = await campaignService.getCampaigns();
       setCampaigns(data);
     } catch (err) {

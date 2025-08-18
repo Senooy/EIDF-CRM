@@ -1,14 +1,5 @@
-import { Campaign, CampaignStats, EmailTemplate, CampaignRecipient, CampaignActivity, CampaignTimelineData } from '@/types/campaign';
+import { Campaign, CampaignStats, EmailTemplate, CampaignTimelineData } from '@/types/campaign';
 
-// Données spécifiques EIDF pour les variables
-const eidfVariables = {
-  entreprises: ['Climatech Pro', 'Ventilation Expert', 'AirFlow Solutions', 'CVC Technique', 'Aéraulique Plus'],
-  prenoms: ['Jean', 'Marie', 'Pierre', 'Sophie', 'Alain', 'Claire', 'Michel', 'Isabelle', 'Laurent', 'Nathalie'],
-  noms: ['Dupont', 'Martin', 'Bernard', 'Dubois', 'Moreau', 'Simon', 'Laurent', 'Leroy', 'Roux', 'David'],
-  villes: ['Lyon', 'Marseille', 'Toulouse', 'Nice', 'Nantes', 'Strasbourg', 'Montpellier', 'Bordeaux', 'Lille', 'Rennes'],
-  regions: ['Rhône-Alpes', 'PACA', 'Occitanie', 'Nouvelle-Aquitaine', 'Hauts-de-France', 'Bretagne', 'Grand Est'],
-  surfaces: ['2000 m²', '1500 m²', '2500 m²', '1800 m²', '3000 m²', '1200 m²', '2200 m²']
-};
 
 const campaignNames = [
   'Campagne EIDF - Ventilation Professionnelle'
@@ -64,13 +55,11 @@ export function generateMockCampaign(index: number): Campaign {
   const createdDays = Math.floor(Math.random() * 30) + 1;
   const createdAt = new Date(now.getTime() - createdDays * 24 * 60 * 60 * 1000);
   
-  const isEidfCampaign = true; // Seulement campagne EIDF
+  // Campagne EIDF : exactement 6233 emails (comme demandé)
+  const recipientCount = 6233;
   
-  // Campagne EIDF : exactement 290 emails (comme demandé)
-  const recipientCount = 290;
-  
-  const statuses: Campaign['status'][] = ['draft', 'scheduled', 'sending', 'sent', 'paused'];
-  const status = index < 5 ? 'sent' : statuses[Math.floor(Math.random() * statuses.length)];
+  // Force toujours le statut 'sent' pour afficher les statistiques
+  const status: Campaign['status'] = 'sent';
   
   let subject = emailSubjects[index % emailSubjects.length];
   let body = emailBodies[index % emailBodies.length];
@@ -101,41 +90,36 @@ export function generateMockCampaign(index: number): Campaign {
     body,
     status,
     scheduledDate: status === 'scheduled' ? new Date(now.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString() : undefined,
-    sentDate: status === 'sent' ? new Date(createdAt.getTime() + 24 * 60 * 60 * 1000).toISOString() : undefined,
+    sentDate: new Date(createdAt.getTime() + 24 * 60 * 60 * 1000).toISOString(),
     createdAt: createdAt.toISOString(),
     updatedAt: new Date(createdAt.getTime() + Math.random() * 24 * 60 * 60 * 1000).toISOString(),
     createdBy: 'user-1',
     recipientCount,
-    stats: { ...initialStats }
+    stats: status === 'sent' ? generateCampaignStats(recipientCount) : { ...initialStats }
   };
 }
 
-function generateCampaignStats(recipientCount: number, isEidf: boolean = false): CampaignStats {
+function generateCampaignStats(recipientCount: number): CampaignStats {
   const sent = recipientCount;
-  const deliveryRate = 0.95 + Math.random() * 0.03;
+  const deliveryRate = 0.98; // Très bon taux de delivery
   const delivered = Math.floor(sent * deliveryRate);
   
-  // Statistiques spécifiques EIDF (BtoB ventilation)
-  const openRate = 0.25 + Math.random() * 0.10; // 25-35% (BtoB plus élevé)
-  const opened = Math.floor(delivered * openRate);
+  // Statistiques exactes demandées
+  const opened = 250; // 0.2% d'ouverture sur 6233 emails ≈ 250
+  const clicked = Math.floor(opened * 0.1); // 0.1% de clics par rapport aux ouvertures
   
-  const clickRate = 0.02 + Math.random() * 0.02; // 2-4% (BtoB spécialisé)
-  const clicked = Math.floor(opened * clickRate);
+  const converted = 0; // Pas de conversions
   
-  const conversionRate = 0.08 + Math.random() * 0.04; // 8-12% (demandes de devis)
-  const converted = Math.floor(clicked * conversionRate);
-  
-  const bounceRate = 0.01 + Math.random() * 0.02; // Taux plus bas (listes BtoB)
+  const bounceRate = 0.02; // 2% de bounce
   const bounced = Math.floor(sent * bounceRate);
   
-  const unsubscribeRate = 0.001 + Math.random() * 0.002; // Très bas (BtoB)
+  const unsubscribeRate = 0.001; // 0.1% de désabonnements
   const unsubscribed = Math.floor(delivered * unsubscribeRate);
   
-  const spamRate = 0.0005 + Math.random() * 0.0005; // Très bas (BtoB)
+  const spamRate = 0.0005; // 0.05% de spam
   const spamReported = Math.floor(delivered * spamRate);
   
-  const avgOrderValue = 15000 + Math.random() * 30000; // 15-45k€ par projet
-  const revenue = converted * avgOrderValue;
+  const revenue = 0; // Pas de revenus
   
   return {
     sent,
@@ -220,7 +204,7 @@ export function startCampaignUpdates(updateCallback: (campaigns: Campaign[]) => 
     campaigns.forEach((campaign) => {
       if (campaign.status === 'sent') {
         const stats = campaign.stats;
-        const targetSent = 290; // Objectif : 290 emails
+        const targetSent = 6233; // Objectif : 6233 emails
         
         // Phase 1: Envoi des emails (rapide au début)
         if (stats.sent < targetSent) {
@@ -245,33 +229,27 @@ export function startCampaignUpdates(updateCallback: (campaigns: Campaign[]) => 
           stats.bounced = newBounced;
         }
         
-        // Phase 2: Ouvertures (après delivery)
+        // Phase 2: Ouvertures (après delivery) - exactement 250 ouvertures
         if (stats.delivered > 0) {
-          const maxOpened = Math.floor(stats.delivered * (0.25 + Math.random() * 0.10)); // 25-35%
+          const maxOpened = 250; // Exactement 250 ouvertures
           if (stats.opened < maxOpened && Math.random() > 0.6) {
             stats.opened += Math.floor(Math.random() * 3) + 1;
             stats.opened = Math.min(stats.opened, maxOpened);
           }
         }
         
-        // Phase 3: Clics (après ouvertures)
+        // Phase 3: Clics (après ouvertures) - 0.1% du total d'emails
         if (stats.opened > 0) {
-          const maxClicked = Math.floor(stats.opened * (0.02 + Math.random() * 0.03)); // 2-5%
+          const maxClicked = Math.floor(stats.sent * 0.001); // 0.1% du total des emails envoyés
           if (stats.clicked < maxClicked && Math.random() > 0.8) {
             stats.clicked += Math.random() > 0.5 ? 1 : 0;
             stats.clicked = Math.min(stats.clicked, maxClicked);
           }
         }
         
-        // Phase 4: Conversions (après clics)
-        if (stats.clicked > 0) {
-          const maxConverted = Math.floor(stats.clicked * (0.08 + Math.random() * 0.07)); // 8-15%
-          if (stats.converted < maxConverted && Math.random() > 0.95) {
-            stats.converted += 1;
-            stats.revenue += (15000 + Math.random() * 30000); // 15-45k€ par projet
-            stats.converted = Math.min(stats.converted, maxConverted);
-          }
-        }
+        // Pas de conversions ni de revenus
+        stats.converted = 0;
+        stats.revenue = 0;
         
         // Calcul des désabonnements et spam
         if (stats.delivered > 0) {

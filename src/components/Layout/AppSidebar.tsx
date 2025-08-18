@@ -78,13 +78,6 @@ const navigation = [
         icon: ShoppingCart,
         badge: null,
       },
-      {
-        title: "Analytics",
-        href: "/statistics",
-        icon: BarChart2,
-        badge: "Pro",
-        badgeVariant: "secondary" as const,
-      },
     ],
   },
   {

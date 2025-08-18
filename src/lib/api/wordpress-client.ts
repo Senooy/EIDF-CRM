@@ -1,6 +1,8 @@
 import { configService } from '@/lib/db/config';
 import { ApplicationError, ApiError, NetworkError, errorHandler } from '@/lib/error-handler';
 import { logger } from '@/lib/logger';
+import { mockWordPressData } from '@/lib/mockWordPressData';
+import { mockWooCommerceData } from '@/lib/mockWooCommerceData';
 
 // Custom error classes for better error handling
 export class NoActiveSiteError extends ApplicationError {
@@ -27,6 +29,7 @@ export class MissingCredentialsError extends ApplicationError {
 // Proxy configuration for development
 const PROXY_URL = import.meta.env.VITE_PROXY_URL || 'http://localhost:3002/proxy/';
 const USE_PROXY = import.meta.env.VITE_USE_PROXY === 'true' || import.meta.env.DEV;
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || import.meta.env.DEV;
 
 export interface WordPressClientConfig {
   siteId: number;
@@ -84,6 +87,29 @@ export class WordPressClient {
 
   // WordPress API Methods
   async getWordPressData(endpoint: string, params?: Record<string, any>): Promise<any> {
+    // Use mock data in development or when explicitly enabled
+    if (USE_MOCK_DATA) {
+      logger.debug(`WordPress API request (MOCK): GET ${endpoint}`, { params }, 'WordPressClient');
+      
+      switch (endpoint) {
+        case 'posts':
+          return mockWordPressData.posts;
+        case 'pages':
+          return mockWordPressData.pages;
+        case 'users':
+          return mockWordPressData.users;
+        case 'comments':
+          return []; // Pas de commentaires mockés pour l'instant
+        case 'media':
+          return []; // Pas de médias mockés pour l'instant
+        default:
+          if (endpoint === '' || endpoint === '/') {
+            return mockWordPressData.siteInfo;
+          }
+          logger.warn(`WordPress API mock: Unknown endpoint ${endpoint}`, {}, 'WordPressClient');
+          return [];
+      }
+    }
     let url: URL;
     
     if (USE_PROXY) {
@@ -157,6 +183,16 @@ export class WordPressClient {
   }
 
   async postWordPressData(endpoint: string, data: any): Promise<any> {
+    if (USE_MOCK_DATA) {
+      logger.debug(`WordPress API request (MOCK): POST ${endpoint}`, { data }, 'WordPressClient');
+      // Simuler une création réussie
+      return {
+        id: Date.now(),
+        ...data,
+        date: new Date().toISOString(),
+        status: 'publish'
+      };
+    }
     let url: URL;
     
     if (USE_PROXY) {
@@ -188,6 +224,47 @@ export class WordPressClient {
 
   // WooCommerce API Methods
   async getWooCommerceData(endpoint: string, params?: Record<string, any>): Promise<any> {
+    // Use mock data in development or when explicitly enabled
+    if (USE_MOCK_DATA) {
+      logger.debug(`WooCommerce API request (MOCK): GET ${endpoint}`, { params }, 'WordPressClient');
+      
+      switch (endpoint) {
+        case 'orders':
+          return mockWooCommerceData.orders;
+        case 'products':
+          return mockWooCommerceData.products;
+        case 'customers':
+          return mockWooCommerceData.customers;
+        case 'system_status':
+          return mockWooCommerceData.systemStatus;
+        default:
+          if (endpoint.startsWith('orders/')) {
+            const orderId = parseInt(endpoint.split('/')[1]);
+            return mockWooCommerceData.orders.find(o => o.id === orderId) || null;
+          }
+          if (endpoint.startsWith('products/')) {
+            const productId = parseInt(endpoint.split('/')[1]);
+            return mockWooCommerceData.products.find(p => p.id === productId) || null;
+          }
+          if (endpoint.startsWith('customers/')) {
+            const customerId = parseInt(endpoint.split('/')[1]);
+            return mockWooCommerceData.customers.find(c => c.id === customerId) || null;
+          }
+          if (endpoint.startsWith('reports/')) {
+            // Mock des rapports basiques
+            return {
+              totals: {
+                sales: mockWooCommerceData.orders.reduce((sum, o) => sum + parseFloat(o.total), 0),
+                orders: mockWooCommerceData.orders.length,
+                customers: mockWooCommerceData.customers.length,
+                products: mockWooCommerceData.products.length
+              }
+            };
+          }
+          logger.warn(`WooCommerce API mock: Unknown endpoint ${endpoint}`, {}, 'WordPressClient');
+          return [];
+      }
+    }
     let url: URL;
     
     if (USE_PROXY) {
@@ -262,6 +339,15 @@ export class WordPressClient {
   }
 
   async postWooCommerceData(endpoint: string, data: any): Promise<any> {
+    if (USE_MOCK_DATA) {
+      logger.debug(`WooCommerce API request (MOCK): POST ${endpoint}`, { data }, 'WordPressClient');
+      return {
+        id: Date.now(),
+        ...data,
+        date_created: new Date().toISOString(),
+        status: 'processing'
+      };
+    }
     let url: URL;
     
     if (USE_PROXY) {
@@ -292,6 +378,14 @@ export class WordPressClient {
   }
 
   async putWooCommerceData(endpoint: string, data: any): Promise<any> {
+    if (USE_MOCK_DATA) {
+      logger.debug(`WooCommerce API request (MOCK): PUT ${endpoint}`, { data }, 'WordPressClient');
+      return {
+        id: parseInt(endpoint.split('/')[1]) || Date.now(),
+        ...data,
+        date_modified: new Date().toISOString()
+      };
+    }
     let url: URL;
     
     if (USE_PROXY) {
@@ -322,6 +416,14 @@ export class WordPressClient {
   }
 
   async deleteWooCommerceData(endpoint: string): Promise<any> {
+    if (USE_MOCK_DATA) {
+      logger.debug(`WooCommerce API request (MOCK): DELETE ${endpoint}`, {}, 'WordPressClient');
+      return {
+        id: parseInt(endpoint.split('/')[1]) || Date.now(),
+        deleted: true,
+        force: true
+      };
+    }
     const url = new URL(`${this.config.baseUrl}/wp-json/wc/v3/${endpoint}`);
     
     // Add authentication parameters
@@ -411,6 +513,27 @@ class WordPressClientManager {
   private currentSiteId: number | null = null;
 
   async getClient(siteId?: number): Promise<WordPressClient> {
+    // En mode mock, créer un client basique sans validation
+    if (USE_MOCK_DATA) {
+      const mockSiteId = siteId || 1;
+      
+      if (this.clients.has(mockSiteId)) {
+        return this.clients.get(mockSiteId)!;
+      }
+      
+      const client = new WordPressClient({
+        siteId: mockSiteId,
+        baseUrl: 'https://eco-industrie-france.com',
+        wpUsername: 'mock-user',
+        wpPassword: 'mock-password',
+        wooConsumerKey: 'ck_mock',
+        wooConsumerSecret: 'cs_mock',
+      });
+      
+      this.clients.set(mockSiteId, client);
+      return client;
+    }
+    
     // Use provided siteId or current active site
     const targetSiteId = siteId || this.currentSiteId;
     

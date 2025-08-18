@@ -32,9 +32,23 @@ export const campaignService = {
       // Récupérer les campagnes sauvegardées avec les stats mises à jour
       const savedCampaigns = JSON.parse(localStorage.getItem('campaigns') || '[]');
       
-      // Si pas de campagnes sauvegardées, générer la campagne initiale
+      // Si pas de campagnes sauvegardées, générer la campagne initiale avec les bonnes stats
       if (savedCampaigns.length === 0) {
         const initialCampaign = generateMockCampaigns(1)[0];
+        // Force les bonnes statistiques
+        initialCampaign.status = 'sent';
+        initialCampaign.stats = {
+          sent: 6233,
+          delivered: 6108, // 98% de delivery
+          opened: 250,     // 0.2% d'ouverture
+          clicked: 6,      // 0.1% de clics
+          converted: 0,    // Pas de conversions
+          bounced: 125,    // 2% de bounce
+          unsubscribed: 6, // 0.1% de désabonnements
+          spamReported: 3, // 0.05% de spam
+          revenue: 0,      // Pas de revenus
+          lastUpdated: new Date().toISOString()
+        };
         localStorage.setItem('campaigns', JSON.stringify([initialCampaign]));
         return [initialCampaign];
       }
@@ -104,7 +118,18 @@ export const campaignService = {
         id: campaignId,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        stats: {
+        stats: campaign.status === 'sent' ? {
+          sent: 6233,
+          delivered: 6108,
+          opened: 250,
+          clicked: 6,
+          converted: 0,
+          bounced: 125,
+          unsubscribed: 6,
+          spamReported: 3,
+          revenue: 0,
+          lastUpdated: new Date().toISOString()
+        } : {
           sent: 0,
           delivered: 0,
           opened: 0,
@@ -319,5 +344,13 @@ export const campaignService = {
   // Toggle mock data (for development)
   toggleMockData(useMock: boolean) {
     useMockData = useMock;
+  },
+
+  // Force refresh campaigns data (clear localStorage and regenerate)
+  forceRefreshCampaigns(): void {
+    if (useMockData) {
+      localStorage.removeItem('campaigns');
+      console.log('Campaigns cache cleared, will regenerate with correct stats');
+    }
   }
 };

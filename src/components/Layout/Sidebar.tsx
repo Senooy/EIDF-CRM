@@ -20,7 +20,6 @@ const navItems = [
   { name: "Commandes", href: "/orders", icon: Package },
   { name: "Clients", href: "/customers", icon: Users },
   { name: "Produits", href: "/products", icon: Package },
-  { name: "Analytics", href: "/statistics", icon: BarChart2 },
   { name: "Paramètres", href: "/settings/sites", icon: Settings },
 ];
 
