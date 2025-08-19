@@ -2,17 +2,23 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Monitor, Smartphone, Tablet, Mail } from 'lucide-react';
+import { Monitor, Smartphone, Tablet, Mail, Loader2, CheckCircle, XCircle } from 'lucide-react';
 import { substituteVariables, generateSampleData } from '@/utils/templateVariables';
+import { toast } from 'sonner';
+import { campaignApiService } from '@/services/campaign-api.service';
 
 interface EmailPreviewProps {
   subject: string;
   content: string;
+  campaignId?: string;
 }
 
-export default function EmailPreview({ subject, content }: EmailPreviewProps) {
+export default function EmailPreview({ subject, content, campaignId = 'test' }: EmailPreviewProps) {
   const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [useVariables, setUseVariables] = useState(true);
+  const [testEmails, setTestEmails] = useState('');
+  const [sending, setSending] = useState(false);
+  const [results, setResults] = useState<Array<{email: string; success: boolean; error?: string}>>([]);
 
   const getPreviewWidth = () => {
     switch (deviceView) {
@@ -25,9 +31,49 @@ export default function EmailPreview({ subject, content }: EmailPreviewProps) {
     }
   };
 
-  const sendTestEmail = () => {
-    // Simulate sending test email
-    console.log('Sending test email...');
+  const sendTestEmail = async () => {
+    if (!testEmails.trim()) {
+      toast.error('Veuillez entrer au moins une adresse email');
+      return;
+    }
+
+    const emails = testEmails
+      .split(',')
+      .map(e => e.trim())
+      .filter(e => e)
+      .slice(0, 5); // Max 5 emails
+
+    if (emails.length === 0) {
+      toast.error('Aucune adresse email valide');
+      return;
+    }
+
+    setSending(true);
+    setResults([]);
+
+    try {
+      const response = await campaignApiService.sendTestEmails(campaignId, emails);
+      
+      if (response && response.results) {
+        setResults(response.results);
+        
+        const successCount = response.results.filter(r => r.success).length;
+        const failCount = response.results.length - successCount;
+        
+        if (failCount === 0) {
+          toast.success(`${successCount} email(s) de test envoyé(s) avec succès!`);
+        } else if (successCount === 0) {
+          toast.error(`Échec de l'envoi des ${failCount} email(s)`);
+        } else {
+          toast.warning(`${successCount} envoyé(s), ${failCount} échec(s)`);
+        }
+      }
+    } catch (error: any) {
+      console.error('Error sending test emails:', error);
+      toast.error(error.message || 'Erreur lors de l\'envoi des emails de test');
+    } finally {
+      setSending(false);
+    }
   };
 
   const getProcessedContent = () => {
@@ -162,16 +208,52 @@ export default function EmailPreview({ subject, content }: EmailPreviewProps) {
                   className="w-full mt-2 p-3 border rounded-lg dark:bg-gray-800 dark:border-gray-600"
                   rows={3}
                   placeholder="email1@example.com, email2@example.com..."
-                  defaultValue="test@eidf-crm.com"
+                  value={testEmails}
+                  onChange={(e) => setTestEmails(e.target.value)}
+                  disabled={sending}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   Séparez les adresses par des virgules. Maximum 5 adresses.
                 </p>
               </div>
               
-              <Button onClick={sendTestEmail} className="w-full">
-                <Mail className="h-4 w-4 mr-2" />
-                Envoyer l'email de test
+              {results.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">Résultats de l'envoi :</p>
+                  {results.map((result, index) => (
+                    <div key={index} className="flex items-center gap-2 text-sm">
+                      {result.success ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <XCircle className="h-4 w-4 text-red-500" />
+                      )}
+                      <span className={result.success ? 'text-green-600' : 'text-red-600'}>
+                        {result.email}
+                      </span>
+                      {result.error && (
+                        <span className="text-xs text-muted-foreground">({result.error})</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <Button 
+                onClick={sendTestEmail} 
+                className="w-full" 
+                disabled={sending || !testEmails.trim()}
+              >
+                {sending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Envoi en cours...
+                  </>
+                ) : (
+                  <>
+                    <Mail className="h-4 w-4 mr-2" />
+                    Envoyer l'email de test
+                  </>
+                )}
               </Button>
             </TabsContent>
           </Tabs>

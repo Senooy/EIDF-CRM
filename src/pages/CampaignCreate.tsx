@@ -19,18 +19,27 @@ export default function CampaignCreate() {
   const { createCampaign } = useCampaigns();
   const [activeTab, setActiveTab] = useState('details');
   const [saving, setSaving] = useState(false);
+  const [recipientEmails, setRecipientEmails] = useState<string[]>([]);
+  const [segmentType, setSegmentType] = useState<'all' | 'segment' | 'custom' | 'manual'>('all');
   const [campaignData, setCampaignData] = useState({
     name: '',
     subject: '',
     body: '',
     recipientSegment: 'all',
     scheduledDate: '',
-    scheduledTime: ''
+    scheduledTime: '',
+    fromName: 'EIDF CRM',
+    fromEmail: 'noreply@eidf-crm.fr'
   });
 
   const handleSave = async (isDraft: boolean = true) => {
     if (!campaignData.name || !campaignData.subject) {
       toast.error('Veuillez remplir le nom et l\'objet de la campagne');
+      return;
+    }
+
+    if (segmentType === 'manual' && recipientEmails.length === 0) {
+      toast.error('Veuillez ajouter au moins une adresse email valide');
       return;
     }
 
@@ -41,15 +50,25 @@ export default function CampaignCreate() {
         ? new Date(`${campaignData.scheduledDate}T${campaignData.scheduledTime}`).toISOString()
         : undefined;
 
-      await createCampaign({
+      const campaignPayload: any = {
         name: campaignData.name,
         subject: campaignData.subject,
         body: campaignData.body,
+        fromName: campaignData.fromName,
+        fromEmail: campaignData.fromEmail,
         status,
         scheduledDate,
         recipientCount: getEstimatedRecipientCount(),
         createdBy: 'current-user' // TODO: récupérer l'utilisateur actuel
-      });
+      };
+
+      // Add recipient emails if manual mode
+      if (segmentType === 'manual' && recipientEmails.length > 0) {
+        campaignPayload.recipientEmails = recipientEmails;
+        console.log(`Adding ${recipientEmails.length} manual recipients to draft campaign`);
+      }
+
+      await createCampaign(campaignPayload);
 
       navigate('/campaigns');
     } catch (error) {
@@ -65,26 +84,82 @@ export default function CampaignCreate() {
       return;
     }
 
+    if (segmentType === 'manual' && recipientEmails.length === 0) {
+      toast.error('Veuillez ajouter au moins une adresse email valide');
+      return;
+    }
+
     setSaving(true);
+    const emailCount = segmentType === 'manual' ? recipientEmails.length : getEstimatedRecipientCount();
+    toast.info(`Préparation de l'envoi à ${emailCount} destinataires...`);
+    
     try {
-      await createCampaign({
+      // Step 1: Create campaign in DRAFT status first
+      const campaignPayload: any = {
         name: campaignData.name,
         subject: campaignData.subject,
         body: campaignData.body,
-        status: 'sent',
+        fromName: campaignData.fromName,
+        fromEmail: campaignData.fromEmail,
+        status: 'DRAFT', // Create as draft first
         recipientCount: getEstimatedRecipientCount(),
-        createdBy: 'current-user' // TODO: récupérer l'utilisateur actuel
+        createdBy: 'current-user'
+      };
+
+      // Add recipient emails if manual mode
+      if (segmentType === 'manual' && recipientEmails.length > 0) {
+        campaignPayload.recipientEmails = recipientEmails;
+        console.log(`Adding ${recipientEmails.length} manual recipients to campaign`);
+      }
+
+      console.log('Creating campaign with payload:', campaignPayload);
+
+      // Create the campaign
+      const response = await fetch('/api/campaigns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(campaignPayload),
       });
 
+      if (!response.ok) {
+        throw new Error('Failed to create campaign');
+      }
+
+      const newCampaign = await response.json();
+      toast.success('Campagne créée, envoi en cours...');
+
+      // Step 2: Send the campaign
+      const sendResponse = await fetch(`/api/campaigns/${newCampaign.id}/send`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!sendResponse.ok) {
+        throw new Error('Failed to send campaign');
+      }
+
+      const sendResult = await sendResponse.json();
+      console.log('Campaign sent:', sendResult);
+      
+      const finalEmailCount = segmentType === 'manual' ? recipientEmails.length : getEstimatedRecipientCount();
+      toast.success(`Campagne envoyée avec succès à ${finalEmailCount} destinataires!`);
       navigate('/campaigns');
     } catch (error) {
       console.error('Error sending campaign:', error);
+      toast.error('Erreur lors de l\'envoi de la campagne');
     } finally {
       setSaving(false);
     }
   };
 
   const getEstimatedRecipientCount = () => {
+    if (segmentType === 'manual') {
+      return recipientEmails.length;
+    }
     // Logique pour calculer le nombre de destinataires selon le segment
     switch (campaignData.recipientSegment) {
       case 'all':
@@ -154,6 +229,28 @@ export default function CampaignCreate() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
+                      <Label htmlFor="from-name">Nom de l'expéditeur</Label>
+                      <Input
+                        id="from-name"
+                        placeholder="Ex: EIDF CRM"
+                        value={campaignData.fromName}
+                        onChange={(e) => setCampaignData({ ...campaignData, fromName: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="from-email">Email de l'expéditeur</Label>
+                      <Input
+                        id="from-email"
+                        type="email"
+                        placeholder="Ex: noreply@eidf-crm.fr"
+                        value={campaignData.fromEmail}
+                        onChange={(e) => setCampaignData({ ...campaignData, fromEmail: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
                       <Label htmlFor="schedule-date">Date d'envoi</Label>
                       <Input
                         id="schedule-date"
@@ -192,7 +289,13 @@ export default function CampaignCreate() {
           <TabsContent value="recipients" className="space-y-6">
             <RecipientSelector
               selectedSegment={campaignData.recipientSegment}
-              onSegmentChange={(segment) => setCampaignData({ ...campaignData, recipientSegment: segment })}
+              onSegmentChange={(segment) => {
+                setCampaignData({ ...campaignData, recipientSegment: segment });
+              }}
+              segmentType={segmentType}
+              onSegmentTypeChange={setSegmentType}
+              recipientEmails={recipientEmails}
+              onEmailsChange={setRecipientEmails}
             />
           </TabsContent>
 

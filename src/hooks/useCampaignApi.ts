@@ -42,7 +42,7 @@ export function useCampaigns(options?: {
     } finally {
       setLoading(false);
     }
-  }, [options]);
+  }, [options?.status, options?.limit, options?.offset]);
 
   const createCampaign = useCallback(async (data: CreateCampaignRequest): Promise<Campaign | null> => {
     try {

@@ -3,7 +3,7 @@ import { Product } from './woocommerce';
 import { SEOProgressStorage } from './seo-progress-storage';
 import { SEOStyle } from './gemini-single-call';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001/api';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || '/api';
 
 export interface BatchProgress {
   total: number;

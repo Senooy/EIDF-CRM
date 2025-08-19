@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Product } from '@/lib/woocommerce';
 import { GeneratedProductContent } from '@/lib/gemini-service';
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001/api';
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || '/api';
 
 interface GenerateContentParams {
   product: Partial<Product>;

@@ -1,6 +1,7 @@
 import { Campaign, CampaignStats, CampaignActivity } from '@/types/campaign';
+import { auth } from '@/lib/firebase';
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '/api';
 
 export interface CreateCampaignRequest {
   name: string;
@@ -58,7 +59,15 @@ class CampaignApiService {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const token = localStorage.getItem('authToken');
+    // Get Firebase auth token
+    let token: string | undefined;
+    try {
+      if (auth.currentUser) {
+        token = await auth.currentUser.getIdToken();
+      }
+    } catch (error) {
+      console.error('Error getting auth token:', error);
+    }
     
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,

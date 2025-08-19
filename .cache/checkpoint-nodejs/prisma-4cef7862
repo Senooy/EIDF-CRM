@@ -1,0 +1,53 @@
+{
+  "last_reminder": 1755543483234,
+  "cached_at": 1755543462578,
+  "version": "6.11.0",
+  "cli_path": "/opt/eidf-crm/node_modules/.bin/prisma",
+  "output": {
+    "product": "prisma",
+    "previous_version": "6.11.0",
+    "checkpoint_version": 4,
+    "local_timestamp_without_timezone": "2025-08-18T20:57:42Z",
+    "current_version": "6.14.0",
+    "current_release_date": 1755016037,
+    "client_event_id": "0abc518b-2562-4759-a55e-734ad4c57c41",
+    "current_download_url": "https://github.com/prisma/prisma",
+    "package": "prisma",
+    "release_tag": "latest",
+    "install_command": "npm install --save-dev prisma",
+    "schema_providers": [
+      "sqlite"
+    ],
+    "schema_preview_features": [],
+    "schema_generators_providers": [
+      "prisma-client-js"
+    ],
+    "current_changelog_url": "https://github.com/prisma/prisma",
+    "outdated": true,
+    "project_website": "https://prisma.io",
+    "alerts": []
+  },
+  "product": "prisma",
+  "cli_install_type": "local",
+  "local_timestamp": "2025-08-18T21:12:34+02:00",
+  "project_hash": "5ac2e668",
+  "cli_path_hash": "4cef7862",
+  "endpoint": "https://checkpoint.prisma.io",
+  "arch": "x64",
+  "os": "linux",
+  "node_version": "v20.19.4",
+  "command": "db push --accept-data-loss",
+  "schema_providers": [
+    "postgresql"
+  ],
+  "schema_preview_features": [],
+  "schema_generators_providers": [
+    "prisma-client-js"
+  ],
+  "cache_file": "/opt/eidf-crm/.cache/checkpoint-nodejs/prisma-4cef7862",
+  "cache_duration": 43200000,
+  "remind_duration": 172800000,
+  "timeout": 5000,
+  "unref": true,
+  "child_path": "/opt/eidf-crm/node_modules/prisma/build/child"
+}

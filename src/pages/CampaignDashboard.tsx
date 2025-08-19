@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { PageHeader } from '@/components/Layout/PageHeader';
 import { PageSkeleton } from '@/components/ui/loading-skeleton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Plus, Mail, MousePointerClick, TrendingUp, Users, BarChart3, Filter, Activity, AlertCircle } from 'lucide-react';
+import { Plus, Mail, MousePointerClick, TrendingUp, Users, BarChart3, Filter, Activity, AlertCircle, Sparkles, Settings } from 'lucide-react';
+import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { Campaign, CampaignKPI } from '@/types/campaign';
 import { useCampaigns } from '@/hooks/useCampaignApi';
@@ -15,6 +16,18 @@ import CampaignPerformanceChart from '@/components/Campaign/CampaignPerformanceC
 
 export default function CampaignDashboard() {
   const navigate = useNavigate();
+  
+  // Memoize options to prevent re-renders
+  const campaignsOptions = useMemo(() => ({ 
+    autoRefresh: true, 
+    refreshInterval: 30000 
+  }), []);
+  
+  const queueStatsOptions = useMemo(() => ({ 
+    autoRefresh: true, 
+    refreshInterval: 5000 
+  }), []);
+  
   const { 
     campaigns, 
     loading, 
@@ -23,9 +36,37 @@ export default function CampaignDashboard() {
     pauseCampaign, 
     resumeCampaign, 
     deleteCampaign 
-  } = useCampaigns({ autoRefresh: true, refreshInterval: 30000 });
-  const { stats: queueStats } = useQueueStats({ autoRefresh: true, refreshInterval: 5000 });
+  } = useCampaigns(campaignsOptions);
+  const { stats: queueStats } = useQueueStats(queueStatsOptions);
   const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [creatingDemo, setCreatingDemo] = useState(false);
+
+  const handleCreateDemoCampaign = async () => {
+    try {
+      setCreatingDemo(true);
+      const response = await fetch('/api/campaigns/seed-demo', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create demo campaign');
+      }
+      
+      const data = await response.json();
+      toast.success(data.message);
+      
+      // Reload campaigns list
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating demo campaign:', error);
+      toast.error('Erreur lors de la création de la campagne de démo');
+    } finally {
+      setCreatingDemo(false);
+    }
+  };
 
   const calculateOverallKPIs = (): CampaignKPI => {
     const sentCampaigns = campaigns.filter(c => c.status === 'SENT' || c.status === 'SENDING');
@@ -96,6 +137,23 @@ export default function CampaignDashboard() {
         description="Gérez et analysez vos campagnes marketing"
         actions={
           <div className="flex gap-2">
+            <Button 
+              onClick={() => navigate('/email-settings')} 
+              variant="outline"
+              className="gap-2"
+            >
+              <Settings className="h-4 w-4" />
+              Paramètres
+            </Button>
+            <Button 
+              onClick={handleCreateDemoCampaign} 
+              variant="outline"
+              className="gap-2"
+              disabled={creatingDemo}
+            >
+              <Sparkles className="h-4 w-4" />
+              {creatingDemo ? 'Création...' : 'Campagne démo'}
+            </Button>
             <Button onClick={() => navigate('/campaigns/create')} className="gap-2">
               <Plus className="h-4 w-4" />
               Nouvelle campagne

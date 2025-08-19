@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test CORS</title>
+</head>
+<body>
+    <h1>Test CORS API</h1>
+    <button onclick="testAPI()">Test API Direct (port 3001)</button>
+    <button onclick="testProxy()">Test API via Proxy (port 8080)</button>
+    <button onclick="testCampaigns()">Test Campaigns Endpoint</button>
+    
+    <h2>Results:</h2>
+    <pre id="result"></pre>
+
+    <script>
+        const resultEl = document.getElementById('result');
+        
+        async function testAPI() {
+            try {
+                resultEl.textContent = 'Testing direct API call to port 3001...\n';
+                const response = await fetch('http://localhost:3001/api/test');
+                const data = await response.json();
+                resultEl.textContent += 'Success: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultEl.textContent += 'Error: ' + error.message;
+            }
+        }
+        
+        async function testProxy() {
+            try {
+                resultEl.textContent = 'Testing API via proxy (relative URL)...\n';
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                resultEl.textContent += 'Success: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultEl.textContent += 'Error: ' + error.message;
+            }
+        }
+        
+        async function testCampaigns() {
+            try {
+                resultEl.textContent = 'Testing campaigns endpoint (will fail without auth)...\n';
+                const response = await fetch('/api/campaigns');
+                const data = await response.json();
+                resultEl.textContent += 'Response: ' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultEl.textContent += 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+</html>

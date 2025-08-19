@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCampaigns } from '@/hooks/useCampaigns';
-import { campaignService } from '@/services/campaignService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,14 +39,20 @@ export default function CampaignEdit() {
   const loadCampaign = async () => {
     try {
       setLoading(true);
-      const campaignData = await campaignService.getCampaign(id!);
+      // Fetch campaign from API
+      const response = await fetch(`/api/campaigns/${id}`);
+      if (!response.ok) {
+        throw new Error('Failed to load campaign');
+      }
+      const campaignData = await response.json();
+      
       if (campaignData) {
         setCampaign(campaignData);
         setCampaignData({
           name: campaignData.name,
           subject: campaignData.subject,
           body: campaignData.body,
-          recipientSegment: campaignData.recipientSegment?.id || 'all',
+          recipientSegment: campaignData.recipientSegment || 'all',
           scheduledDate: campaignData.scheduledDate ? campaignData.scheduledDate.split('T')[0] : '',
           scheduledTime: campaignData.scheduledDate ? campaignData.scheduledDate.split('T')[1]?.slice(0, 5) : ''
         });

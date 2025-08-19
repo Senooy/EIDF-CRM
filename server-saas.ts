@@ -14,6 +14,7 @@ import organizationRoutes from './src/server/routes/organization.routes';
 import apiCredentialRoutes from './src/server/routes/api-credential.routes';
 import billingRoutes from './src/server/routes/billing.routes';
 import analyticsRoutes from './src/server/routes/analytics.routes';
+// import campaignsRoutes from './src/server/routes/campaigns.routes'; // TODO: Fix imports with @/ alias
 
 // Load environment variables
 dotenv.config();
@@ -23,7 +24,36 @@ console.log('Starting SaaS server...');
 const app = express();
 const port = process.env.PORT || 3001;
 
-app.use(cors());
+// Configure CORS with specific options
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost origins for development
+    const allowedOrigins = [
+      'http://localhost:8080',
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:8080',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:3000'
+    ];
+    
+    if (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all origins in development
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['x-wp-total', 'x-wp-totalpages'],
+  maxAge: 86400
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Helper type for async request handlers
@@ -40,6 +70,12 @@ app.use('/api', organizationRoutes);
 app.use('/api', apiCredentialRoutes);
 app.use('/api', billingRoutes);
 app.use('/api/analytics', analyticsRoutes);
+// app.use('/api', campaignsRoutes); // TODO: Fix imports with @/ alias
+
+// Temporary mock campaigns endpoint for testing
+app.get('/api/campaigns', (req: express.Request, res: express.Response) => {
+  res.json([]);
+});
 
 // Multi-tenant WooCommerce proxy routes
 const wooCommerceRouter = express.Router();

@@ -3,7 +3,8 @@ import { QueryFunctionContext } from "@tanstack/react-query";
 import { logger } from './logger';
 
 // Use server proxy URL for all WooCommerce API calls
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3001/api';
+// In development, use relative URL to leverage Vite proxy
+const SERVER_URL = import.meta.env.VITE_SERVER_URL || '/api';
 
 // Create Axios instance for server API
 const woocommerceApi = axios.create({

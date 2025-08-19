@@ -1,11 +1,17 @@
 import { Router } from 'express';
 import { authenticateUser, requireOrganization, requireRole, AuthRequest } from '../middleware/auth';
-import { UserRole } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '../db/prisma';
 import { campaignQueueService } from '../services/campaign-queue.service';
 import { trackingService } from '../services/tracking.service';
 import { emailService } from '../services/email.service';
-import { logger } from '@/lib/logger';
+
+// Define UserRole enum locally to avoid import issues
+enum UserRole {
+  OWNER = 'OWNER',
+  ADMIN = 'ADMIN', 
+  MEMBER = 'MEMBER',
+  VIEWER = 'VIEWER'
+}
 
 const router = Router();
 
@@ -161,7 +167,7 @@ router.post('/campaigns', requireRole(UserRole.OWNER, UserRole.ADMIN, UserRole.M
         delayBetweenMin: delayBetweenMin || 3,
         delayBetweenMax: delayBetweenMax || 15,
         totalRecipients: validRecipients.length,
-        createdBy: req.userId!,
+        createdBy: req.user?.uid || 'system',
         status: scheduledAt ? 'SCHEDULED' : 'DRAFT'
       }
     });
@@ -188,11 +194,11 @@ router.post('/campaigns', requireRole(UserRole.OWNER, UserRole.ADMIN, UserRole.M
       }
     }
 
-    logger.info('Campaign created', {
+    console.log('Campaign created', {
       campaignId: campaign.id,
       organizationId: req.organizationId,
       recipientCount: validRecipients.length,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.status(201).json(campaign);
@@ -246,10 +252,10 @@ router.put('/campaigns/:id', requireRole(UserRole.OWNER, UserRole.ADMIN, UserRol
       data: updateData
     });
 
-    logger.info('Campaign updated', {
+    console.log('Campaign updated', {
       campaignId: req.params.id,
       organizationId: req.organizationId,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.json(updatedCampaign);
@@ -284,10 +290,10 @@ router.delete('/campaigns/:id', requireRole(UserRole.OWNER, UserRole.ADMIN), asy
       where: { id: req.params.id }
     });
 
-    logger.info('Campaign deleted', {
+    console.log('Campaign deleted', {
       campaignId: req.params.id,
       organizationId: req.organizationId,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.status(204).send();
@@ -320,10 +326,10 @@ router.post('/campaigns/:id/send', requireRole(UserRole.OWNER, UserRole.ADMIN, U
     // Start sending immediately
     await campaignQueueService.startCampaign(campaign.id);
 
-    logger.info('Campaign send initiated', {
+    console.log('Campaign send initiated', {
       campaignId: req.params.id,
       organizationId: req.organizationId,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.json({ message: 'Campaign send initiated successfully' });
@@ -355,10 +361,10 @@ router.post('/campaigns/:id/pause', requireRole(UserRole.OWNER, UserRole.ADMIN),
 
     await campaignQueueService.pauseCampaign(campaign.id);
 
-    logger.info('Campaign paused', {
+    console.log('Campaign paused', {
       campaignId: req.params.id,
       organizationId: req.organizationId,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.json({ message: 'Campaign paused successfully' });
@@ -390,10 +396,10 @@ router.post('/campaigns/:id/resume', requireRole(UserRole.OWNER, UserRole.ADMIN)
 
     await campaignQueueService.resumeCampaign(campaign.id);
 
-    logger.info('Campaign resumed', {
+    console.log('Campaign resumed', {
       campaignId: req.params.id,
       organizationId: req.organizationId,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.json({ message: 'Campaign resumed successfully' });
@@ -463,12 +469,12 @@ router.post('/campaigns/:id/test', requireRole(UserRole.OWNER, UserRole.ADMIN, U
       }
     }
 
-    logger.info('Test emails sent', {
+    console.log('Test emails sent', {
       campaignId: req.params.id,
       organizationId: req.organizationId,
       testEmails,
       results,
-      userId: req.userId
+      userId: req.user?.uid
     });
 
     res.json({

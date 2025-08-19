@@ -6,12 +6,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Edit, Send, Eye, Calendar, Users, TrendingUp, Mail, MousePointer, ShoppingCart, Euro, Activity, Clock } from 'lucide-react';
+import { ArrowLeft, Edit, Send, Eye, Calendar, Users, TrendingUp, Mail, MousePointer, ShoppingCart, Euro, Activity, Clock, TestTube, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Campaign, CampaignStats, CampaignTimelineData } from '@/types/campaign';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { toast } from 'sonner';
+import TestEmailDialog from '@/components/Campaign/TestEmailDialog';
+import RecipientsList from '@/components/Campaign/RecipientsList';
 
 export default function CampaignDetails() {
   const { id } = useParams<{ id: string }>();
@@ -21,25 +33,69 @@ export default function CampaignDetails() {
   const [timelineData, setTimelineData] = useState<CampaignTimelineData[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [testEmailDialogOpen, setTestEmailDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(`/api/campaigns/${id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        toast.success('Campagne supprimée avec succès');
+        navigate('/campaigns');
+      } else {
+        throw new Error('Failed to delete campaign');
+      }
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
+      toast.error('Erreur lors de la suppression de la campagne');
+    }
+  };
 
   useEffect(() => {
     if (id) {
       loadCampaignDetails();
-      setupRealTimeUpdates();
+      // Real-time updates removed as we're using direct API calls
     }
   }, [id]);
 
   const loadCampaignDetails = async () => {
     try {
       setLoading(true);
-      const campaignData = await campaignService.getCampaign(id!);
+      // Fetch campaign from API directly
+      const response = await fetch(`/api/campaigns/${id}`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          toast.error('Campagne non trouvée');
+        } else {
+          throw new Error('Failed to load campaign');
+        }
+        navigate('/campaigns');
+        return;
+      }
+      
+      const campaignData = await response.json();
+      
       if (campaignData) {
         setCampaign(campaignData);
-        setStats(campaignData.stats);
-        setTimelineData(generateCampaignTimelineData(campaignData));
-      } else {
-        toast.error('Campagne non trouvée');
-        navigate('/campaigns');
+        // Ensure stats object exists with default values
+        const campaignStats = campaignData.stats || {
+          sent: campaignData.sentCount || 0,
+          delivered: campaignData.deliveredCount || 0,
+          opened: campaignData.openedCount || 0,
+          clicked: campaignData.clickedCount || 0,
+          converted: campaignData.convertedCount || 0,
+          bounced: campaignData.bouncedCount || 0,
+          unsubscribed: campaignData.unsubscribedCount || 0,
+          spamReported: campaignData.spamReportedCount || 0,
+          revenue: 0,
+          lastUpdated: campaignData.updatedAt || campaignData.createdAt || new Date().toISOString()
+        };
+        setStats(campaignStats);
+        setTimelineData(generateCampaignTimelineData({ ...campaignData, stats: campaignStats }));
       }
     } catch (error) {
       console.error('Error loading campaign:', error);
@@ -50,17 +106,7 @@ export default function CampaignDetails() {
     }
   };
 
-  const setupRealTimeUpdates = () => {
-    const unsubscribe = campaignService.subscribeToCampaignStats(id!, (newStats) => {
-      setStats(newStats);
-      if (campaign) {
-        const updatedCampaign = { ...campaign, stats: newStats };
-        setTimelineData(generateCampaignTimelineData(updatedCampaign));
-      }
-    });
-
-    return () => unsubscribe();
-  };
+  // Real-time updates removed - using direct API calls instead
 
   const getStatusColor = (status: Campaign['status']) => {
     switch (status) {
@@ -112,21 +158,21 @@ export default function CampaignDetails() {
   const kpiCards = [
     {
       title: 'Emails envoyés',
-      value: stats.sent.toLocaleString(),
+      value: (stats?.sent || 0).toLocaleString(),
       icon: Mail,
       color: 'text-blue-600 dark:text-blue-400',
       bgColor: 'bg-blue-50 dark:bg-blue-900/20'
     },
     {
       title: 'Taux d\'ouverture',
-      value: formatPercentage(stats.opened, stats.delivered),
+      value: formatPercentage(stats?.opened || 0, stats?.delivered || 0),
       icon: Eye,
       color: 'text-green-600 dark:text-green-400',
       bgColor: 'bg-green-50 dark:bg-green-900/20'
     },
     {
       title: 'Taux de clic',
-      value: formatPercentage(stats.clicked, stats.opened),
+      value: formatPercentage(stats?.clicked || 0, stats?.opened || 0),
       icon: MousePointer,
       color: 'text-purple-600 dark:text-purple-400',
       bgColor: 'bg-purple-50 dark:bg-purple-900/20'
@@ -161,10 +207,25 @@ export default function CampaignDetails() {
               <div className="flex gap-2">
                 <Button
                   variant="outline"
+                  onClick={() => setTestEmailDialogOpen(true)}
+                >
+                  <TestTube className="h-4 w-4 mr-2" />
+                  Tester
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => navigate(`/campaigns/${id}/edit`)}
                 >
                   <Edit className="h-4 w-4 mr-2" />
                   Modifier
+                </Button>
+                <Button
+                  variant="outline"
+                  className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                  onClick={() => setDeleteDialogOpen(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Supprimer
                 </Button>
                 {campaign.status === 'draft' && (
                   <Button>
@@ -216,31 +277,31 @@ export default function CampaignDetails() {
                     <CardContent className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.delivered}</div>
+                          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats?.delivered || 0}</div>
                           <div className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">Délivrés</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatPercentage(stats.delivered, stats.sent)}
+                            {formatPercentage(stats?.delivered || 0, stats?.sent || 0)}
                           </div>
                         </div>
                         <div className="text-center p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                          <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats.bounced}</div>
+                          <div className="text-2xl font-bold text-red-600 dark:text-red-400">{stats?.bounced || 0}</div>
                           <div className="text-sm text-gray-600 dark:text-gray-300 dark:text-gray-300">Bounces</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatPercentage(stats.bounced, stats.sent)}
+                            {formatPercentage(stats?.bounced || 0, stats?.sent || 0)}
                           </div>
                         </div>
                         <div className="text-center p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-                          <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.unsubscribed}</div>
+                          <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats?.unsubscribed || 0}</div>
                           <div className="text-sm text-gray-600 dark:text-gray-300">Désabonnés</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatPercentage(stats.unsubscribed, stats.delivered)}
+                            {formatPercentage(stats?.unsubscribed || 0, stats?.delivered || 0)}
                           </div>
                         </div>
                         <div className="text-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                          <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats.spamReported}</div>
+                          <div className="text-2xl font-bold text-gray-600 dark:text-gray-300">{stats?.spamReported || 0}</div>
                           <div className="text-sm text-gray-600 dark:text-gray-300">Spam signalé</div>
                           <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {formatPercentage(stats.spamReported, stats.delivered)}
+                            {formatPercentage(stats?.spamReported || 0, stats?.delivered || 0)}
                           </div>
                         </div>
                       </div>
@@ -279,7 +340,7 @@ export default function CampaignDetails() {
                       <div>
                         <label className="text-sm font-medium text-gray-500 dark:text-gray-400">Dernière mise à jour</label>
                         <p className="text-sm">
-                          {format(new Date(stats.lastUpdated), 'dd MMMM yyyy à HH:mm', { locale: fr })}
+                          {stats?.lastUpdated ? format(new Date(stats.lastUpdated), 'dd MMMM yyyy à HH:mm', { locale: fr }) : 'N/A'}
                         </p>
                       </div>
                     </CardContent>
@@ -371,27 +432,46 @@ export default function CampaignDetails() {
               </TabsContent>
 
               <TabsContent value="recipients" className="space-y-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Users className="h-5 w-5" />
-                      Destinataires
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8">
-                      <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                      <p className="text-lg font-medium text-gray-900">
-                        {campaign.recipientCount?.toLocaleString()} destinataires
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        Segment : {campaign.recipientSegment?.name || 'Tous les contacts'}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <RecipientsList campaignId={campaign.id} />
               </TabsContent>
             </Tabs>
+            
+            {/* Test Email Dialog */}
+            {campaign && (
+              <TestEmailDialog
+                open={testEmailDialogOpen}
+                onOpenChange={setTestEmailDialogOpen}
+                campaignId={campaign.id}
+                campaignName={campaign.name}
+                campaignSubject={campaign.subject}
+              />
+            )}
+            
+            {/* Delete Confirmation Dialog */}
+            <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cette campagne ?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Cette action est irréversible. La campagne "{campaign?.name}" sera définitivement supprimée.
+                    {campaign?.status === 'sent' && (
+                      <span className="block mt-2 font-semibold text-yellow-600">
+                        ⚠️ Attention : Cette campagne a déjà été envoyée. Les statistiques seront perdues.
+                      </span>
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Annuler</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={handleDelete}
+                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  >
+                    Supprimer
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
       </div>
   );
 }

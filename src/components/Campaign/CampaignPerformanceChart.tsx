@@ -13,16 +13,31 @@ export default function CampaignPerformanceChart({ campaigns }: CampaignPerforma
       .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
       .slice(-10);
 
-    return sortedCampaigns.map(campaign => ({
-      name: campaign.name.length > 20 ? campaign.name.substring(0, 20) + '...' : campaign.name,
-      date: format(new Date(campaign.createdAt), 'dd MMM', { locale: fr }),
-      Envoyés: campaign.stats.sent,
-      Ouverts: campaign.stats.opened,
-      Cliqués: campaign.stats.clicked,
-      Convertis: campaign.stats.converted,
-      'Taux d\'ouverture': parseFloat(((campaign.stats.opened / campaign.stats.delivered) * 100).toFixed(1)),
-      'Taux de clic': parseFloat(((campaign.stats.clicked / campaign.stats.opened) * 100).toFixed(2)),
-    }));
+    return sortedCampaigns.map(campaign => {
+      const stats = campaign.stats || {
+        sent: 0,
+        delivered: 0,
+        opened: 0,
+        clicked: 0,
+        converted: 0,
+        bounced: 0,
+        unsubscribed: 0,
+        spamReported: 0,
+        revenue: 0,
+        lastUpdated: campaign.createdAt
+      };
+      
+      return {
+        name: campaign.name.length > 20 ? campaign.name.substring(0, 20) + '...' : campaign.name,
+        date: format(new Date(campaign.createdAt), 'dd MMM', { locale: fr }),
+        Envoyés: stats.sent,
+        Ouverts: stats.opened,
+        Cliqués: stats.clicked,
+        Convertis: stats.converted,
+        'Taux d\'ouverture': stats.delivered > 0 ? parseFloat(((stats.opened / stats.delivered) * 100).toFixed(1)) : 0,
+        'Taux de clic': stats.opened > 0 ? parseFloat(((stats.clicked / stats.opened) * 100).toFixed(2)) : 0,
+      };
+    });
   };
 
   const data = prepareChartData();

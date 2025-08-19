@@ -1,0 +1,240 @@
+[
+  {
+    "exit_code": 0,
+    "script": "npm",
+    "node_version": "20.19.4",
+    "version": "N/A",
+    "unstable_restarts": 0,
+    "restart_time": 3,
+    "created_at": 1755560623660,
+    "axm_dynamic": {},
+    "axm_options": {
+      "error": true,
+      "heapdump": true,
+      "feature.profiler.heapsnapshot": false,
+      "feature.profiler.heapsampling": true,
+      "feature.profiler.cpu_js": true,
+      "latency": true,
+      "catchExceptions": true,
+      "profiling": true,
+      "metrics": {
+        "http": true,
+        "runtime": true,
+        "eventLoop": true,
+        "network": false,
+        "v8": true
+      },
+      "standalone": false,
+      "module_conf": {},
+      "apm": {
+        "version": "6.1.0",
+        "type": "node"
+      },
+      "module_name": "eidf-crm-frontend",
+      "module_version": "6.0.8"
+    },
+    "axm_monitor": {
+      "Used Heap Size": {
+        "value": "7.46",
+        "type": "internal/v8/heap/used",
+        "unit": "MiB",
+        "historic": true
+      },
+      "Heap Usage": {
+        "value": 74.82,
+        "type": "internal/v8/heap/usage",
+        "unit": "%",
+        "historic": true
+      },
+      "Heap Size": {
+        "value": "9.98",
+        "type": "internal/v8/heap/total",
+        "unit": "MiB",
+        "historic": true
+      },
+      "Event Loop Latency p95": {
+        "value": "1.18",
+        "type": "internal/libuv/latency/p95",
+        "unit": "ms",
+        "historic": true
+      },
+      "Event Loop Latency": {
+        "value": "0.47",
+        "type": "internal/libuv/latency/p50",
+        "unit": "ms",
+        "historic": true
+      },
+      "Active handles": {
+        "value": 5,
+        "type": "internal/libuv/handles",
+        "historic": true
+      },
+      "Active requests": {
+        "value": 0,
+        "type": "internal/libuv/requests",
+        "historic": true
+      }
+    },
+    "axm_actions": [
+      {
+        "action_name": "km:heapdump",
+        "action_type": "internal",
+        "arity": 2
+      },
+      {
+        "action_name": "km:cpu:profiling:start",
+        "action_type": "internal",
+        "arity": 2
+      },
+      {
+        "action_name": "km:cpu:profiling:stop",
+        "action_type": "internal",
+        "arity": 1
+      },
+      {
+        "action_name": "km:heap:sampling:start",
+        "action_type": "internal",
+        "arity": 2
+      },
+      {
+        "action_name": "km:heap:sampling:stop",
+        "action_type": "internal",
+        "arity": 1
+      }
+    ],
+    "pm_uptime": 1755560623818,
+    "status": "online",
+    "unique_id": "567c7cb6-50e5-4fd5-89d4-6dbfeb302dd0",
+    "LANG": "C.UTF-8",
+    "TERM": "xterm-256color",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "MAIL": "/var/mail/eidf",
+    "LOGNAME": "eidf",
+    "USER": "eidf",
+    "HOME": "/opt/eidf-crm",
+    "SHELL": "/bin/bash",
+    "SUDO_COMMAND": "/usr/bin/pm2 start ecosystem.config.cjs",
+    "SUDO_USER": "root",
+    "SUDO_UID": "0",
+    "SUDO_GID": "0",
+    "SUDO_HOME": "/root",
+    "PM2_USAGE": "CLI",
+    "PM2_JSON_PROCESSING": "true",
+    "PWD": "/opt/eidf-crm",
+    "PORT": 3000,
+    "NODE_ENV": "production",
+    "PM2_HOME": "/opt/eidf-crm/.pm2",
+    "eidf-crm-frontend": "{}",
+    "NODE_APP_INSTANCE": 0,
+    "vizion_running": false,
+    "km_link": false,
+    "pm_pid_path": "/opt/eidf-crm/.pm2/pids/eidf-crm-frontend-0.pid",
+    "pm_err_log_path": "/opt/eidf-crm/.pm2/logs/eidf-crm-frontend-error.log",
+    "pm_out_log_path": "/opt/eidf-crm/.pm2/logs/eidf-crm-frontend-out.log",
+    "exec_mode": "fork_mode",
+    "exec_interpreter": "/usr/bin/node",
+    "pm_cwd": "/opt/eidf-crm",
+    "pm_exec_path": "/usr/bin/npm",
+    "node_args": [],
+    "name": "eidf-crm-frontend",
+    "cwd": "/opt/eidf-crm",
+    "args": [
+      "run",
+      "preview"
+    ],
+    "env": {
+      "NODE_ENV": "production",
+      "PORT": 3000
+    },
+    "merge_logs": true,
+    "vizion": true,
+    "autostart": true,
+    "autorestart": true,
+    "instance_var": "NODE_APP_INSTANCE",
+    "pmx": true,
+    "automation": true,
+    "treekill": true,
+    "username": "eidf",
+    "windowsHide": true,
+    "kill_retry_time": 100,
+    "namespace": "default",
+    "filter_env": []
+  },
+  {
+    "kill_retry_time": 100,
+    "windowsHide": true,
+    "username": "eidf",
+    "treekill": true,
+    "automation": true,
+    "pmx": true,
+    "instance_var": "NODE_APP_INSTANCE",
+    "watch": false,
+    "autorestart": true,
+    "autostart": true,
+    "vizion": true,
+    "merge_logs": true,
+    "env": {
+      "LANG": "C.UTF-8",
+      "TERM": "xterm-256color",
+      "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "MAIL": "/var/mail/eidf",
+      "LOGNAME": "eidf",
+      "USER": "eidf",
+      "HOME": "/opt/eidf-crm",
+      "SHELL": "/bin/bash",
+      "SUDO_COMMAND": "/usr/bin/pm2 start tsx server.ts --name eidf-crm-api",
+      "SUDO_USER": "root",
+      "SUDO_UID": "0",
+      "SUDO_GID": "0",
+      "SUDO_HOME": "/root",
+      "PM2_USAGE": "CLI",
+      "PM2_HOME": "/opt/eidf-crm/.pm2",
+      "eidf-crm-api": {},
+      "unique_id": "953111e9-6ee8-4523-8d64-bd778376bf60"
+    },
+    "args": [
+      "-c",
+      "tsx server.ts"
+    ],
+    "namespace": "default",
+    "filter_env": [],
+    "name": "eidf-crm-api",
+    "node_args": [],
+    "pm_exec_path": "/usr/bin/bash",
+    "pm_cwd": "/opt/eidf-crm",
+    "exec_interpreter": "none",
+    "exec_mode": "fork_mode",
+    "pm_out_log_path": "/opt/eidf-crm/.pm2/logs/eidf-crm-api-out.log",
+    "pm_err_log_path": "/opt/eidf-crm/.pm2/logs/eidf-crm-api-error.log",
+    "pm_pid_path": "/opt/eidf-crm/.pm2/pids/eidf-crm-api-6.pid",
+    "km_link": false,
+    "vizion_running": false,
+    "NODE_APP_INSTANCE": 0,
+    "LANG": "C.UTF-8",
+    "TERM": "xterm-256color",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "MAIL": "/var/mail/eidf",
+    "LOGNAME": "eidf",
+    "USER": "eidf",
+    "HOME": "/opt/eidf-crm",
+    "SHELL": "/bin/bash",
+    "SUDO_COMMAND": "/usr/bin/pm2 start tsx server.ts --name eidf-crm-api",
+    "SUDO_USER": "root",
+    "SUDO_UID": "0",
+    "SUDO_GID": "0",
+    "SUDO_HOME": "/root",
+    "PM2_USAGE": "CLI",
+    "PM2_HOME": "/opt/eidf-crm/.pm2",
+    "unique_id": "953111e9-6ee8-4523-8d64-bd778376bf60",
+    "status": "online",
+    "pm_uptime": 1755560672746,
+    "axm_actions": [],
+    "axm_monitor": {},
+    "axm_options": {},
+    "axm_dynamic": {},
+    "created_at": 1755560672746,
+    "restart_time": 0,
+    "unstable_restarts": 0,
+    "version": "N/A"
+  }
+]

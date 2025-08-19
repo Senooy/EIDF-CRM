@@ -1,0 +1,8 @@
+{
+  "defaultFromName": "Eco Industrie de France",
+  "defaultFromEmail": "noreply@eidf-crm.fr",
+  "smtpHost": "localhost",
+  "smtpPort": "587",
+  "trackingBaseUrl": "https://dashboard.eidf-crm.fr",
+  "updatedAt": "2025-08-19T16:54:26.660Z"
+}

@@ -8,7 +8,18 @@ interface CampaignConversionFunnelProps {
 export default function CampaignConversionFunnel({ campaigns }: CampaignConversionFunnelProps) {
   const calculateFunnelData = () => {
     const totals = campaigns.reduce((acc, campaign) => {
-      const stats = campaign.stats;
+      const stats = campaign.stats || {
+        sent: 0,
+        delivered: 0,
+        opened: 0,
+        clicked: 0,
+        converted: 0,
+        bounced: 0,
+        unsubscribed: 0,
+        spamReported: 0,
+        revenue: 0,
+        lastUpdated: campaign.createdAt
+      };
       return {
         sent: acc.sent + stats.sent,
         delivered: acc.delivered + stats.delivered,

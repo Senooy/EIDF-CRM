@@ -1,0 +1,1554 @@
+2025-08-19T02:36:55: 
+2025-08-19T02:36:55: node:internal/modules/run_main:123
+2025-08-19T02:36:55:     triggerUncaughtException(
+2025-08-19T02:36:55:     ^
+2025-08-19T02:36:55: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:55:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:55:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:55:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:55:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:55:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563814868:2:3811)
+2025-08-19T02:36:55:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563814868:2:4310)
+2025-08-19T02:36:55:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563814868:2:5051)
+2025-08-19T02:36:55:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563814868:2:5422)
+2025-08-19T02:36:55:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:55:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:55:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:55: }
+2025-08-19T02:36:55: 
+2025-08-19T02:36:55: Node.js v20.19.4
+2025-08-19T02:36:55: 
+2025-08-19T02:36:55: node:internal/modules/run_main:123
+2025-08-19T02:36:55:     triggerUncaughtException(
+2025-08-19T02:36:55:     ^
+2025-08-19T02:36:55: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:55:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:55:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:55:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:55:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:55:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563815587:2:3811)
+2025-08-19T02:36:55:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563815587:2:4310)
+2025-08-19T02:36:55:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563815587:2:5051)
+2025-08-19T02:36:55:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563815587:2:5422)
+2025-08-19T02:36:55:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:55:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:55:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:55: }
+2025-08-19T02:36:55: 
+2025-08-19T02:36:55: Node.js v20.19.4
+2025-08-19T02:36:56: 
+2025-08-19T02:36:56: node:internal/modules/run_main:123
+2025-08-19T02:36:56:     triggerUncaughtException(
+2025-08-19T02:36:56:     ^
+2025-08-19T02:36:56: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:56:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:56:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:56:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:56:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:56:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816208:2:3811)
+2025-08-19T02:36:56:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816208:2:4310)
+2025-08-19T02:36:56:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816208:2:5051)
+2025-08-19T02:36:56:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816208:2:5422)
+2025-08-19T02:36:56:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:56:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:56:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:56: }
+2025-08-19T02:36:56: 
+2025-08-19T02:36:56: Node.js v20.19.4
+2025-08-19T02:36:57: 
+2025-08-19T02:36:57: node:internal/modules/run_main:123
+2025-08-19T02:36:57:     triggerUncaughtException(
+2025-08-19T02:36:57:     ^
+2025-08-19T02:36:57: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:57:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:57:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:57:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:57:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:57:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816892:2:3811)
+2025-08-19T02:36:57:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816892:2:4310)
+2025-08-19T02:36:57:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816892:2:5051)
+2025-08-19T02:36:57:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563816892:2:5422)
+2025-08-19T02:36:57:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:57:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:57:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:57: }
+2025-08-19T02:36:57: 
+2025-08-19T02:36:57: Node.js v20.19.4
+2025-08-19T02:36:57: 
+2025-08-19T02:36:57: node:internal/modules/run_main:123
+2025-08-19T02:36:57:     triggerUncaughtException(
+2025-08-19T02:36:57:     ^
+2025-08-19T02:36:57: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:57:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:57:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:57:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:57:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:57:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563817449:2:3811)
+2025-08-19T02:36:57:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563817449:2:4310)
+2025-08-19T02:36:57:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563817449:2:5051)
+2025-08-19T02:36:57:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563817449:2:5422)
+2025-08-19T02:36:57:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:57:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:57:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:57: }
+2025-08-19T02:36:57: 
+2025-08-19T02:36:57: Node.js v20.19.4
+2025-08-19T02:36:58: 
+2025-08-19T02:36:58: node:internal/modules/run_main:123
+2025-08-19T02:36:58:     triggerUncaughtException(
+2025-08-19T02:36:58:     ^
+2025-08-19T02:36:58: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:58:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:58:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:58:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:58:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:58:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818082:2:3811)
+2025-08-19T02:36:58:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818082:2:4310)
+2025-08-19T02:36:58:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818082:2:5051)
+2025-08-19T02:36:58:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818082:2:5422)
+2025-08-19T02:36:58:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:58:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:58:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:58: }
+2025-08-19T02:36:58: 
+2025-08-19T02:36:58: Node.js v20.19.4
+2025-08-19T02:36:59: 
+2025-08-19T02:36:59: node:internal/modules/run_main:123
+2025-08-19T02:36:59:     triggerUncaughtException(
+2025-08-19T02:36:59:     ^
+2025-08-19T02:36:59: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:59:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:59:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:59:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:59:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:59:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818881:2:3811)
+2025-08-19T02:36:59:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818881:2:4310)
+2025-08-19T02:36:59:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818881:2:5051)
+2025-08-19T02:36:59:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563818881:2:5422)
+2025-08-19T02:36:59:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:59:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:59:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:59: }
+2025-08-19T02:36:59: 
+2025-08-19T02:36:59: Node.js v20.19.4
+2025-08-19T02:36:59: 
+2025-08-19T02:36:59: node:internal/modules/run_main:123
+2025-08-19T02:36:59:     triggerUncaughtException(
+2025-08-19T02:36:59:     ^
+2025-08-19T02:36:59: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:36:59:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:36:59:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:36:59:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:36:59:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:36:59:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563819527:2:3811)
+2025-08-19T02:36:59:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563819527:2:4310)
+2025-08-19T02:36:59:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563819527:2:5051)
+2025-08-19T02:36:59:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563819527:2:5422)
+2025-08-19T02:36:59:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:36:59:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:36:59:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:36:59: }
+2025-08-19T02:36:59: 
+2025-08-19T02:36:59: Node.js v20.19.4
+2025-08-19T02:37:00: 
+2025-08-19T02:37:00: node:internal/modules/run_main:123
+2025-08-19T02:37:00:     triggerUncaughtException(
+2025-08-19T02:37:00:     ^
+2025-08-19T02:37:00: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:00:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:00:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:00:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:00:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:00:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820012:2:3811)
+2025-08-19T02:37:00:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820012:2:4310)
+2025-08-19T02:37:00:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820012:2:5051)
+2025-08-19T02:37:00:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820012:2:5422)
+2025-08-19T02:37:00:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:00:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:00:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:00: }
+2025-08-19T02:37:00: 
+2025-08-19T02:37:00: Node.js v20.19.4
+2025-08-19T02:37:00: 
+2025-08-19T02:37:00: node:internal/modules/run_main:123
+2025-08-19T02:37:00:     triggerUncaughtException(
+2025-08-19T02:37:00:     ^
+2025-08-19T02:37:00: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:00:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:00:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:00:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:00:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:00:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820559:2:3811)
+2025-08-19T02:37:00:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820559:2:4310)
+2025-08-19T02:37:00:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820559:2:5051)
+2025-08-19T02:37:00:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563820559:2:5422)
+2025-08-19T02:37:00:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:00:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:00:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:00: }
+2025-08-19T02:37:00: 
+2025-08-19T02:37:00: Node.js v20.19.4
+2025-08-19T02:37:01: 
+2025-08-19T02:37:01: node:internal/modules/run_main:123
+2025-08-19T02:37:01:     triggerUncaughtException(
+2025-08-19T02:37:01:     ^
+2025-08-19T02:37:01: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:01:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:01:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:01:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:01:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:01:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821119:2:3811)
+2025-08-19T02:37:01:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821119:2:4310)
+2025-08-19T02:37:01:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821119:2:5051)
+2025-08-19T02:37:01:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821119:2:5422)
+2025-08-19T02:37:01:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:01:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:01:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:01: }
+2025-08-19T02:37:01: 
+2025-08-19T02:37:01: Node.js v20.19.4
+2025-08-19T02:37:02: 
+2025-08-19T02:37:02: node:internal/modules/run_main:123
+2025-08-19T02:37:02:     triggerUncaughtException(
+2025-08-19T02:37:02:     ^
+2025-08-19T02:37:02: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:02:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:02:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:02:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:02:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:02:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821725:2:3811)
+2025-08-19T02:37:02:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821725:2:4310)
+2025-08-19T02:37:02:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821725:2:5051)
+2025-08-19T02:37:02:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563821725:2:5422)
+2025-08-19T02:37:02:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:02:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:02:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:02: }
+2025-08-19T02:37:02: 
+2025-08-19T02:37:02: Node.js v20.19.4
+2025-08-19T02:37:02: 
+2025-08-19T02:37:02: node:internal/modules/run_main:123
+2025-08-19T02:37:02:     triggerUncaughtException(
+2025-08-19T02:37:02:     ^
+2025-08-19T02:37:02: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:02:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:02:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:02:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:02:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:02:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822321:2:3811)
+2025-08-19T02:37:02:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822321:2:4310)
+2025-08-19T02:37:02:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822321:2:5051)
+2025-08-19T02:37:02:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822321:2:5422)
+2025-08-19T02:37:02:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:02:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:02:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:02: }
+2025-08-19T02:37:02: 
+2025-08-19T02:37:02: Node.js v20.19.4
+2025-08-19T02:37:03: 
+2025-08-19T02:37:03: node:internal/modules/run_main:123
+2025-08-19T02:37:03:     triggerUncaughtException(
+2025-08-19T02:37:03:     ^
+2025-08-19T02:37:03: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:03:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:03:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:03:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:03:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:03:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822909:2:3811)
+2025-08-19T02:37:03:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822909:2:4310)
+2025-08-19T02:37:03:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822909:2:5051)
+2025-08-19T02:37:03:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563822909:2:5422)
+2025-08-19T02:37:03:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:03:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:03:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:03: }
+2025-08-19T02:37:03: 
+2025-08-19T02:37:03: Node.js v20.19.4
+2025-08-19T02:37:03: 
+2025-08-19T02:37:03: node:internal/modules/run_main:123
+2025-08-19T02:37:03:     triggerUncaughtException(
+2025-08-19T02:37:03:     ^
+2025-08-19T02:37:03: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:03:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:03:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:03:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:03:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:03:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563823515:2:3811)
+2025-08-19T02:37:03:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563823515:2:4310)
+2025-08-19T02:37:03:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563823515:2:5051)
+2025-08-19T02:37:03:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563823515:2:5422)
+2025-08-19T02:37:03:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:03:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:03:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:03: }
+2025-08-19T02:37:03: 
+2025-08-19T02:37:03: Node.js v20.19.4
+2025-08-19T02:37:04: 
+2025-08-19T02:37:04: node:internal/modules/run_main:123
+2025-08-19T02:37:04:     triggerUncaughtException(
+2025-08-19T02:37:04:     ^
+2025-08-19T02:37:04: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/routes/campaigns.routes.ts
+2025-08-19T02:37:04:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:37:04:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:37:04:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:37:04:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:37:04:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563824007:2:3811)
+2025-08-19T02:37:04:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563824007:2:4310)
+2025-08-19T02:37:04:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563824007:2:5051)
+2025-08-19T02:37:04:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563824007:2:5422)
+2025-08-19T02:37:04:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:37:04:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:37:04:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:37:04: }
+2025-08-19T02:37:04: 
+2025-08-19T02:37:04: Node.js v20.19.4
+2025-08-19T02:38:57: 
+2025-08-19T02:38:57: node:internal/modules/run_main:123
+2025-08-19T02:38:57:     triggerUncaughtException(
+2025-08-19T02:38:57:     ^
+2025-08-19T02:38:57: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:38:57:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:38:57:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:38:57:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:38:57:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:38:57:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563936826:2:3811)
+2025-08-19T02:38:57:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563936826:2:4310)
+2025-08-19T02:38:57:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563936826:2:5051)
+2025-08-19T02:38:57:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563936826:2:5422)
+2025-08-19T02:38:57:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:38:57:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:38:57:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:38:57: }
+2025-08-19T02:38:57: 
+2025-08-19T02:38:57: Node.js v20.19.4
+2025-08-19T02:38:57: 
+2025-08-19T02:38:57: node:internal/modules/run_main:123
+2025-08-19T02:38:57:     triggerUncaughtException(
+2025-08-19T02:38:57:     ^
+2025-08-19T02:38:57: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:38:57:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:38:57:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:38:57:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:38:57:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:38:57:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563937674:2:3811)
+2025-08-19T02:38:57:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563937674:2:4310)
+2025-08-19T02:38:57:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563937674:2:5051)
+2025-08-19T02:38:57:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563937674:2:5422)
+2025-08-19T02:38:57:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:38:57:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:38:57:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:38:57: }
+2025-08-19T02:38:57: 
+2025-08-19T02:38:57: Node.js v20.19.4
+2025-08-19T02:38:58: 
+2025-08-19T02:38:58: node:internal/modules/run_main:123
+2025-08-19T02:38:58:     triggerUncaughtException(
+2025-08-19T02:38:58:     ^
+2025-08-19T02:38:58: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:38:58:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:38:58:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:38:58:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:38:58:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:38:58:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938159:2:3811)
+2025-08-19T02:38:58:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938159:2:4310)
+2025-08-19T02:38:58:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938159:2:5051)
+2025-08-19T02:38:58:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938159:2:5422)
+2025-08-19T02:38:58:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:38:58:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:38:58:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:38:58: }
+2025-08-19T02:38:58: 
+2025-08-19T02:38:58: Node.js v20.19.4
+2025-08-19T02:38:58: 
+2025-08-19T02:38:58: node:internal/modules/run_main:123
+2025-08-19T02:38:58:     triggerUncaughtException(
+2025-08-19T02:38:58:     ^
+2025-08-19T02:38:58: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:38:58:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:38:58:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:38:58:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:38:58:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:38:58:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938653:2:3811)
+2025-08-19T02:38:58:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938653:2:4310)
+2025-08-19T02:38:58:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938653:2:5051)
+2025-08-19T02:38:58:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563938653:2:5422)
+2025-08-19T02:38:58:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:38:58:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:38:58:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:38:58: }
+2025-08-19T02:38:58: 
+2025-08-19T02:38:58: Node.js v20.19.4
+2025-08-19T02:38:59: 
+2025-08-19T02:38:59: node:internal/modules/run_main:123
+2025-08-19T02:38:59:     triggerUncaughtException(
+2025-08-19T02:38:59:     ^
+2025-08-19T02:38:59: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/tracking.service.ts
+2025-08-19T02:38:59:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:38:59:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:38:59:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:38:59:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:38:59:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939134:2:3811)
+2025-08-19T02:38:59:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939134:2:4310)
+2025-08-19T02:38:59:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939134:2:5051)
+2025-08-19T02:38:59:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939134:2:5422)
+2025-08-19T02:38:59:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:38:59:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:38:59:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:38:59: }
+2025-08-19T02:38:59: 
+2025-08-19T02:38:59: Node.js v20.19.4
+2025-08-19T02:38:59: 
+2025-08-19T02:38:59: node:internal/modules/run_main:123
+2025-08-19T02:38:59:     triggerUncaughtException(
+2025-08-19T02:38:59:     ^
+2025-08-19T02:38:59: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:38:59:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:38:59:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:38:59:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:38:59:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:38:59:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939610:2:3811)
+2025-08-19T02:38:59:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939610:2:4310)
+2025-08-19T02:38:59:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939610:2:5051)
+2025-08-19T02:38:59:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563939610:2:5422)
+2025-08-19T02:38:59:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:38:59:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:38:59:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:38:59: }
+2025-08-19T02:38:59: 
+2025-08-19T02:38:59: Node.js v20.19.4
+2025-08-19T02:39:00: 
+2025-08-19T02:39:00: node:internal/modules/run_main:123
+2025-08-19T02:39:00:     triggerUncaughtException(
+2025-08-19T02:39:00:     ^
+2025-08-19T02:39:00: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:00:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:00:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:00:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:00:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:00:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940114:2:3811)
+2025-08-19T02:39:00:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940114:2:4310)
+2025-08-19T02:39:00:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940114:2:5051)
+2025-08-19T02:39:00:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940114:2:5422)
+2025-08-19T02:39:00:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:00:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:00:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:00: }
+2025-08-19T02:39:00: 
+2025-08-19T02:39:00: Node.js v20.19.4
+2025-08-19T02:39:00: 
+2025-08-19T02:39:00: node:internal/modules/run_main:123
+2025-08-19T02:39:00:     triggerUncaughtException(
+2025-08-19T02:39:00:     ^
+2025-08-19T02:39:00: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/email.service.ts
+2025-08-19T02:39:00:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:00:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:00:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:00:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:00:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940644:2:3811)
+2025-08-19T02:39:00:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940644:2:4310)
+2025-08-19T02:39:00:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940644:2:5051)
+2025-08-19T02:39:00:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563940644:2:5422)
+2025-08-19T02:39:00:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:00:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:00:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:00: }
+2025-08-19T02:39:00: 
+2025-08-19T02:39:00: Node.js v20.19.4
+2025-08-19T02:39:01: 
+2025-08-19T02:39:01: node:internal/modules/run_main:123
+2025-08-19T02:39:01:     triggerUncaughtException(
+2025-08-19T02:39:01:     ^
+2025-08-19T02:39:01: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:01:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:01:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:01:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:01:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:01:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941225:2:3811)
+2025-08-19T02:39:01:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941225:2:4310)
+2025-08-19T02:39:01:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941225:2:5051)
+2025-08-19T02:39:01:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941225:2:5422)
+2025-08-19T02:39:01:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:01:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:01:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:01: }
+2025-08-19T02:39:01: 
+2025-08-19T02:39:01: Node.js v20.19.4
+2025-08-19T02:39:02: 
+2025-08-19T02:39:02: node:internal/modules/run_main:123
+2025-08-19T02:39:02:     triggerUncaughtException(
+2025-08-19T02:39:02:     ^
+2025-08-19T02:39:02: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:02:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:02:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:02:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:02:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:02:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941759:2:3811)
+2025-08-19T02:39:02:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941759:2:4310)
+2025-08-19T02:39:02:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941759:2:5051)
+2025-08-19T02:39:02:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563941759:2:5422)
+2025-08-19T02:39:02:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:02:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:02:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:02: }
+2025-08-19T02:39:02: 
+2025-08-19T02:39:02: Node.js v20.19.4
+2025-08-19T02:39:02: 
+2025-08-19T02:39:02: node:internal/modules/run_main:123
+2025-08-19T02:39:02:     triggerUncaughtException(
+2025-08-19T02:39:02:     ^
+2025-08-19T02:39:02: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:02:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:02:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:02:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:02:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:02:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942445:2:3811)
+2025-08-19T02:39:02:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942445:2:4310)
+2025-08-19T02:39:02:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942445:2:5051)
+2025-08-19T02:39:02:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942445:2:5422)
+2025-08-19T02:39:02:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:02:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:02:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:02: }
+2025-08-19T02:39:02: 
+2025-08-19T02:39:02: Node.js v20.19.4
+2025-08-19T02:39:03: 
+2025-08-19T02:39:03: node:internal/modules/run_main:123
+2025-08-19T02:39:03:     triggerUncaughtException(
+2025-08-19T02:39:03:     ^
+2025-08-19T02:39:03: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/tracking.service.ts
+2025-08-19T02:39:03:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:03:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:03:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:03:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:03:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942998:2:3811)
+2025-08-19T02:39:03:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942998:2:4310)
+2025-08-19T02:39:03:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942998:2:5051)
+2025-08-19T02:39:03:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563942998:2:5422)
+2025-08-19T02:39:03:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:03:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:03:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:03: }
+2025-08-19T02:39:03: 
+2025-08-19T02:39:03: Node.js v20.19.4
+2025-08-19T02:39:03: 
+2025-08-19T02:39:03: node:internal/modules/run_main:123
+2025-08-19T02:39:03:     triggerUncaughtException(
+2025-08-19T02:39:03:     ^
+2025-08-19T02:39:03: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:03:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:03:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:03:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:03:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:03:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563943555:2:3811)
+2025-08-19T02:39:03:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563943555:2:4310)
+2025-08-19T02:39:03:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563943555:2:5051)
+2025-08-19T02:39:03:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563943555:2:5422)
+2025-08-19T02:39:03:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:03:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:03:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:03: }
+2025-08-19T02:39:03: 
+2025-08-19T02:39:03: Node.js v20.19.4
+2025-08-19T02:39:04: 
+2025-08-19T02:39:04: node:internal/modules/run_main:123
+2025-08-19T02:39:04:     triggerUncaughtException(
+2025-08-19T02:39:04:     ^
+2025-08-19T02:39:04: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/tracking.service.ts
+2025-08-19T02:39:04:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:04:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:04:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:04:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:04:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944108:2:3811)
+2025-08-19T02:39:04:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944108:2:4310)
+2025-08-19T02:39:04:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944108:2:5051)
+2025-08-19T02:39:04:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944108:2:5422)
+2025-08-19T02:39:04:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:04:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:04:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:04: }
+2025-08-19T02:39:04: 
+2025-08-19T02:39:04: Node.js v20.19.4
+2025-08-19T02:39:04: 
+2025-08-19T02:39:04: node:internal/modules/run_main:123
+2025-08-19T02:39:04:     triggerUncaughtException(
+2025-08-19T02:39:04:     ^
+2025-08-19T02:39:04: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:04:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:04:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:04:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:04:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:04:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944657:2:3811)
+2025-08-19T02:39:04:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944657:2:4310)
+2025-08-19T02:39:04:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944657:2:5051)
+2025-08-19T02:39:04:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563944657:2:5422)
+2025-08-19T02:39:04:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:04:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:04:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:04: }
+2025-08-19T02:39:04: 
+2025-08-19T02:39:04: Node.js v20.19.4
+2025-08-19T02:39:05: 
+2025-08-19T02:39:05: node:internal/modules/run_main:123
+2025-08-19T02:39:05:     triggerUncaughtException(
+2025-08-19T02:39:05:     ^
+2025-08-19T02:39:05: Error [ERR_MODULE_NOT_FOUND]: Cannot find package '@/lib' imported from /opt/eidf-crm/src/server/services/campaign-queue.service.ts
+2025-08-19T02:39:05:     at packageResolve (node:internal/modules/esm/resolve:873:9)
+2025-08-19T02:39:05:     at moduleResolve (node:internal/modules/esm/resolve:946:18)
+2025-08-19T02:39:05:     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
+2025-08-19T02:39:05:     at nextResolve (node:internal/modules/esm/hooks:864:28)
+2025-08-19T02:39:05:     at resolveBase (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563945189:2:3811)
+2025-08-19T02:39:05:     at resolveDirectory (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563945189:2:4310)
+2025-08-19T02:39:05:     at resolveTsPaths (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563945189:2:5051)
+2025-08-19T02:39:05:     at async resolve (file:///usr/lib/node_modules/tsx/dist/esm/index.mjs?1755563945189:2:5422)
+2025-08-19T02:39:05:     at async nextResolve (node:internal/modules/esm/hooks:864:22)
+2025-08-19T02:39:05:     at async Hooks.resolve (node:internal/modules/esm/hooks:306:24) {
+2025-08-19T02:39:05:   code: 'ERR_MODULE_NOT_FOUND'
+2025-08-19T02:39:05: }
+2025-08-19T02:39:05: 
+2025-08-19T02:39:05: Node.js v20.19.4
+2025-08-19T02:39:32: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:32:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:32:                       ^
+2025-08-19T02:39:32: 
+2025-08-19T02:39:32: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:32:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:32:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:32:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:32:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:32:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:32:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:32: 
+2025-08-19T02:39:32: Node.js v20.19.4
+2025-08-19T02:39:34: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:34:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:34:                       ^
+2025-08-19T02:39:34: 
+2025-08-19T02:39:34: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:34:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:34:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:34:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:34:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:34:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:34:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:34: 
+2025-08-19T02:39:34: Node.js v20.19.4
+2025-08-19T02:39:36: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:36:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:36:                       ^
+2025-08-19T02:39:36: 
+2025-08-19T02:39:36: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:36:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:36:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:36:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:36:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:36:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:36:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:36: 
+2025-08-19T02:39:36: Node.js v20.19.4
+2025-08-19T02:39:38: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:38:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:38:                       ^
+2025-08-19T02:39:38: 
+2025-08-19T02:39:38: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:38:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:38:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:38:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:38:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:38:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:38:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:38: 
+2025-08-19T02:39:38: Node.js v20.19.4
+2025-08-19T02:39:40: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:40:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:40:                       ^
+2025-08-19T02:39:40: 
+2025-08-19T02:39:40: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:40:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:40:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:40:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:40:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:40:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:40:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:40: 
+2025-08-19T02:39:40: Node.js v20.19.4
+2025-08-19T02:39:42: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:42:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:42:                       ^
+2025-08-19T02:39:42: 
+2025-08-19T02:39:42: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:42:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:42:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:42:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:42:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:42:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:42:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:42: 
+2025-08-19T02:39:42: Node.js v20.19.4
+2025-08-19T02:39:44: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:44:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:44:                       ^
+2025-08-19T02:39:44: 
+2025-08-19T02:39:44: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:44:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:44:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:44:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:44:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:44:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:44:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:44: 
+2025-08-19T02:39:44: Node.js v20.19.4
+2025-08-19T02:39:45: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:45:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:45:                       ^
+2025-08-19T02:39:45: 
+2025-08-19T02:39:45: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:45:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:45:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:45:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:45:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:45:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:45:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:45: 
+2025-08-19T02:39:45: Node.js v20.19.4
+2025-08-19T02:39:47: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:47:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:47:                       ^
+2025-08-19T02:39:47: 
+2025-08-19T02:39:47: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:47:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:47:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:47:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:47:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:47:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:47:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:47: 
+2025-08-19T02:39:47: Node.js v20.19.4
+2025-08-19T02:39:49: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:49:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:49:                       ^
+2025-08-19T02:39:49: 
+2025-08-19T02:39:49: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:49:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:49:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:49:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:49:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:49:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:49:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:49: 
+2025-08-19T02:39:49: Node.js v20.19.4
+2025-08-19T02:39:51: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:51:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:51:                       ^
+2025-08-19T02:39:51: 
+2025-08-19T02:39:51: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:51:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:51:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:51:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:51:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:51:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:51:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:51: 
+2025-08-19T02:39:51: Node.js v20.19.4
+2025-08-19T02:39:53: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:53:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:53:                       ^
+2025-08-19T02:39:53: 
+2025-08-19T02:39:53: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:53:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:53:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:53:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:53:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:53:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:53:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:53: 
+2025-08-19T02:39:53: Node.js v20.19.4
+2025-08-19T02:39:55: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:55:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:55:                       ^
+2025-08-19T02:39:55: 
+2025-08-19T02:39:55: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:55:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:55:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:55:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:55:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:55:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:55:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:55: 
+2025-08-19T02:39:55: Node.js v20.19.4
+2025-08-19T02:39:57: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:57:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:57:                       ^
+2025-08-19T02:39:57: 
+2025-08-19T02:39:57: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:57:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:57:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:57:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:57:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:57:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:57:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:57: 
+2025-08-19T02:39:57: Node.js v20.19.4
+2025-08-19T02:39:59: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:39:59:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:39:59:                       ^
+2025-08-19T02:39:59: 
+2025-08-19T02:39:59: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:39:59:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:39:59:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:39:59:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:39:59:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:39:59:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:39:59:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:39:59: 
+2025-08-19T02:39:59: Node.js v20.19.4
+2025-08-19T02:40:02: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:02:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:02:                       ^
+2025-08-19T02:40:02: 
+2025-08-19T02:40:02: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:02:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:02:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:02:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:02:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:02:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:02:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:02: 
+2025-08-19T02:40:02: Node.js v20.19.4
+2025-08-19T02:40:05: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:05:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:05:                       ^
+2025-08-19T02:40:05: 
+2025-08-19T02:40:05: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:05:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:05:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:05:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:05:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:05:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:05:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:05: 
+2025-08-19T02:40:05: Node.js v20.19.4
+2025-08-19T02:40:08: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:08:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:08:                       ^
+2025-08-19T02:40:08: 
+2025-08-19T02:40:08: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:08:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:08:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:08:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:08:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:08:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:08:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:08: 
+2025-08-19T02:40:08: Node.js v20.19.4
+2025-08-19T02:40:10: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:10:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:10:                       ^
+2025-08-19T02:40:10: 
+2025-08-19T02:40:10: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:10:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:10:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:10:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:10:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:10:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:10:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:10: 
+2025-08-19T02:40:10: Node.js v20.19.4
+2025-08-19T02:40:12: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:12:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:12:                       ^
+2025-08-19T02:40:12: 
+2025-08-19T02:40:12: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:12:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:12:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:12:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:12:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:12:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:12:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:12: 
+2025-08-19T02:40:12: Node.js v20.19.4
+2025-08-19T02:40:15: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:15:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:15:                       ^
+2025-08-19T02:40:15: 
+2025-08-19T02:40:15: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:15:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:15:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:15:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:15:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:15:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:15:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:15: 
+2025-08-19T02:40:15: Node.js v20.19.4
+2025-08-19T02:40:19: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:19:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:19:                       ^
+2025-08-19T02:40:19: 
+2025-08-19T02:40:19: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:19:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:19:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:19:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:19:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:19:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:19:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:19: 
+2025-08-19T02:40:19: Node.js v20.19.4
+2025-08-19T02:40:21: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:21:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:21:                       ^
+2025-08-19T02:40:21: 
+2025-08-19T02:40:21: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:21:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:21:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:21:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:21:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:21:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:21:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:21: 
+2025-08-19T02:40:21: Node.js v20.19.4
+2025-08-19T02:40:24: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:24:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:24:                       ^
+2025-08-19T02:40:24: 
+2025-08-19T02:40:24: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:24:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:24:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:24:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:24:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:24:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:24:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:24: 
+2025-08-19T02:40:24: Node.js v20.19.4
+2025-08-19T02:40:26: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:26:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:26:                       ^
+2025-08-19T02:40:26: 
+2025-08-19T02:40:26: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:26:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:26:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:26:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:26:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:26:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:26:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:26: 
+2025-08-19T02:40:26: Node.js v20.19.4
+2025-08-19T02:40:28: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:28:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:28:                       ^
+2025-08-19T02:40:28: 
+2025-08-19T02:40:28: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:28:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:28:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:28:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:28:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:28:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:28:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:28: 
+2025-08-19T02:40:28: Node.js v20.19.4
+2025-08-19T02:40:31: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:31:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:31:                       ^
+2025-08-19T02:40:31: 
+2025-08-19T02:40:31: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:31:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:31:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:31:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:31:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:31:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:31:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:31: 
+2025-08-19T02:40:31: Node.js v20.19.4
+2025-08-19T02:40:33: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:33:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:33:                       ^
+2025-08-19T02:40:33: 
+2025-08-19T02:40:33: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:33:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:33:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:33:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:33:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:33:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:33:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:33: 
+2025-08-19T02:40:33: Node.js v20.19.4
+2025-08-19T02:40:35: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:35:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:35:                       ^
+2025-08-19T02:40:35: 
+2025-08-19T02:40:35: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:35:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:35:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:35:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:35:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:35:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:35:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:35: 
+2025-08-19T02:40:35: Node.js v20.19.4
+2025-08-19T02:40:37: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:37:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:37:                       ^
+2025-08-19T02:40:37: 
+2025-08-19T02:40:37: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:37:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:37:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:37:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:37:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:37:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:37:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:37: 
+2025-08-19T02:40:37: Node.js v20.19.4
+2025-08-19T02:40:40: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:40:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:40:                       ^
+2025-08-19T02:40:40: 
+2025-08-19T02:40:40: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:40:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:40:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:40:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:40:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:40:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:40:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:40: 
+2025-08-19T02:40:40: Node.js v20.19.4
+2025-08-19T02:40:42: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:42:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:42:                       ^
+2025-08-19T02:40:42: 
+2025-08-19T02:40:42: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:42:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:42:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:42:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:42:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:42:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:42:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:42: 
+2025-08-19T02:40:42: Node.js v20.19.4
+2025-08-19T02:40:44: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:44:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:44:                       ^
+2025-08-19T02:40:44: 
+2025-08-19T02:40:44: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:44:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:44:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:44:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:44:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:44:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:44:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:44: 
+2025-08-19T02:40:44: Node.js v20.19.4
+2025-08-19T02:40:46: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:46:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:46:                       ^
+2025-08-19T02:40:46: 
+2025-08-19T02:40:46: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:46:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:46:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:46:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:46:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:46:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:46:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:46: 
+2025-08-19T02:40:46: Node.js v20.19.4
+2025-08-19T02:40:48: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:48:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:48:                       ^
+2025-08-19T02:40:48: 
+2025-08-19T02:40:48: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:48:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:48:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:48:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:48:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:48:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:48:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:48: 
+2025-08-19T02:40:48: Node.js v20.19.4
+2025-08-19T02:40:50: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:50:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:50:                       ^
+2025-08-19T02:40:50: 
+2025-08-19T02:40:50: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:50:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:50:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:50:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:50:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:50:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:50:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:50: 
+2025-08-19T02:40:50: Node.js v20.19.4
+2025-08-19T02:40:52: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:52:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:52:                       ^
+2025-08-19T02:40:52: 
+2025-08-19T02:40:52: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:52:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:52:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:52:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:52:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:52:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:52:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:52: 
+2025-08-19T02:40:52: Node.js v20.19.4
+2025-08-19T02:40:55: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:55:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:55:                       ^
+2025-08-19T02:40:55: 
+2025-08-19T02:40:55: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:55:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:55:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:55:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:55:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:55:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:55:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:55: 
+2025-08-19T02:40:55: Node.js v20.19.4
+2025-08-19T02:40:57: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:57:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:57:                       ^
+2025-08-19T02:40:57: 
+2025-08-19T02:40:57: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:57:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:57:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:57:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:57:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:57:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:57:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:57: 
+2025-08-19T02:40:57: Node.js v20.19.4
+2025-08-19T02:40:59: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:40:59:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:40:59:                       ^
+2025-08-19T02:40:59: 
+2025-08-19T02:40:59: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:40:59:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:40:59:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:40:59:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:40:59:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:40:59:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:40:59:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:40:59: 
+2025-08-19T02:40:59: Node.js v20.19.4
+2025-08-19T02:41:01: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:01:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:01:                       ^
+2025-08-19T02:41:01: 
+2025-08-19T02:41:01: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:01:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:01:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:01:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:01:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:01:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:01:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:01: 
+2025-08-19T02:41:01: Node.js v20.19.4
+2025-08-19T02:41:04: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:04:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:04:                       ^
+2025-08-19T02:41:04: 
+2025-08-19T02:41:04: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:04:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:04:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:04:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:04:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:04:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:04:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:04: 
+2025-08-19T02:41:04: Node.js v20.19.4
+2025-08-19T02:41:06: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:06:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:06:                       ^
+2025-08-19T02:41:06: 
+2025-08-19T02:41:06: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:06:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:06:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:06:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:06:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:06:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:06:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:06: 
+2025-08-19T02:41:06: Node.js v20.19.4
+2025-08-19T02:41:08: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:08:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:08:                       ^
+2025-08-19T02:41:08: 
+2025-08-19T02:41:08: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:08:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:08:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:08:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:08:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:08:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:08:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:08: 
+2025-08-19T02:41:08: Node.js v20.19.4
+2025-08-19T02:41:11: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:11:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:11:                       ^
+2025-08-19T02:41:11: 
+2025-08-19T02:41:11: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:11:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:11:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:11:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:11:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:11:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:11:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:11: 
+2025-08-19T02:41:11: Node.js v20.19.4
+2025-08-19T02:41:13: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:13:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:13:                       ^
+2025-08-19T02:41:13: 
+2025-08-19T02:41:13: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:13:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:13:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:13:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:13:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:13:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:13:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:13: 
+2025-08-19T02:41:13: Node.js v20.19.4
+2025-08-19T02:41:15: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:15:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:15:                       ^
+2025-08-19T02:41:15: 
+2025-08-19T02:41:15: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:15:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:15:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:15:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:15:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:15:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:15:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:15: 
+2025-08-19T02:41:15: Node.js v20.19.4
+2025-08-19T02:41:17: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:17:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:17:                       ^
+2025-08-19T02:41:17: 
+2025-08-19T02:41:17: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:17:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:17:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:17:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:17:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:17:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:17:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:17: 
+2025-08-19T02:41:17: Node.js v20.19.4
+2025-08-19T02:41:20: file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152
+2025-08-19T02:41:20:                 throw new Error('Neither apiKey nor config.authenticator provided');
+2025-08-19T02:41:20:                       ^
+2025-08-19T02:41:20: 
+2025-08-19T02:41:20: Error: Neither apiKey nor config.authenticator provided
+2025-08-19T02:41:20:     at Stripe._setAuthenticator (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:152:23)
+2025-08-19T02:41:20:     at new Stripe (file:///opt/eidf-crm/node_modules/stripe/esm/stripe.core.js:90:14)
+2025-08-19T02:41:20:     at <anonymous> (/opt/eidf-crm/src/server/services/stripe.service.ts:5:16)
+2025-08-19T02:41:20:     at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+2025-08-19T02:41:20:     at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+2025-08-19T02:41:20:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+2025-08-19T02:41:20: 
+2025-08-19T02:41:20: Node.js v20.19.4
+2025-08-19T02:41:36: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:36: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:37: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:37: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:38: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:38: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:39: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:39: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:40: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:40: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:41: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:41: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:42: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:42: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:43: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:43: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:43: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:43: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:44: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:44: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:45: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:45: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:46: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:46: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:47: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:47: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:48: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:48: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:49: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:49: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:49: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:49: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:50: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:50: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:51: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:51: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:52: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:52: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:53: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:53: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:54: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:54: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:54: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:54: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:55: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:55: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:56: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:56: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:57: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:57: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:58: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:58: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:41:59: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:41:59: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:00: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:00: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:01: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:01: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:02: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:02: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:03: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:03: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:03: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:03: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:04: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:04: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:05: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:05: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:06: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:06: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:07: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:07: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:07: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:07: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:08: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:08: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:09: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:09: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:10: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:10: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:11: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:11: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:12: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:12: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:12: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:12: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:13: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:13: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:14: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:14: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:15: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:15: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:16: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:16: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:16: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:16: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:17: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:17: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:18: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:18: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:19: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:19: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:19: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:19: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:20: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:20: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:21: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:21: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:22: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:22: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:23: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:23: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:24: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:24: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:24: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:24: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:25: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:25: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:26: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:26: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:27: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:27: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:28: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:28: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:28: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:28: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:29: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:29: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:30: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:30: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:31: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:31: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:31: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:31: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:32: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:32: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:33: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:33: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:34: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:34: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:35: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:35: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:36: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:36: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:36: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:36: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:37: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:37: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:38: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:38: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:39: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:39: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:40: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:40: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:41: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:41: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:41: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:41: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:42: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:42: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:43: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:43: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:44: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:44: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:45: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:45: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:46: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:46: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:47: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:47: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:48: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:48: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:48: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:48: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:49: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:49: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:50: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:50: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:51: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:51: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:52: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:52: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:53: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:53: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:54: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:54: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:55: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:55: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:56: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:56: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:57: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:57: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:58: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:58: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:58: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:58: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:42:59: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:42:59: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:00: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:00: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:02: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:02: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:03: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:03: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:04: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:04: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:05: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:05: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:05: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:05: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:07: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:07: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:08: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:08: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:08: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:08: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:09: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:09: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:10: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:10: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:11: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:11: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:12: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:12: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:13: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:13: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:14: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:14: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:15: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:15: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:16: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:16: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:16: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:16: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:17: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:17: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:18: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:18: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:19: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:19: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:20: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:20: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:20: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:20: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:21: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:21: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:22: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:22: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:23: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:23: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:24: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:24: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:25: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:25: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:25: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:25: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:26: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:26: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:27: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:27: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:28: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:28: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:29: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:29: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:30: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:30: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:31: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:31: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:32: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:32: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:34: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:34: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:35: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:35: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:36: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:43:36: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:43:37: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:06: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:06: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:07: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:07: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:07: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:07: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:08: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:08: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:09: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:09: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:10: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:10: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:10: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:10: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:11: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:11: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:12: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:12: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:13: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:13: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:14: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:14: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:14: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:14: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:15: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:15: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:16: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:16: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:17: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:17: ❌ Port 3001 is already in use. Please stop the other process or use a different port.
+2025-08-19T02:53:18: Warning: GEMINI_API_KEY not found in .env.server
+2025-08-19T02:53:18: ❌ Port 3001 is already in use. Please stop the other process or use a different port.

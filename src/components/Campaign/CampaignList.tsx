@@ -2,6 +2,16 @@ import { useState } from 'react';
 import { Campaign } from '@/types/campaign';
 import { Button } from '@/components/ui/button';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Table,
   TableBody,
   TableCell,
@@ -43,6 +53,22 @@ export default function CampaignList({
   onDeleteCampaign
 }: CampaignListProps) {
   const navigate = useNavigate();
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [campaignToDelete, setCampaignToDelete] = useState<Campaign | null>(null);
+
+  const handleDeleteClick = (e: React.MouseEvent, campaign: Campaign) => {
+    e.stopPropagation();
+    setCampaignToDelete(campaign);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (campaignToDelete) {
+      onDeleteCampaign?.(campaignToDelete.id);
+      setDeleteDialogOpen(false);
+      setCampaignToDelete(null);
+    }
+  };
 
   const formatMetric = (value: number, total: number): string => {
     if (total === 0) return '0%';
@@ -60,6 +86,7 @@ export default function CampaignList({
   }
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -125,10 +152,13 @@ export default function CampaignList({
             </TableCell>
             <TableCell>
               <p className="text-sm">
-                {formatDistance(new Date(campaign.createdAt), new Date(), {
-                  addSuffix: true,
-                  locale: fr,
-                })}
+                {campaign.createdAt ? 
+                  formatDistance(new Date(campaign.createdAt), new Date(), {
+                    addSuffix: true,
+                    locale: fr,
+                  })
+                  : 'N/A'
+                }
               </p>
             </TableCell>
             <TableCell>
@@ -148,23 +178,21 @@ export default function CampaignList({
                     <BarChart3 className="h-4 w-4 mr-2" />
                     Voir les statistiques
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/campaigns/${campaign.id}/edit`);
+                  }}>
+                    <Edit className="h-4 w-4 mr-2" />
+                    Modifier
+                  </DropdownMenuItem>
                   {(campaign.status === 'DRAFT' || campaign.status === 'SCHEDULED') && (
-                    <>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        navigate(`/campaigns/${campaign.id}/edit`);
-                      }}>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Modifier
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        onSendCampaign?.(campaign.id);
-                      }}>
-                        <Send className="h-4 w-4 mr-2" />
-                        Envoyer maintenant
-                      </DropdownMenuItem>
-                    </>
+                    <DropdownMenuItem onClick={(e) => {
+                      e.stopPropagation();
+                      onSendCampaign?.(campaign.id);
+                    }}>
+                      <Send className="h-4 w-4 mr-2" />
+                      Envoyer maintenant
+                    </DropdownMenuItem>
                   )}
                   <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                     <Copy className="h-4 w-4 mr-2" />
@@ -189,18 +217,13 @@ export default function CampaignList({
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
-                  {(campaign.status === 'DRAFT') && (
-                    <DropdownMenuItem
-                      className="text-destructive"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onDeleteCampaign?.(campaign.id);
-                      }}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Supprimer
-                    </DropdownMenuItem>
-                  )}
+                  <DropdownMenuItem
+                    className="text-destructive"
+                    onClick={(e) => handleDeleteClick(e, campaign)}
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Supprimer
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </TableCell>
@@ -208,5 +231,32 @@ export default function CampaignList({
         ))}
       </TableBody>
     </Table>
+
+    {/* Delete Confirmation Dialog */}
+    <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Êtes-vous sûr de vouloir supprimer cette campagne ?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Cette action est irréversible. La campagne "{campaignToDelete?.name}" sera définitivement supprimée.
+            {campaignToDelete?.status === 'SENT' && (
+              <span className="block mt-2 font-semibold text-yellow-600">
+                ⚠️ Attention : Cette campagne a déjà été envoyée. Les statistiques seront perdues.
+              </span>
+            )}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Annuler</AlertDialogCancel>
+          <AlertDialogAction 
+            onClick={handleConfirmDelete}
+            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+          >
+            Supprimer
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+    </>
   );
 }

@@ -11,15 +11,43 @@ import {
 } from './src/lib/gemini-service.js';
 import { generateAllContentSingleCall } from './src/lib/gemini-single-call.js';
 import { AuthRequest, authenticateUser } from './src/server/middleware/auth';
+import campaignsRouter from './src/server/routes/campaigns-simple.routes.js';
+import settingsRouter from './src/server/routes/settings.routes.js';
 
 // Load server environment variables
 dotenv.config({ path: '.env.server' });
 
-console.log('Starting server...');
-console.log('Loading environment from .env.server');
-
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
+
+// Configure CORS with specific options
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost origins for development
+    const allowedOrigins = [
+      'http://localhost:8080',
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://127.0.0.1:8080',
+      'http://127.0.0.1:5173',
+      'http://127.0.0.1:3000'
+    ];
+    
+    if (allowedOrigins.includes(origin) || origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      callback(null, true);
+    } else {
+      callback(null, true); // Allow all origins in development
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  exposedHeaders: ['x-wp-total', 'x-wp-totalpages'],
+  maxAge: 86400
+};
 
 // WooCommerce API configuration
 const WOOCOMMERCE_API_URL = process.env.WOOCOMMERCE_API_URL;
@@ -53,7 +81,7 @@ const woocommerceApi = axios.create({
   },
 });
 
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Helper type for async request handlers
@@ -69,6 +97,21 @@ const asyncHandler = (fn: AsyncRequestHandler) =>
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Public test endpoint for CORS testing
+app.get('/api/test', (req: Request, res: Response) => {
+  res.json({ 
+    message: 'API is working!', 
+    timestamp: new Date().toISOString(),
+    headers: req.headers.origin 
+  });
+});
+
+// Use campaigns routes (public for testing, add auth later if needed)
+app.use('/api', campaignsRouter);
+
+// Use settings routes
+app.use('/api', settingsRouter);
 
 // Apply authentication middleware to all other routes
 app.use('/api', authenticateUser);

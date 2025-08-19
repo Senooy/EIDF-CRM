@@ -1,0 +1,163 @@
+[
+  {
+    "filter_env": [],
+    "namespace": "default",
+    "kill_retry_time": 100,
+    "windowsHide": true,
+    "username": "eidf",
+    "treekill": true,
+    "automation": true,
+    "pmx": true,
+    "instance_var": "NODE_APP_INSTANCE",
+    "autorestart": true,
+    "autostart": true,
+    "vizion": true,
+    "merge_logs": true,
+    "env": {
+      "PORT": 3000,
+      "NODE_ENV": "production"
+    },
+    "args": [
+      "run",
+      "preview"
+    ],
+    "cwd": "/opt/eidf-crm",
+    "name": "eidf-crm-frontend",
+    "node_args": [],
+    "pm_exec_path": "/usr/bin/npm",
+    "pm_cwd": "/opt/eidf-crm",
+    "exec_interpreter": "/usr/bin/node",
+    "exec_mode": "fork_mode",
+    "pm_out_log_path": "/opt/eidf-crm/.pm2/logs/eidf-crm-frontend-out.log",
+    "pm_err_log_path": "/opt/eidf-crm/.pm2/logs/eidf-crm-frontend-error.log",
+    "pm_pid_path": "/opt/eidf-crm/.pm2/pids/eidf-crm-frontend-0.pid",
+    "km_link": false,
+    "vizion_running": false,
+    "NODE_APP_INSTANCE": 0,
+    "eidf-crm-frontend": "{}",
+    "PM2_HOME": "/opt/eidf-crm/.pm2",
+    "NODE_ENV": "production",
+    "PORT": 3000,
+    "PWD": "/opt/eidf-crm",
+    "PM2_JSON_PROCESSING": "true",
+    "PM2_USAGE": "CLI",
+    "SUDO_HOME": "/root",
+    "SUDO_GID": "0",
+    "SUDO_UID": "0",
+    "SUDO_USER": "root",
+    "SUDO_COMMAND": "/usr/bin/pm2 start ecosystem.config.cjs",
+    "SHELL": "/bin/bash",
+    "HOME": "/opt/eidf-crm",
+    "USER": "eidf",
+    "LOGNAME": "eidf",
+    "MAIL": "/var/mail/eidf",
+    "PATH": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+    "TERM": "xterm-256color",
+    "LANG": "C.UTF-8",
+    "unique_id": "567c7cb6-50e5-4fd5-89d4-6dbfeb302dd0",
+    "status": "online",
+    "pm_uptime": 1755545264327,
+    "axm_actions": [
+      {
+        "action_name": "km:heapdump",
+        "action_type": "internal",
+        "arity": 2
+      },
+      {
+        "action_name": "km:cpu:profiling:start",
+        "action_type": "internal",
+        "arity": 2
+      },
+      {
+        "action_name": "km:cpu:profiling:stop",
+        "action_type": "internal",
+        "arity": 1
+      },
+      {
+        "action_name": "km:heap:sampling:start",
+        "action_type": "internal",
+        "arity": 2
+      },
+      {
+        "action_name": "km:heap:sampling:stop",
+        "action_type": "internal",
+        "arity": 1
+      }
+    ],
+    "axm_monitor": {
+      "Used Heap Size": {
+        "value": "7.40",
+        "type": "internal/v8/heap/used",
+        "unit": "MiB",
+        "historic": true
+      },
+      "Heap Usage": {
+        "value": 84.78,
+        "type": "internal/v8/heap/usage",
+        "unit": "%",
+        "historic": true
+      },
+      "Heap Size": {
+        "value": "8.73",
+        "type": "internal/v8/heap/total",
+        "unit": "MiB",
+        "historic": true
+      },
+      "Event Loop Latency p95": {
+        "value": "1.52",
+        "type": "internal/libuv/latency/p95",
+        "unit": "ms",
+        "historic": true
+      },
+      "Event Loop Latency": {
+        "value": "0.55",
+        "type": "internal/libuv/latency/p50",
+        "unit": "ms",
+        "historic": true
+      },
+      "Active handles": {
+        "value": 5,
+        "type": "internal/libuv/handles",
+        "historic": true
+      },
+      "Active requests": {
+        "value": 0,
+        "type": "internal/libuv/requests",
+        "historic": true
+      }
+    },
+    "axm_options": {
+      "error": true,
+      "heapdump": true,
+      "feature.profiler.heapsnapshot": false,
+      "feature.profiler.heapsampling": true,
+      "feature.profiler.cpu_js": true,
+      "latency": true,
+      "catchExceptions": true,
+      "profiling": true,
+      "metrics": {
+        "http": true,
+        "runtime": true,
+        "eventLoop": true,
+        "network": false,
+        "v8": true
+      },
+      "standalone": false,
+      "module_conf": {},
+      "apm": {
+        "version": "6.1.0",
+        "type": "node"
+      },
+      "module_name": "eidf-crm-frontend",
+      "module_version": "6.0.8"
+    },
+    "axm_dynamic": {},
+    "created_at": 1755545264148,
+    "restart_time": 2,
+    "unstable_restarts": 0,
+    "version": "N/A",
+    "node_version": "20.19.4",
+    "script": "npm",
+    "exit_code": 0
+  }
+]

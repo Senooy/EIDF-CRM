@@ -6,11 +6,16 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Users, Filter, Plus, X } from 'lucide-react';
 
 interface RecipientSelectorProps {
   selectedSegment: string;
   onSegmentChange: (segment: string) => void;
+  segmentType?: 'all' | 'segment' | 'custom' | 'manual';
+  onSegmentTypeChange?: (type: 'all' | 'segment' | 'custom' | 'manual') => void;
+  recipientEmails?: string[];
+  onEmailsChange?: (emails: string[]) => void;
 }
 
 interface FilterCriteria {
@@ -20,9 +25,18 @@ interface FilterCriteria {
   value: string;
 }
 
-export default function RecipientSelector({ selectedSegment, onSegmentChange }: RecipientSelectorProps) {
+export default function RecipientSelector({ 
+  selectedSegment, 
+  onSegmentChange,
+  segmentType: propSegmentType,
+  onSegmentTypeChange,
+  recipientEmails = [],
+  onEmailsChange 
+}: RecipientSelectorProps) {
   const [filters, setFilters] = useState<FilterCriteria[]>([]);
-  const [segmentType, setSegmentType] = useState<'all' | 'segment' | 'custom'>('all');
+  const [segmentType, setSegmentType] = useState<'all' | 'segment' | 'custom' | 'manual'>(propSegmentType || 'all');
+  const [emailList, setEmailList] = useState<string>(recipientEmails.join('\n'));
+  const [emailErrors, setEmailErrors] = useState<string[]>([]);
 
   const predefinedSegments = [
     { id: 'new-customers', name: 'Nouveaux clients', count: 45 },
@@ -50,11 +64,49 @@ export default function RecipientSelector({ selectedSegment, onSegmentChange }: 
     setFilters(filters.map(f => f.id === id ? { ...f, ...updates } : f));
   };
 
+  const validateEmail = (email: string): boolean => {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
+
+  const handleEmailListChange = (value: string) => {
+    setEmailList(value);
+    
+    // Parse and validate emails
+    const emails = value
+      .split(/[,;\n]/)
+      .map(e => e.trim())
+      .filter(e => e.length > 0);
+    
+    const errors: string[] = [];
+    const validEmails: string[] = [];
+    
+    emails.forEach((email, index) => {
+      if (validateEmail(email)) {
+        validEmails.push(email);
+      } else if (email) {
+        errors.push(`Ligne ${index + 1}: "${email}" n'est pas une adresse email valide`);
+      }
+    });
+    
+    setEmailErrors(errors);
+    if (onEmailsChange) {
+      onEmailsChange(validEmails);
+    }
+  };
+
   const getEstimatedCount = () => {
     if (segmentType === 'all') return 1234;
     if (segmentType === 'segment') {
       const segment = predefinedSegments.find(s => s.id === selectedSegment);
       return segment?.count || 0;
+    }
+    if (segmentType === 'manual') {
+      const emails = emailList
+        .split(/[,;\n]/)
+        .map(e => e.trim())
+        .filter(e => e.length > 0 && validateEmail(e));
+      return emails.length;
     }
     return Math.floor(Math.random() * 500) + 100;
   };
@@ -69,7 +121,13 @@ export default function RecipientSelector({ selectedSegment, onSegmentChange }: 
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <RadioGroup value={segmentType} onValueChange={(v) => setSegmentType(v as 'all' | 'segment' | 'custom')}>
+          <RadioGroup value={segmentType} onValueChange={(v) => {
+            const newType = v as 'all' | 'segment' | 'custom' | 'manual';
+            setSegmentType(newType);
+            if (onSegmentTypeChange) {
+              onSegmentTypeChange(newType);
+            }
+          }}>
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <RadioGroupItem value="all" id="all" />
@@ -122,6 +180,46 @@ export default function RecipientSelector({ selectedSegment, onSegmentChange }: 
                   <p className="text-sm text-muted-foreground">
                     Créer un segment avec des filtres
                   </p>
+                </div>
+              </div>
+
+              <div className="flex items-start space-x-3">
+                <RadioGroupItem value="manual" id="manual" />
+                <div className="flex-1">
+                  <Label htmlFor="manual" className="text-base font-medium cursor-pointer">
+                    Liste manuelle d'emails
+                  </Label>
+                  <p className="text-sm text-muted-foreground">
+                    Saisir ou coller une liste d'adresses email
+                  </p>
+                  {segmentType === 'manual' && (
+                    <div className="mt-3 space-y-2">
+                      <Textarea
+                        placeholder="Entrez les adresses email (une par ligne ou séparées par des virgules)&#10;&#10;Exemple:&#10;jean.dupont@example.com&#10;marie.martin@example.com&#10;pierre.bernard@example.com"
+                        value={emailList}
+                        onChange={(e) => handleEmailListChange(e.target.value)}
+                        className="min-h-[150px] font-mono text-sm"
+                      />
+                      {emailErrors.length > 0 && (
+                        <div className="rounded-md bg-destructive/10 p-3">
+                          <p className="text-sm font-medium text-destructive mb-1">Erreurs détectées:</p>
+                          <ul className="text-xs text-destructive space-y-1">
+                            {emailErrors.slice(0, 3).map((error, i) => (
+                              <li key={i}>• {error}</li>
+                            ))}
+                            {emailErrors.length > 3 && (
+                              <li>• ...et {emailErrors.length - 3} autres erreurs</li>
+                            )}
+                          </ul>
+                        </div>
+                      )}
+                      {emailList && emailErrors.length === 0 && (
+                        <p className="text-sm text-green-600">
+                          ✓ {getEstimatedCount()} adresses email valides
+                        </p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

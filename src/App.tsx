@@ -22,6 +22,7 @@ import CampaignDashboard from "./pages/CampaignDashboard";
 import CampaignCreate from "./pages/CampaignCreate";
 import CampaignEdit from "./pages/CampaignEdit";
 import CampaignDetails from "./pages/CampaignDetails";
+import EmailSettings from "./pages/EmailSettings";
 import { queryConfig } from "./lib/queryConfig";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ThemeProvider } from "./hooks/use-theme";
@@ -60,6 +61,7 @@ const App = () => (
                 <Route path="/campaigns/create" element={<CampaignCreate />} />
                 <Route path="/campaigns/:id" element={<CampaignDetails />} />
                 <Route path="/campaigns/:id/edit" element={<CampaignEdit />} />
+                <Route path="/email-settings" element={<EmailSettings />} />
                 <Route path="/settings/sites" element={<SiteConfiguration />} />
                 <Route path="/settings/sync" element={<SyncSettings />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

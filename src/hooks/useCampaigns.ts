@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Campaign, EmailTemplate } from '@/types/campaign';
 import { toast } from 'sonner';
-// Import both services for gradual migration
-import { campaignService } from '@/services/campaignService';
-import { useCampaigns as useNewCampaigns } from '@/hooks/useCampaignApi';
+import { campaignApiService } from '@/services/campaign-api.service';
 
 export const useCampaigns = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
@@ -14,9 +12,11 @@ export const useCampaigns = () => {
     try {
       setLoading(true);
       setError(null);
-      // Force la régénération des campagnes avec les bonnes stats
-      campaignService.forceRefreshCampaigns();
-      const data = await campaignService.getCampaigns();
+      const response = await fetch('/api/campaigns');
+      if (!response.ok) {
+        throw new Error('Failed to load campaigns');
+      }
+      const data = await response.json();
       setCampaigns(data);
     } catch (err) {
       setError('Erreur lors du chargement des campagnes');
@@ -34,32 +34,35 @@ export const useCampaigns = () => {
     scheduledDate?: string;
     recipientCount: number;
     createdBy: string;
+    recipientEmails?: string[];
   }) => {
     try {
-      const newCampaign: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'> = {
-        ...campaignData,
-        sentDate: campaignData.status === 'sent' ? new Date().toISOString() : undefined,
-        stats: {
-          sent: 0,
-          delivered: 0,
-          opened: 0,
-          clicked: 0,
-          converted: 0,
-          bounced: 0,
-          unsubscribed: 0,
-          spamReported: 0,
-          revenue: 0,
-          lastUpdated: new Date().toISOString()
-        }
-      };
+      const response = await fetch('/api/campaigns', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: campaignData.name,
+          subject: campaignData.subject,
+          body: campaignData.body,
+          status: campaignData.status.toUpperCase(),
+          scheduledDate: campaignData.scheduledDate,
+          recipientEmails: campaignData.recipientEmails || [],
+        }),
+      });
 
-      const campaignId = await campaignService.createCampaign(newCampaign);
+      if (!response.ok) {
+        throw new Error('Failed to create campaign');
+      }
+
+      const newCampaign = await response.json();
       
       // Recharger les campagnes après création
       await loadCampaigns();
       
       toast.success('Campagne créée avec succès');
-      return campaignId;
+      return newCampaign.id;
     } catch (err) {
       toast.error('Erreur lors de la création de la campagne');
       console.error('Error creating campaign:', err);
@@ -69,7 +72,18 @@ export const useCampaigns = () => {
 
   const updateCampaign = async (id: string, updates: Partial<Campaign>) => {
     try {
-      await campaignService.updateCampaign(id, updates);
+      const response = await fetch(`/api/campaigns/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updates),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update campaign');
+      }
+
       await loadCampaigns();
       toast.success('Campagne mise à jour');
     } catch (err) {
@@ -81,7 +95,14 @@ export const useCampaigns = () => {
 
   const deleteCampaign = async (id: string) => {
     try {
-      await campaignService.deleteCampaign(id);
+      const response = await fetch(`/api/campaigns/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete campaign');
+      }
+
       await loadCampaigns();
       toast.success('Campagne supprimée');
     } catch (err) {
@@ -93,7 +114,14 @@ export const useCampaigns = () => {
 
   const sendCampaign = async (id: string) => {
     try {
-      await campaignService.sendCampaign(id);
+      const response = await fetch(`/api/campaigns/${id}/send`, {
+        method: 'POST',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send campaign');
+      }
+
       await loadCampaigns();
       toast.success('Campagne envoyée avec succès');
     } catch (err) {
@@ -126,8 +154,25 @@ export const useEmailTemplates = () => {
   const loadTemplates = async () => {
     try {
       setLoading(true);
-      const data = await campaignService.getEmailTemplates();
-      setTemplates(data);
+      // For now, return mock templates until we implement the templates API
+      setTemplates([
+        {
+          id: '1',
+          name: 'Template de bienvenue',
+          subject: 'Bienvenue chez nous!',
+          body: '<h1>Bienvenue!</h1><p>Nous sommes ravis de vous compter parmi nous.</p>',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+        {
+          id: '2',
+          name: 'Promotion',
+          subject: 'Offre spéciale pour vous',
+          body: '<h1>Offre exclusive!</h1><p>Profitez de -20% sur votre prochain achat.</p>',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ]);
     } catch (err) {
       console.error('Error loading templates:', err);
     } finally {
@@ -137,10 +182,16 @@ export const useEmailTemplates = () => {
 
   const createTemplate = async (templateData: Omit<EmailTemplate, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
-      const templateId = await campaignService.createEmailTemplate(templateData);
-      await loadTemplates();
+      // For now, just add to local state
+      const newTemplate = {
+        ...templateData,
+        id: Date.now().toString(),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      };
+      setTemplates(prev => [...prev, newTemplate]);
       toast.success('Template créé avec succès');
-      return templateId;
+      return newTemplate.id;
     } catch (err) {
       toast.error('Erreur lors de la création du template');
       console.error('Error creating template:', err);
