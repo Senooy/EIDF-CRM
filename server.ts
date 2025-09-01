@@ -2,14 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
-import { 
-  initializeGemini, 
-  generateAllProductContent, 
-  batchGenerateContent,
-  GeneratedProductContent,
-  BatchGenerationResult 
-} from './src/lib/gemini-service.js';
-import { generateAllContentSingleCall } from './src/lib/gemini-single-call.js';
+// Removed AI dependencies - focus on campaigns only
 import { AuthRequest, authenticateUser } from './src/server/middleware/auth';
 import campaignsRouter from './src/server/routes/campaigns-simple.routes.js';
 import settingsRouter from './src/server/routes/settings.routes.js';
@@ -474,8 +467,8 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 app.listen(port, () => {
-  console.log(`✅ Server is running on http://localhost:${port}`);
-  console.log(`✅ WooCommerce proxy ready at http://localhost:${port}/api/wc/*`);
+  console.log(`✅ EIDF CRM Campaign Server is running on http://localhost:${port}`);
+  console.log(`✅ Campaign management API ready`);
 }).on('error', (err: any) => {
   if (err.code === 'EADDRINUSE') {
     console.error(`❌ Port ${port} is already in use. Please stop the other process or use a different port.`);

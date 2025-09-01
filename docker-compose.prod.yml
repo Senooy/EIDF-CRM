@@ -1,0 +1,165 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  database:
+    image: postgres:15-alpine
+    container_name: eidf-crm-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-eidf_crm}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - eidf-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: eidf-crm-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - eidf-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Campaign Backend
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: eidf-crm-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB:-eidf_crm}?schema=public
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      FIREBASE_SERVICE_ACCOUNT: ${FIREBASE_SERVICE_ACCOUNT}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY}
+      SMTP_HOST: ${SMTP_HOST:-localhost}
+      SMTP_PORT: ${SMTP_PORT:-25}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@eidf-crm.fr}
+      DEFAULT_FROM_NAME: ${DEFAULT_FROM_NAME:-EIDF CRM}
+      TRACKING_BASE_URL: ${TRACKING_BASE_URL:-https://crm.example.com}
+      APP_BASE_URL: ${APP_BASE_URL:-https://crm.example.com}
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - eidf-network
+    volumes:
+      - ./uploads:/app/uploads
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: eidf-crm-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - eidf-network
+    volumes:
+      - ./ssl:/etc/nginx/ssl:ro
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  # Email service (Postfix)
+  postfix:
+    image: boky/postfix:v3.7.0
+    container_name: eidf-crm-postfix
+    restart: unless-stopped
+    environment:
+      ALLOWED_SENDER_DOMAINS: ${ALLOWED_SENDER_DOMAINS:-eidf-crm.fr}
+      HOSTNAME: ${HOSTNAME:-mail.eidf-crm.fr}
+      RELAYHOST: ${RELAYHOST:-}
+      RELAYHOST_USERNAME: ${RELAYHOST_USERNAME:-}
+      RELAYHOST_PASSWORD: ${RELAYHOST_PASSWORD:-}
+    volumes:
+      - postfix_data:/var/spool/postfix
+      - ./postfix/main.cf:/etc/postfix/main.cf:ro
+    networks:
+      - eidf-network
+    ports:
+      - "25:25"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
+  # Monitoring - Portainer (optional)
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: eidf-crm-portainer
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    networks:
+      - eidf-network
+    profiles:
+      - monitoring
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  postfix_data:
+    driver: local
+  portainer_data:
+    driver: local
+
+networks:
+  eidf-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

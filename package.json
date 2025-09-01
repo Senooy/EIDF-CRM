@@ -12,6 +12,7 @@
     "start:saas": "concurrently -n \"SERVER,CLIENT\" -c \"bgBlue.bold,bgGreen.bold\" \"npm run start:server:saas\" \"npm run dev\"",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:backend": "tsc server-saas.ts --outDir dist --moduleResolution node --esModuleInterop --allowSyntheticDefaultImports --experimentalDecorators --emitDecoratorMetadata",
     "lint": "eslint .",
     "preview": "vite preview",
     "prisma:generate": "prisma generate",

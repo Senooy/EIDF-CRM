@@ -23,27 +23,20 @@ import {
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { SyncStatusButton } from "@/components/SyncStatus";
+// Removed SyncStatus import - not needed for campaigns only
 
 const searchCommands = [
   {
     group: "Navigation",
     items: [
-      { title: "Dashboard", href: "/", keywords: ["home", "accueil"] },
-      { title: "WordPress", href: "/wordpress", keywords: ["wp", "site"] },
-      { title: "WooCommerce", href: "/woocommerce", keywords: ["shop", "boutique"] },
-      { title: "Campagnes", href: "/campaigns", keywords: ["email", "marketing"] },
-      { title: "Commandes", href: "/orders", keywords: ["orders", "ventes"] },
-      { title: "Clients", href: "/customers", keywords: ["users", "utilisateurs"] },
-      { title: "Produits", href: "/products", keywords: ["items", "articles"] },
+      { title: "Campagnes", href: "/campaigns", keywords: ["email", "marketing", "campagne"] },
+      { title: "Paramètres Email", href: "/email-settings", keywords: ["email", "config", "smtp"] },
     ],
   },
   {
     group: "Actions",
     items: [
-      { title: "Nouvelle campagne", href: "/campaigns/create", keywords: ["create", "new"] },
-      { title: "Ajouter un site", href: "/settings/sites", keywords: ["add", "config"] },
-      { title: "Synchroniser", action: "sync", keywords: ["refresh", "update"] },
+      { title: "Nouvelle campagne", href: "/campaigns/create", keywords: ["create", "new", "campagne"] },
     ],
   },
 ];
@@ -51,8 +44,8 @@ const searchCommands = [
 export function AppHeader() {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState([
-    { id: 1, title: "Nouvelle commande", message: "Commande #1234 reçue", unread: true },
-    { id: 2, title: "Stock faible", message: "Le produit 'T-shirt' est presque épuisé", unread: true },
+    { id: 1, title: "Campagne envoyée", message: "La campagne 'Newsletter Mars' a été envoyée à 1,234 contacts", unread: true },
+    { id: 2, title: "Taux d'ouverture élevé", message: "Campagne 'Promotion Printemps' : 32% d'ouverture", unread: true },
     { id: 3, title: "Campagne terminée", message: "La campagne 'Soldes d'été' est terminée", unread: false },
   ]);
   const navigate = useNavigate();
@@ -75,10 +68,8 @@ export function AppHeader() {
     if (item.href) {
       navigate(item.href);
       setOpen(false);
-    } else if (item.action === "sync") {
-      // Trigger sync action
-      setOpen(false);
     }
+    // Removed sync functionality - campaigns only
   };
 
   const markAsRead = (id: number) => {
@@ -108,7 +99,7 @@ export function AppHeader() {
         </div>
 
         <div className="flex items-center gap-2">
-          <SyncStatusButton />
+          {/* Sync status removed - campaigns only mode */}
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

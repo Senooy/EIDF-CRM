@@ -53,97 +53,28 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/contexts/AuthContext";
-import { SiteSwitcher } from "./SiteSwitcher";
 import { useTheme } from "@/hooks/use-theme";
 
 const navigation = [
   {
-    title: "Tableau de bord",
+    title: "Campagnes Email",
     items: [
       {
-        title: "Vue d'ensemble",
-        href: "/",
-        icon: LayoutDashboard,
-        badge: null,
-      },
-      {
-        title: "WordPress",
-        href: "/wordpress",
-        icon: Globe,
-        badge: null,
-      },
-      {
-        title: "WooCommerce",
-        href: "/woocommerce",
-        icon: ShoppingCart,
-        badge: null,
-      },
-    ],
-  },
-  {
-    title: "Gestion",
-    items: [
-      {
-        title: "Campagnes",
+        title: "Toutes les campagnes",
         href: "/campaigns",
         icon: Mail,
-        badge: "3",
-        badgeVariant: "default" as const,
-      },
-      {
-        title: "Commandes",
-        href: "/orders",
-        icon: Package,
         badge: null,
       },
       {
-        title: "Clients",
-        href: "/customers",
-        icon: Users,
-        badge: null,
-      },
-      {
-        title: "Produits",
-        href: "/products",
-        icon: FolderOpen,
-        badge: null,
-        subItems: [
-          {
-            title: "Tous les produits",
-            href: "/products",
-          },
-          {
-            title: "Catégories",
-            href: "/products/categories",
-          },
-          {
-            title: "Inventaire",
-            href: "/products/inventory",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Outils",
-    items: [
-      {
-        title: "Assistant IA",
-        href: "/ai-assistant",
-        icon: Bot,
-        badge: "Beta",
-        badgeVariant: "outline" as const,
-      },
-      {
-        title: "SEO & Contenu",
-        href: "/seo",
+        title: "Nouvelle campagne",
+        href: "/campaigns/create",
         icon: FileText,
         badge: null,
       },
       {
-        title: "Automatisations",
-        href: "/automations",
-        icon: Zap,
+        title: "Paramètres Email",
+        href: "/email-settings",
+        icon: Settings,
         badge: null,
       },
     ],
@@ -151,11 +82,6 @@ const navigation = [
 ];
 
 const bottomNavigation = [
-  {
-    title: "Paramètres",
-    href: "/settings/sites",
-    icon: Settings,
-  },
   {
     title: "Thème",
     icon: Palette,
@@ -194,12 +120,9 @@ export function AppSidebar() {
             <Globe className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
-            <span className="text-sm font-semibold">WPHQ</span>
-            <span className="text-xs text-muted-foreground">Hub WordPress</span>
+            <span className="text-sm font-semibold">EIDF CRM</span>
+            <span className="text-xs text-muted-foreground">Campagnes Email</span>
           </div>
-        </div>
-        <div className="mt-4">
-          <SiteSwitcher />
         </div>
       </SidebarHeader>
       
